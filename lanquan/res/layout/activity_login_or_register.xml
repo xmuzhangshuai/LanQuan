@@ -1,0 +1,48 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="${relativePackage}.${activityClass}" >
+
+    <fragment
+        android:id="@+id/main_find_fragment_container"
+        android:name="com.lanquan.ui.MainFindFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/navigation_height"
+        android:layout_alignParentBottom="true"
+        android:background="@color/system_main_orange"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:paddingTop="1dp" >
+
+        <Button
+            android:id="@+id/register_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="1dp"
+            android:layout_weight="1"
+            android:background="@drawable/sel_log_btn"
+            android:paddingLeft="@dimen/login_register"
+            android:paddingRight="@dimen/login_register"
+            android:text="注册"
+            android:textColor="@color/system_main_orange"
+            android:textSize="@dimen/title_size" />
+
+        <Button
+            android:id="@+id/login_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/sel_log_btn"
+            android:paddingLeft="@dimen/login_register"
+            android:paddingRight="@dimen/login_register"
+            android:text="登录"
+            android:textColor="@color/system_main_orange"
+            android:textSize="@dimen/title_size" />
+    </LinearLayout>
+
+</RelativeLayout>

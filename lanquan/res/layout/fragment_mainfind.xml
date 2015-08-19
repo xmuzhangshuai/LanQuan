@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/system_gray"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/main_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/navigation_height"
+        android:background="@color/system_main_blue"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/recommendBtn"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sel_blue_orange_nav_bg_left" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:padding="5dp"
+                android:singleLine="true"
+                android:text="推荐"
+                android:textColor="@color/sel_blue_orange_color"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/newBtn"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/sel_blue_orange_nav_bg_right" >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:padding="5dp"
+                android:singleLine="true"
+                android:text="最新"
+                android:textColor="@color/sel_blue_orange_color"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </LinearLayout>
+
+    <android.support.v4.view.ViewPager
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/mian_find_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</LinearLayout>

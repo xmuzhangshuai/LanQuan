@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:gravity="center_horizontal"
+    android:paddingBottom="15dp" >
+
+    <HorizontalScrollView
+        android:id="@+id/image_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/linearLayout1"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@android:color/transparent"
+        android:padding="0dp"
+        android:scrollbars="none" >
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/context_menu_item_bg_all"
+            android:gravity="left"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:scrollbars="none" >
+
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView5"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView6"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView7"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView9"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="112dp"
+                android:layout_height="200dp"
+                android:layout_marginLeft="5dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@android:color/transparent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/takePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:background="@drawable/context_menu_item_bg_top"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="拍摄"
+            android:textColor="@color/system_sky_blue"
+            android:textSize="@dimen/day_recommend_user_font" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="match_parent"
+            android:layout_height="0.2dp"
+            android:background="@color/system_gray" />
+
+        <TextView
+            android:id="@+id/choosePhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/context_menu_item_bg_bottom"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="从相册选择"
+            android:textColor="@color/system_sky_blue"
+            android:textSize="@dimen/day_recommend_user_font" />
+
+        <TextView
+            android:id="@+id/cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/context_menu_cancel"
+            android:clickable="true"
+            android:gravity="center"
+            android:onClick="cancel"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp"
+            android:text="@string/cancel"
+            android:textColor="@color/system_female"
+            android:textSize="@dimen/day_recommend_user_font" />
+    </LinearLayout>
+
+</RelativeLayout>

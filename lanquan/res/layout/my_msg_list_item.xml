@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/sel_color_white_gray"
+    android:orientation="vertical"
+    android:paddingBottom="0.1dp"
+    android:paddingTop="@dimen/setting_list_margin" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/personal_timecapsule_padding"
+        android:layout_marginRight="@dimen/personal_timecapsule_padding" >
+
+        <ImageView
+            android:id="@+id/head_image"
+            android:layout_width="@dimen/headimage_size"
+            android:layout_height="@dimen/headimage_size"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/photoconor" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/share_space"
+            android:layout_toRightOf="@+id/head_image" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/item_content"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/register_font_size"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/comment"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/margin_chat_activity"
+                    android:textSize="@dimen/register_font_size" />
+
+                <TextView
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="@dimen/margin_chat_activity"
+                    android:textColor="@color/unenable"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/item_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/item_text"
+                    android:layout_width="@dimen/student_flag_left"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="4"
+                    android:textColor="@color/unenable"
+                    android:textSize="13sp"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/item_image"
+                    android:layout_width="@dimen/student_flag_left"
+                    android:layout_height="@dimen/register_height"
+                    android:gravity="center"
+                    android:scaleType="centerCrop"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.5dp"
+        android:layout_marginTop="@dimen/setting_list_margin"
+        android:background="@color/unenable_font" />
+
+</LinearLayout>

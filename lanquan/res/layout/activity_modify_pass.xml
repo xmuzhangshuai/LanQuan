@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/system_main_bg"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/login_register"
+        android:gravity="center_vertical"
+        android:padding="0.0px" >
+
+        <ImageView
+            android:id="@+id/rlCommenTitleBG"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@color/system_main_blue" />
+
+        <LinearLayout
+            android:id="@+id/left_btn_bg"
+            android:layout_width="@dimen/login_register"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/sel_nav_rightbtn_bg"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="@dimen/day_recommend_help_font_space" >
+
+            <ImageView
+                android:id="@+id/nav_left_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:src="@drawable/ic_action_previous_item" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/nav_text"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerInParent="true"
+            android:layout_toRightOf="@+id/left_btn_bg"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="修改密码"
+            android:textColor="@color/white"
+            android:textSize="@dimen/day_recommend_user_font" />
+
+        <TextView
+            android:id="@+id/publish_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="12dp"
+            android:background="@drawable/sel_nav_rightbtn_bg"
+            android:gravity="center"
+            android:paddingBottom="@dimen/margin_chat_activity"
+            android:paddingLeft="@dimen/new_msg"
+            android:paddingRight="@dimen/new_msg"
+            android:paddingTop="@dimen/margin_chat_activity"
+            android:text="保存"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/day_recommend_dot_space"
+        android:layout_marginRight="@dimen/day_recommend_dot_space"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/shape_radius"
+        android:orientation="vertical" >
+
+        <EditText
+            android:id="@+id/oldpass"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/register_height"
+            android:background="@drawable/shape_top_radius"
+            android:hint="旧密码"
+            android:inputType="textPassword"
+            android:maxLength="18"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/personal_timecapsule_padding"
+            android:textSize="@dimen/day_recommend_user_font" >
+        </EditText>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0px"
+            android:background="@drawable/shape_line" />
+
+        <EditText
+            android:id="@+id/newpass"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/register_height"
+            android:background="@drawable/shape_noradius"
+            android:hint="新密码"
+            android:inputType="textPassword"
+            android:maxLength="18"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/personal_timecapsule_padding"
+            android:textSize="@dimen/day_recommend_user_font" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1.0px"
+            android:background="@drawable/shape_line" />
+
+        <EditText
+            android:id="@+id/conform_password"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/register_height"
+            android:background="@drawable/shape_bottom_radius"
+            android:hint="再次输入新密码"
+            android:inputType="textPassword"
+            android:maxLength="18"
+            android:maxLines="1"
+            android:paddingLeft="@dimen/personal_timecapsule_padding"
+            android:textSize="@dimen/day_recommend_user_font" />
+    </LinearLayout>
+
+</LinearLayout>
