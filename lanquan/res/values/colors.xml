@@ -8,6 +8,7 @@
     <color name="system_main_blue">#3F4657</color> <!-- 系统深蓝色 -->
     <color name="system_main_blue_pressed">#2F3647</color> <!-- 系统深蓝色按键后 -->
     <color name="system_main_orange">#FF8A52</color> <!-- 系统橘色 -->
+    <color name="system_main_orange_pressed">#EF7A42</color> <!-- 系统橘色按键后 -->
     <color name="system_main_orange_trans">#70FF8A52</color> <!-- 浅橘色 -->
     <color name="system_main_bg">#E9E9E9</color> <!-- 系统背景灰色 -->
     <color name="font_gray">#888888</color> <!-- 字体灰色 -->

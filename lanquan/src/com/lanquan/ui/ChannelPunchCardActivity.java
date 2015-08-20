@@ -3,7 +3,12 @@ package com.lanquan.ui;
 import java.util.Date;
 import java.util.LinkedList;
 
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
@@ -14,6 +19,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -145,10 +151,30 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 		case R.id.inputBar:
+			showScreenPostDialog();
 			break;
 		default:
 			break;
 		}
+	}
+
+	/**
+	 * 显示打卡对话框
+	 */
+	void showScreenPostDialog() {
+		// DialogFragment.show() will take care of adding the fragment
+		// in a transaction. We also want to remove any currently showing
+		// dialog, so make our own transaction and take care of that here.
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		Fragment prev = getFragmentManager().findFragmentByTag("punch_dialog");
+		if (prev != null) {
+			ft.remove(prev);
+		}
+		ft.addToBackStack(null);
+
+		// Create and show the dialog.
+		PunchDialogFragment newFragment = new PunchDialogFragment();
+		newFragment.show(ft, "punch_dialog");
 	}
 
 	/**
@@ -260,7 +286,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 	 * @author:     zhangshuai    
 	 * @version:    1.0    
 	 * 创建时间:    2015-8-19 下午4:21:34  
-	*/ 
+	*/
 	class CommentAdapter extends BaseAdapter {
 		private class ViewHolder {
 			public ImageView headImageView;
@@ -374,4 +400,83 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 			return view;
 		}
 	}
+
+	/** 
+	 * 类描述 ：打卡的对话框
+	 * 类名： ChannelPunchCardActivity.java  
+	 * Copyright:   Copyright (c)2015    
+	 * Company:     zhangshuai   
+	 * @author:     zhangshuai    
+	 * @version:    1.0    
+	 * 创建时间:    2015-8-20 下午2:52:57  
+	*/
+	class PunchDialogFragment extends DialogFragment implements OnClickListener {
+
+		private View rootView;
+		private TextView confirmBtn;// 确定
+		private View uploadHeadImageBtn;
+		private ImageView headImage;// 头像
+		private ImageView cameraImage;
+		private EditText contenteEditText;
+
+		@Override
+		public void onCreate(Bundle savedInstanceState) {
+			// TODO Auto-generated method stub
+			super.onCreate(savedInstanceState);
+			setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+		}
+
+		@Override
+		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+			// TODO Auto-generated method stub
+			rootView = inflater.inflate(R.layout.fragment_dialog_punch, container, false);
+			getDialog().requestWindowFeature(Window.FEATURE_NO_TITLE);
+			getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+			findViewById();
+			initView();
+			return rootView;
+		}
+
+		private void findViewById() {
+			confirmBtn = (TextView) rootView.findViewById(R.id.confirm);
+			uploadHeadImageBtn = (View) rootView.findViewById(R.id.gethead_btn);
+			headImage = (ImageView) rootView.findViewById(R.id.headimage);
+			cameraImage = (ImageView) rootView.findViewById(R.id.camera_image);
+			contenteEditText = (EditText) rootView.findViewById(R.id.content);
+		}
+
+		private void initView() {
+			confirmBtn.setOnClickListener(this);
+			headImage.setVisibility(View.GONE);
+			cameraImage.setVisibility(View.VISIBLE);
+			uploadHeadImageBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+//					showPicturePicker(getActivity());
+				}
+			});
+		}
+
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			switch (v.getId()) {
+			case R.id.confirm:
+				// getChooseState();
+				// FragmentPagerAdapter f = (FragmentPagerAdapter)
+				// mViewPager.getAdapter();
+				// MainExplorePostFragment mainExplorePostFragment =
+				// (MainExplorePostFragment) f.instantiateItem(mViewPager, 0);
+				// mainExplorePostFragment.screenToRefresh(gender,
+				// love_stateString);
+				// ScreenDialogFragment.this.dismiss();
+				break;
+			default:
+				break;
+			}
+		}
+	}
+
 }
