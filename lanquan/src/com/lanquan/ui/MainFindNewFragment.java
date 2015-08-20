@@ -272,8 +272,8 @@ public class MainFindNewFragment extends BaseV4Fragment {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(), PhotoChannelDetailActivity.class);
-					intent.putExtra(PhotoChannelDetailActivity.JSONCHANNEL, jsonChannel);
+					Intent intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+					intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
 					startActivity(intent);
 					getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 				}

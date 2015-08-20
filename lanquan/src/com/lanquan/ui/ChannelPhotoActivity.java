@@ -49,7 +49,7 @@ import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
  * @version:    1.0    
  * 创建时间:    2015-8-7 下午4:04:34  
 */
-public class PhotoChannelDetailActivity extends BaseActivity implements OnClickListener {
+public class ChannelPhotoActivity extends BaseActivity implements OnClickListener {
 	public final static String JSONCHANNEL = "jsonchannel";
 	private View leftButton;// 导航栏左侧按钮
 	private View concernBtn;// 关注按钮
@@ -127,7 +127,7 @@ public class PhotoChannelDetailActivity extends BaseActivity implements OnClickL
 		sendBtn.setOnClickListener(this);
 		addImageBtn.setOnClickListener(this);
 
-		choicenessMenuPopupWindow = new ChoicenessMenuPopupWindow(PhotoChannelDetailActivity.this, jsonChannel.getC_title());
+		choicenessMenuPopupWindow = new ChoicenessMenuPopupWindow(ChannelPhotoActivity.this, jsonChannel.getC_title());
 
 		titleTextView.setOnClickListener(new OnClickListener() {
 
@@ -190,7 +190,7 @@ public class PhotoChannelDetailActivity extends BaseActivity implements OnClickL
 			@Override
 			public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(PhotoChannelDetailActivity.this.getApplicationContext(), System.currentTimeMillis(),
+				String label = DateUtils.formatDateTime(ChannelPhotoActivity.this.getApplicationContext(), System.currentTimeMillis(),
 						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
@@ -201,7 +201,7 @@ public class PhotoChannelDetailActivity extends BaseActivity implements OnClickL
 			@Override
 			public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(PhotoChannelDetailActivity.this.getApplicationContext(), System.currentTimeMillis(),
+				String label = DateUtils.formatDateTime(ChannelPhotoActivity.this.getApplicationContext(), System.currentTimeMillis(),
 						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
@@ -224,14 +224,14 @@ public class PhotoChannelDetailActivity extends BaseActivity implements OnClickL
 			concern();
 			break;
 		case R.id.right_btn_bg2:
-			startActivity(new Intent(PhotoChannelDetailActivity.this, ChannelInfoActivity.class));
+			startActivity(new Intent(ChannelPhotoActivity.this, ChannelInfoActivity.class));
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 		case R.id.send_btn:
 			comment(commentEditText.getText().toString());
 			break;
 		case R.id.add_image:
-			startActivity(new Intent(PhotoChannelDetailActivity.this, CommentImageActivity.class));
+			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class));
 			break;
 		default:
 			break;
@@ -457,7 +457,7 @@ public class PhotoChannelDetailActivity extends BaseActivity implements OnClickL
 
 			final ViewHolder holder;
 			if (convertView == null) {
-				view = LayoutInflater.from(PhotoChannelDetailActivity.this).inflate(R.layout.channel_comment_list_item, null);
+				view = LayoutInflater.from(ChannelPhotoActivity.this).inflate(R.layout.channel_comment_list_item, null);
 				holder = new ViewHolder();
 				holder.headImageView = (ImageView) view.findViewById(R.id.head_image);
 				holder.nameTextView = (TextView) view.findViewById(R.id.name);
@@ -517,7 +517,7 @@ public class PhotoChannelDetailActivity extends BaseActivity implements OnClickL
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(PhotoChannelDetailActivity.this, ImageShowerActivity.class);
+					Intent intent = new Intent(ChannelPhotoActivity.this, ImageShowerActivity.class);
 					intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, channel.getC_big_photo());
 					startActivity(intent);
 					overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);

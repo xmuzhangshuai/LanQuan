@@ -5,12 +5,15 @@ import java.util.LinkedList;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,83 +23,92 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.lanquan.R;
+import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
-import com.lanquan.base.BaseV4Fragment;
 import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.UserPreference;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /** 
- * 类描述 ：主页面——发现页面的推荐页面
- * 类名： MainFindRecommendFragment.java  
+ * 类描述 ：打卡频道
+ * 类名： PunchCardChannelActivity.java  
  * Copyright:   Copyright (c)2015    
  * Company:     zhangshuai   
  * @author:     zhangshuai    
  * @version:    1.0    
- * 创建时间:    2015-8-6 下午3:19:11  
+ * 创建时间:    2015-8-19 下午3:59:05  
 */
-public class MainFindRecommendFragment extends BaseV4Fragment {
-	private View rootView;// 根View
-
-	private PullToRefreshListView postListView;
+public class ChannelPunchCardActivity extends BaseActivity implements OnClickListener {
+	public final static String JSONCHANNEL = "jsonchannel";
+	private View leftButton;// 导航栏左侧按钮
+	private View concernBtn;// 关注按钮
+	private View infoBtn;// 信息按钮
+	private TextView titleTextView;// 频道名称
+	private View punchBtn;// 打卡频道
+	private PullToRefreshListView channelListView;
 	protected boolean pauseOnScroll = false;
 	protected boolean pauseOnFling = true;
 	private UserPreference userPreference;
 
 	private LinkedList<JsonChannel> jsonChannelList;
 	private int pageNow = 0;// 控制页数
-	private ChannelAdapter mAdapter;
+	private CommentAdapter mAdapter;
+	private JsonChannel jsonChannel;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
+		setContentView(R.layout.activity_punch_card_channel);
 		userPreference = BaseApplication.getInstance().getUserPreference();
+
 		jsonChannelList = new LinkedList<JsonChannel>();
-	}
+		jsonChannel = (JsonChannel) getIntent().getSerializableExtra(JSONCHANNEL);
+		if (jsonChannel == null) {
+			finish();
+		}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		rootView = inflater.inflate(R.layout.fragment_mainfind_recommend, container, false);
-
-		findViewById();// 初始化views
+		findViewById();
 		initView();
+
 		// 获取数据
 		getDataTask(pageNow);
 
-		postListView.setMode(Mode.BOTH);
-		mAdapter = new ChannelAdapter();
-		postListView.setAdapter(mAdapter);
-
-		return rootView;
-	}
-
-	@Override
-	public void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-		postListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
+		channelListView.setMode(Mode.BOTH);
+		mAdapter = new CommentAdapter();
+		channelListView.setAdapter(mAdapter);
 	}
 
 	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
-		postListView = (PullToRefreshListView) rootView.findViewById(R.id.channel_list);
+		channelListView = (PullToRefreshListView) findViewById(R.id.punch_channel_list);
+		leftButton = findViewById(R.id.left_btn_bg);
+		titleTextView = (TextView) findViewById(R.id.nav_text);
+		concernBtn = findViewById(R.id.right_btn_bg);
+		infoBtn = findViewById(R.id.right_btn_bg2);
+		punchBtn = findViewById(R.id.inputBar);
 	}
 
 	@Override
 	protected void initView() {
 		// TODO Auto-generated method stub
+		titleTextView.setText(jsonChannel.getC_title());
+		leftButton.setOnClickListener(this);
+		concernBtn.setOnClickListener(this);
+		infoBtn.setOnClickListener(this);
+		punchBtn.setOnClickListener(this);
+
 		// 设置上拉下拉刷新事件
-		postListView.setOnRefreshListener(new OnRefreshListener2<ListView>() {
+		channelListView.setOnRefreshListener(new OnRefreshListener2<ListView>() {
 
 			@Override
 			public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+				String label = DateUtils.formatDateTime(ChannelPunchCardActivity.this.getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
 				pageNow = 0;
@@ -106,8 +118,8 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 			@Override
 			public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+				String label = DateUtils.formatDateTime(ChannelPunchCardActivity.this.getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
 				if (pageNow >= 0)
@@ -115,6 +127,28 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 				getDataTask(pageNow);
 			}
 		});
+	}
+
+	@Override
+	public void onClick(View v) {
+		// TODO Auto-generated method stub
+		switch (v.getId()) {
+		case R.id.left_btn_bg:
+			finish();
+			overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
+			break;
+		case R.id.right_btn_bg:
+			concern();
+			break;
+		case R.id.right_btn_bg2:
+			startActivity(new Intent(ChannelPunchCardActivity.this, ChannelInfoActivity.class));
+			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+			break;
+		case R.id.inputBar:
+			break;
+		default:
+			break;
+		}
 	}
 
 	/**
@@ -207,23 +241,37 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		jsonChannelList.add(channel5);
 		jsonChannelList.add(channel6);
 		// mAdapter.notifyDataSetChanged();
-		postListView.onRefreshComplete();
+		channelListView.onRefreshComplete();
+	}
+
+	/**
+	 *关注 
+	 */
+	private void concern() {
+		infoBtn.setVisibility(View.VISIBLE);
+		concernBtn.setVisibility(View.GONE);
 	}
 
 	/** 
-	 * 类描述 ：推荐列表频道适配器
-	 * 类名： MainFindRecommendFragment.java  
+	 * 类描述 ：打卡频道列表适配器
+	 * 类名： ChannelPunchCardActivity.java  
 	 * Copyright:   Copyright (c)2015    
 	 * Company:     zhangshuai   
 	 * @author:     zhangshuai    
 	 * @version:    1.0    
-	 * 创建时间:    2015-8-7 上午9:55:03  
-	*/
-	class ChannelAdapter extends BaseAdapter {
-
+	 * 创建时间:    2015-8-19 下午4:21:34  
+	*/ 
+	class CommentAdapter extends BaseAdapter {
 		private class ViewHolder {
-			public ImageView backPhotoImageView;
-			public TextView titleTextView;
+			public ImageView headImageView;
+			public TextView nameTextView;
+			public TextView timeTextView;
+			public TextView contentTextView;
+			public CheckBox favorBtn;
+			public TextView favorCountTextView;
+			public ImageView deleteBtn;
+			public TextView commentCountTextView;
+			public ImageView itemImageView;
 		}
 
 		@Override
@@ -248,36 +296,80 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			View view = convertView;
-			final JsonChannel jsonChannel = jsonChannelList.get(position);
-			if (jsonChannel == null) {
+			final JsonChannel channel = jsonChannelList.get(position);
+			if (channel == null) {
 				return null;
 			}
 
 			final ViewHolder holder;
 			if (convertView == null) {
-				view = LayoutInflater.from(getActivity()).inflate(R.layout.re_channel_list_item, null);
+				view = LayoutInflater.from(ChannelPunchCardActivity.this).inflate(R.layout.channel_punch_comment_list_item, null);
 				holder = new ViewHolder();
-				holder.backPhotoImageView = (ImageView) view.findViewById(R.id.channel_bg);
-				holder.titleTextView = (TextView) view.findViewById(R.id.title);
+				holder.headImageView = (ImageView) view.findViewById(R.id.head_image);
+				holder.nameTextView = (TextView) view.findViewById(R.id.name);
+				holder.timeTextView = (TextView) view.findViewById(R.id.time);
+				holder.contentTextView = (TextView) view.findViewById(R.id.content);
+				holder.itemImageView = (ImageView) view.findViewById(R.id.item_image);
+				holder.favorBtn = (CheckBox) view.findViewById(R.id.favor_btn);
+				holder.favorCountTextView = (TextView) view.findViewById(R.id.favor_count);
+				holder.deleteBtn = (ImageView) view.findViewById(R.id.delete_btn);
+				holder.commentCountTextView = (TextView) view.findViewById(R.id.comment_count);
 				view.setTag(holder); // 给View添加一个格外的数据
 			} else {
 				holder = (ViewHolder) view.getTag(); // 把数据取出来
 			}
 
-			view.setOnClickListener(new OnClickListener() {
+			// 设置头像
+			if (!TextUtils.isEmpty(channel.getC_small_avatar())) {
+				imageLoader.displayImage(channel.getC_small_avatar(), holder.headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+				if (userPreference.getU_id() != channel.getC_userid()) {
+					// 点击头像进入详情页面
+					holder.headImageView.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							// Intent intent = new Intent(getActivity(),
+							// PersonDetailActivity.class);
+							// intent.putExtra(UserTable.U_ID,
+							// jsonPostItem.getP_userid());
+							// intent.putExtra(UserTable.U_NICKNAME,
+							// jsonPostItem.getP_username());
+							// intent.putExtra(UserTable.U_SMALL_AVATAR,
+							// jsonPostItem.getP_small_avatar());
+							// startActivity(intent);
+							// getActivity().overridePendingTransition(R.anim.zoomin2,
+							// R.anim.zoomout);
+						}
+					});
+				}
+			}
+
+			// 设置内容
+			holder.contentTextView.setText(channel.getC_title());
+
+			// 设置姓名
+			holder.nameTextView.setText(channel.getC_username());
+
+			// 设置日期
+			holder.timeTextView.setText(DateTimeTools.getInterval(channel.getC_time()));
+
+			// 设置被赞次数
+			holder.favorCountTextView.setText("" + channel.getC_favor_count());
+
+			// 设置图片
+			imageLoader.displayImage(channel.getC_big_photo(), holder.itemImageView, ImageLoaderTool.getImageOptions());
+			holder.itemImageView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(), ChannelPhotoActivity.class);
-					intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
+					Intent intent = new Intent(ChannelPunchCardActivity.this, ImageShowerActivity.class);
+					intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, channel.getC_big_photo());
 					startActivity(intent);
-					getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+					overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);
 				}
 			});
-
-			imageLoader.displayImage(jsonChannel.getC_big_photo(), holder.backPhotoImageView, ImageLoaderTool.getImageOptions());
-			holder.titleTextView.setText(jsonChannel.getC_title());
 
 			return view;
 		}

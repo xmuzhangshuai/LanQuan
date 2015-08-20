@@ -259,7 +259,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			View view = convertView;
 			final JsonChannel jsonChannel = jsonChannelList.get(position);
@@ -283,10 +283,16 @@ public class MainLanquanFragment extends BaseV4Fragment {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(), PhotoChannelDetailActivity.class);
-					intent.putExtra(PhotoChannelDetailActivity.JSONCHANNEL, jsonChannel);
+					Intent intent;
+					if (position == 1) {
+						intent = new Intent(getActivity(), ChannelPunchCardActivity.class);
+					} else {
+						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+					}
+					intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
 					startActivity(intent);
 					getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+
 				}
 			});
 

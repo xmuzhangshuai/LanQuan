@@ -77,7 +77,14 @@
 
         <!-- 图文频道详情页面 -->
         <activity
-            android:name="com.lanquan.ui.PhotoChannelDetailActivity"
+            android:name="com.lanquan.ui.ChannelPhotoActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+        </activity>
+
+        <!-- 打卡频道详情页面 -->
+        <activity
+            android:name="com.lanquan.ui.ChannelPunchCardActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
@@ -197,7 +204,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustUnspecified|stateHidden" >
         </activity>
-        
+
         <!-- 二维码扫描页面 -->
         <activity
             android:name="com.lanquan.ui.CaptureActivity"
@@ -207,19 +214,18 @@
             android:windowSoftInputMode="stateAlwaysHidden" >
         </activity>
 
-          <!-- 我的二维码 -->
+        <!-- 我的二维码 -->
         <activity
             android:name="com.lanquan.ui.ShareQrCodeActivity"
             android:screenOrientation="portrait" >
         </activity>
-        
-        
+
         <!-- 显示高清图片 -->
         <activity
             android:name="com.lanquan.ui.ImageShowerActivity"
             android:screenOrientation="portrait" >
         </activity>
-        
+
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
