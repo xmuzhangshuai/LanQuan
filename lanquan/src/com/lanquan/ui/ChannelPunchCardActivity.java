@@ -1,15 +1,27 @@
 package com.lanquan.ui;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 
+import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
@@ -17,12 +29,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -31,9 +45,12 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
+import com.lanquan.customwidget.MyMenuDialog;
 import com.lanquan.jsonobject.JsonChannel;
 import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.ImageTools;
+import com.lanquan.utils.LogTool;
 import com.lanquan.utils.UserPreference;
 
 /** 
@@ -47,6 +64,9 @@ import com.lanquan.utils.UserPreference;
 */
 public class ChannelPunchCardActivity extends BaseActivity implements OnClickListener {
 	public final static String JSONCHANNEL = "jsonchannel";
+	private static final int TAKE_PICTURE = 0;
+	private static final int CHOOSE_PICTURE = 1;
+	private String photoUri;// 图片地址
 	private View leftButton;// 导航栏左侧按钮
 	private View concernBtn;// 关注按钮
 	private View infoBtn;// 信息按钮
@@ -401,6 +421,125 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 		}
 	}
 
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode != Activity.RESULT_OK)
+			return;
+		if (requestCode == TAKE_PICTURE) {// 拍照
+			PunchDialogFragment prev = (PunchDialogFragment) getFragmentManager().findFragmentByTag("punch_dialog");
+			if (prev != null) {
+				prev.setImage();
+			}
+		} else if (requestCode == CHOOSE_PICTURE) {// 相册
+			try {
+				Uri selectedImage = data.getData();
+				String[] filePathColumn = { MediaStore.Images.Media.DATA };
+				Cursor cursor = ChannelPunchCardActivity.this.getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+				cursor.moveToFirst();
+				int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+				photoUri = cursor.getString(columnIndex);
+				LogTool.i(cursor.getString(columnIndex));
+				cursor.close();
+				PunchDialogFragment prev = (PunchDialogFragment) getFragmentManager().findFragmentByTag("punch_dialog");
+				if (prev != null) {
+					prev.setImage();
+				}
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
+	 * 从相册选择图片
+	 */
+	private void choosePhoto() {
+		Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+		startActivityForResult(intent, CHOOSE_PICTURE);
+	}
+
+	/**
+	 * 拍照
+	 */
+	private void takePhoto() {
+		try {
+			File uploadFileDir = new File(Environment.getExternalStorageDirectory(), "/lanquan/image");
+			Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+			if (!uploadFileDir.exists()) {
+				uploadFileDir.mkdirs();
+			}
+			String fileName;
+
+			// 删除上一次的临时文件
+			SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE);
+			ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(), sharedPreferences.getString("tempName", ""));
+
+			// 保存本次截图临时文件名字
+			fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
+			Editor editor = sharedPreferences.edit();
+			editor.putString("tempName", fileName);
+			editor.commit();
+
+			File picFile = new File(uploadFileDir, fileName);
+
+			if (!picFile.exists()) {
+				picFile.createNewFile();
+			}
+
+			photoUri = picFile.getAbsolutePath();
+			Uri takePhotoUri = Uri.fromFile(picFile);
+			cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, takePhotoUri);
+			startActivityForResult(cameraIntent, TAKE_PICTURE);
+		} catch (ActivityNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	* 显示对话框，从拍照和相册选择图片来源
+	* 
+	* @param context
+	* @param isCrop
+	*/
+	private void showPicturePicker(Context context) {
+
+		final MyMenuDialog myMenuDialog = new MyMenuDialog(ChannelPunchCardActivity.this);
+		myMenuDialog.setTitle("图片来源");
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("拍照");
+		list.add("相册");
+		myMenuDialog.setMenuList(list);
+		OnItemClickListener listener = new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// TODO Auto-generated method stub
+				switch (position) {
+				case 0:// 如果是拍照
+					myMenuDialog.dismiss();
+					takePhoto();
+					break;
+				case 1:// 从相册选取
+					myMenuDialog.dismiss();
+					choosePhoto();
+					break;
+
+				default:
+					break;
+				}
+			}
+		};
+		myMenuDialog.setListItemClickListener(listener);
+
+		myMenuDialog.show();
+	}
+
 	/** 
 	 * 类描述 ：打卡的对话框
 	 * 类名： ChannelPunchCardActivity.java  
@@ -454,9 +593,19 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-//					showPicturePicker(getActivity());
+					showPicturePicker(getActivity());
 				}
 			});
+		}
+
+		public void setImage() {
+			if (photoUri != null && photoUri.length() > 0) {
+				headImage.setVisibility(View.VISIBLE);
+				cameraImage.setVisibility(View.GONE);
+				imageLoader.displayImage("file://" + photoUri, headImage, ImageLoaderTool.getCircleHeadImageOptions());
+			} else {
+				LogTool.e("图片地址为空");
+			}
 		}
 
 		@Override
@@ -471,7 +620,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 				// (MainExplorePostFragment) f.instantiateItem(mViewPager, 0);
 				// mainExplorePostFragment.screenToRefresh(gender,
 				// love_stateString);
-				// ScreenDialogFragment.this.dismiss();
+				PunchDialogFragment.this.dismiss();
 				break;
 			default:
 				break;
