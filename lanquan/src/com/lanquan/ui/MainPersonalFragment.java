@@ -7,14 +7,13 @@ import java.util.List;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.format.DateUtils;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -86,8 +85,6 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		findViewById();// 初始化views
 		initView();
 		getFragmentManager().beginTransaction().add(R.id.channel_fragment_container, myChannelByTime, "myChannelByTime").show(myChannelByTime).commit();
-
-		// getDataTask(pageNow);
 
 		return rootView;
 	}
@@ -247,7 +244,9 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 
 			findViewById();// 初始化views
 			initView();
-			getDataTask(0);
+			if (jsonChannelList.size() == 0) {
+				getDataTask(0);
+			}
 
 			return rootView;
 		}
@@ -270,12 +269,19 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 
 		public void setList() {
 			if (jsonChannelList != null) {
-				tableLayout.removeAllViews();
-				if (jsonChannelList != null) {
-					for (int i = 0; i < jsonChannelList.size(); i++) {
-						tableLayout.addView(getView(i, null), i);
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						tableLayout.removeAllViews();
+						if (jsonChannelList != null) {
+							for (int i = 0; i < jsonChannelList.size(); i++) {
+								tableLayout.addView(getView(i, null), i);
+							}
+						}
 					}
-				}
+				}).run();
 			} else {
 				LogTool.e("Time: setlist,为空");
 			}
@@ -367,32 +373,94 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		public View getView(int position, View convertView) {
 			// TODO Auto-generated method stub
 			View view = convertView;
-			LogTool.e("添加");
-			final JsonChannel jsonChannel = jsonChannelList.get(position);
-			if (jsonChannel == null) {
+			final JsonChannel channel = jsonChannelList.get(position);
+			if (channel == null) {
 				return null;
 			}
 
 			final ViewHolder holder;
 			if (convertView == null) {
-				view = LayoutInflater.from(getActivity()).inflate(R.layout.channel_list_item, null);
+				view = LayoutInflater.from(getActivity()).inflate(R.layout.by_time_list_item, null);
 				holder = new ViewHolder();
-				holder.channelIconImageView = (ImageView) view.findViewById(R.id.channel_icon);
+				holder.headImageView = (ImageView) view.findViewById(R.id.head_image);
 				holder.titleTextView = (TextView) view.findViewById(R.id.title);
+				holder.timeTextView = (TextView) view.findViewById(R.id.time);
+				holder.contentTextView = (TextView) view.findViewById(R.id.content);
+				holder.itemImageView = (ImageView) view.findViewById(R.id.item_image);
+				holder.favorBtn = (CheckBox) view.findViewById(R.id.favor_btn);
+				holder.favorCountTextView = (TextView) view.findViewById(R.id.favor_count);
+				holder.deleteBtn = (ImageView) view.findViewById(R.id.delete_btn);
+				holder.commentCountTextView = (TextView) view.findViewById(R.id.comment_count);
 				view.setTag(holder); // 给View添加一个格外的数据
 			} else {
 				holder = (ViewHolder) view.getTag(); // 把数据取出来
 			}
 
-			imageLoader.displayImage(jsonChannel.getC_small_avatar(), holder.channelIconImageView, ImageLoaderTool.getHeadImageOptions(10));
-			holder.titleTextView.setText(jsonChannel.getC_title());
+			// 设置头像
+			if (!TextUtils.isEmpty(channel.getC_small_avatar())) {
+				imageLoader.displayImage(channel.getC_small_avatar(), holder.headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+				if (userPreference.getU_id() != channel.getC_userid()) {
+					// 点击头像进入详情页面
+					holder.headImageView.setOnClickListener(new OnClickListener() {
+
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							// Intent intent = new Intent(getActivity(),
+							// PersonDetailActivity.class);
+							// intent.putExtra(UserTable.U_ID,
+							// jsonPostItem.getP_userid());
+							// intent.putExtra(UserTable.U_NICKNAME,
+							// jsonPostItem.getP_username());
+							// intent.putExtra(UserTable.U_SMALL_AVATAR,
+							// jsonPostItem.getP_small_avatar());
+							// startActivity(intent);
+							// getActivity().overridePendingTransition(R.anim.zoomin2,
+							// R.anim.zoomout);
+						}
+					});
+				}
+			}
+
+			// 设置内容
+			holder.contentTextView.setText(channel.getC_title());
+
+			// 设置题目
+			holder.titleTextView.setText(channel.getC_title());
+
+			// 设置日期
+			holder.timeTextView.setText(DateTimeTools.getInterval(channel.getC_time()));
+
+			// 设置被赞次数
+			holder.favorCountTextView.setText("" + channel.getC_favor_count());
+
+			// 设置图片
+			imageLoader.displayImage(channel.getC_big_photo(), holder.itemImageView, ImageLoaderTool.getImageOptions());
+			holder.itemImageView.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					Intent intent = new Intent(getActivity(), ImageShowerActivity.class);
+					intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, channel.getC_big_photo());
+					startActivity(intent);
+					getActivity().overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);
+				}
+			});
 
 			return view;
 		}
 
 		private class ViewHolder {
-			public ImageView channelIconImageView;
+			public ImageView headImageView;
 			public TextView titleTextView;
+			public TextView timeTextView;
+			public TextView contentTextView;
+			public CheckBox favorBtn;
+			public TextView favorCountTextView;
+			public ImageView deleteBtn;
+			public TextView commentCountTextView;
+			public ImageView itemImageView;
 		}
 	}
 
@@ -428,7 +496,9 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 
 			findViewById();// 初始化views
 			initView();
-			getDataTask(0);
+			if (jsonChannelList.size() == 0) {
+				getDataTask(0);
+			}
 
 			return rootView;
 		}
@@ -451,7 +521,6 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 
 		public void setList() {
 			if (jsonChannelList != null) {
-				LogTool.i("Time: setlist,长度:" + jsonChannelList.size());
 				tableLayout.removeAllViews();
 				if (jsonChannelList != null) {
 					for (int i = 0; i < jsonChannelList.size(); i++) {
@@ -549,7 +618,6 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		public View getView(int position, View convertView) {
 			// TODO Auto-generated method stub
 			View view = convertView;
-			LogTool.e("添加");
 			final JsonChannel jsonChannel = jsonChannelList.get(position);
 			if (jsonChannel == null) {
 				return null;
@@ -557,7 +625,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 
 			final ViewHolder holder;
 			if (convertView == null) {
-				view = LayoutInflater.from(getActivity()).inflate(R.layout.channel_list_item, null);
+				view = LayoutInflater.from(getActivity()).inflate(R.layout.by_channel_list_item, null);
 				holder = new ViewHolder();
 				holder.channelIconImageView = (ImageView) view.findViewById(R.id.channel_icon);
 				holder.titleTextView = (TextView) view.findViewById(R.id.title);
