@@ -1,5 +1,7 @@
 package com.lanquan.base;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -22,6 +24,7 @@ import android.view.ViewGroup;
 */
 public abstract class BaseFragment extends Fragment {
 	public static final String TAG = BaseFragment.class.getSimpleName();
+	protected ImageLoader imageLoader = ImageLoader.getInstance();
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {

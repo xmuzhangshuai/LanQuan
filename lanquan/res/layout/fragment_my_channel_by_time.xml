@@ -5,8 +5,18 @@
     android:background="@color/system_main_bg"
     android:orientation="vertical" >
 
-    <com.handmark.pulltorefresh.library.PullToRefreshListView
-        android:id="@+id/lanquan_list"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TableLayout
+            android:id="@+id/tablelayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+        </TableLayout>
+    </RelativeLayout>
+    <ListView
+        android:id="@+id/channel_list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:cacheColorHint="@color/white"
