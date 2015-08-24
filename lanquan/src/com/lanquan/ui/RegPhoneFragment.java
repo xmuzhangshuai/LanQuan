@@ -362,7 +362,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		// };
 		// AsyncHttpClientTool.post("user/getValidateCode", params,
 		// responseHandler);
-		responseAuthcode = "111111";
+		responseAuthcode = "123456";
 	}
 
 	/**
@@ -406,6 +406,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		// };
 		// AsyncHttpClientTool.post("user/getValidateCode", params,
 		// responseHandler);
+		userPreference.setU_tel(mPhone);
 		next();
 	}
 

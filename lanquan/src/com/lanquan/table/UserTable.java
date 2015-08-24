@@ -10,10 +10,7 @@ public class UserTable {
 	public static final String U_ACT_AMOUNT = "u_act_amount";
 	public static final String TABLE_NAME = "u_user";
 	public static final String U_ID = "u_id";
-	public static final String U_NICKNAME = "u_nickname";
-	public static final String U_PASSWORD = "u_password";
 	public static final String U_NEW_PASSWORD = "u_new_password";
-	public static final String U_TEL = "u_tel";
 	public static final String U_EMAIL = "u_email";
 	public static final String U_BIRTHDAY = "u_birthday";
 	public static final String U_AGE = "u_age";
@@ -26,4 +23,10 @@ public class UserTable {
 	public static final String U_GENDER = "u_gender";
 	public static final String U_STUDENT_NUMBER = "u_student_number";
 	public static final String U_STUDENT_PASS = "u_stundet_pass";
+
+	public static final String U_TEL = "phone";
+	public static final String U_NICKNAME = "nickname";
+	public static final String AVATAR = "avatar";
+	public static final String U_PASSWORD = "password";
+	public static final String U_ACCESS_TOKEN = "u_access_token";
 }

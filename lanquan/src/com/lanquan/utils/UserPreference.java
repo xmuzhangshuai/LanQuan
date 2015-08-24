@@ -43,16 +43,6 @@ public class UserPreference {
 		// LogTool.i("学校ID: " + getU_schoolid());
 		// LogTool.i("学校: " + getSchoolName());
 		LogTool.i("简介: " + getU_introduce());
-		LogTool.i("学号: " + getU_student_number());
-		LogTool.i("教务处密码: " + getU_student_pass());
-		LogTool.i("身份: " + getU_identity());
-		LogTool.i("行业: " + getU_industry());
-		LogTool.i("技能: " + getU_skills());
-		LogTool.i("情感状态: " + getU_love_state());
-		LogTool.i("兴趣: " + getU_interests());
-		LogTool.i("关注的人数: " + getMyConcerned_count());
-		LogTool.i("追随者数量: " + getMyFollower_count());
-		LogTool.i("赞过的帖子的数量: " + getMyFavor_count());
 	}
 
 	/**
@@ -182,6 +172,16 @@ public class UserPreference {
 		editor.commit();
 	}
 
+	// access_token
+	public String getAccess_token() {
+		return sp.getString(UserTable.U_ACCESS_TOKEN, "");
+	}
+
+	public void setAccess_token(String access_token) {
+		editor.putString(UserTable.U_ACCESS_TOKEN, access_token);
+		editor.commit();
+	}
+
 	// 省份
 	// public int getU_provinceid() {
 	// return sp.getInt(UserTable.U_PROVINCEID, -1);
@@ -260,115 +260,4 @@ public class UserPreference {
 		editor.putString(UserTable.U_INTRODUCE, u_introduce);
 		editor.commit();
 	}
-
-	// 学号
-	public String getU_student_number() {
-		return sp.getString(UserTable.U_STUDENT_NUMBER, "");
-	}
-
-	public void setU_student_number(String stundet_number) {
-		editor.putString(UserTable.U_STUDENT_NUMBER, stundet_number);
-		editor.commit();
-	}
-
-	// 教务处密码
-	public String getU_student_pass() {
-		return sp.getString(UserTable.U_STUDENT_PASS, "");
-	}
-
-	public void setU_student_pass(String stundet_pass) {
-		editor.putString(UserTable.U_STUDENT_PASS, stundet_pass);
-		editor.commit();
-	}
-
-	// 身份
-	public String getU_identity() {
-		return sp.getString(UserTable.U_IDENTITY, "");
-	}
-
-	public void setU_identity(String identity) {
-		editor.putString(UserTable.U_IDENTITY, identity);
-		editor.commit();
-	}
-
-	// 行业
-	public String getU_industry() {
-		return sp.getString(UserTable.U_INDUSTRY_ITEM, "");
-	}
-
-	public void setU_industry(String industry) {
-		editor.putString(UserTable.U_INDUSTRY_ITEM, industry);
-		editor.commit();
-	}
-
-	// 技能
-	public String getU_skills() {
-		return sp.getString(UserTable.U_SKILL_ITEMS, "");
-	}
-
-	public void setU_skills(String skills) {
-		editor.putString(UserTable.U_SKILL_ITEMS, skills);
-		editor.commit();
-	}
-
-	// 情感状态
-	public String getU_love_state() {
-		return sp.getString(UserTable.U_LOVE_STATE, "");
-	}
-
-	public void setU_love_state(String love_state) {
-		editor.putString(UserTable.U_LOVE_STATE, love_state);
-		editor.commit();
-	}
-
-	// 兴趣
-	public String getU_interests() {
-		return sp.getString(UserTable.U_INTEREST_ITEMS, "");
-	}
-
-	public void setU_interests(String interests) {
-		editor.putString(UserTable.U_INTEREST_ITEMS, interests);
-		editor.commit();
-	}
-
-	// 我关注的人数
-	public int getMyConcerned_count() {
-		return sp.getInt("my_concerned_count", -1);
-	}
-
-	public void setMyConcerned_count(int count) {
-		editor.putInt("my_concerned_count", count);
-		editor.commit();
-	}
-
-	// 我的追随者数量
-	public int getMyFollower_count() {
-		return sp.getInt("my_follower_count", -1);
-	}
-
-	public void setMyFollower_count(int count) {
-		editor.putInt("my_follower_count", count);
-		editor.commit();
-	}
-
-	// 新的追随者数量
-	public int getNewMyFollower_count() {
-		return sp.getInt("new_my_follower_count", -1);
-	}
-
-	public void setNewMyFollower_count(int count) {
-		editor.putInt("new_my_follower_count", count);
-		editor.commit();
-	}
-
-	// 我赞过的帖子的数量
-	public int getMyFavor_count() {
-		return sp.getInt("my_favor_count", -1);
-	}
-
-	public void setMyFavor_count(int count) {
-		editor.putInt("my_favor_count", count);
-		editor.commit();
-	}
-
 }

@@ -2,12 +2,17 @@ package com.lanquan.ui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Map;
+
+import org.apache.http.Header;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,9 +26,19 @@ import android.view.Window;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseFragmentActivity;
+import com.lanquan.config.Constants;
 import com.lanquan.customwidget.MyAlertDialog;
+import com.lanquan.table.UserTable;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.MD5For32;
+import com.lanquan.utils.ToastTool;
+import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /** 
  * 类描述 ：注册
@@ -40,6 +55,7 @@ public class RegisterActivity extends BaseFragmentActivity {
 	private FragmentManager fragmentManager;
 	public static final int CROP = 2;
 	public static final int CROP_PICTURE = 3;
+	private UserPreference userPreference;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +63,9 @@ public class RegisterActivity extends BaseFragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_register);
+		userPreference = BaseApplication.getInstance().getUserPreference();
+
+		LogTool.e(MD5For32.GetMD5Code(Constants.SignKey + 0 + 99 + 1 + "light"));
 
 		findViewById();
 		initView();
@@ -131,7 +150,6 @@ public class RegisterActivity extends BaseFragmentActivity {
 				if (photoUri != null) {
 					// photo = BitmapFactory.decodeFile(photoUri.getPath());
 					uploadImage(photoUri.getPath());
-					LogTool.e("裁剪返回" + "photoUri");
 				}
 				if (photo == null) {
 					Bundle extra = data.getExtras();
@@ -153,7 +171,6 @@ public class RegisterActivity extends BaseFragmentActivity {
 
 						uploadImage(ImageTools.savePhotoToSDCard(photo, Environment.getExternalStorageDirectory().getAbsolutePath(), fileName, 100)
 								.getAbsolutePath());
-						LogTool.e("裁剪返回" + "Bitmap");
 					}
 				}
 				break;
@@ -167,63 +184,59 @@ public class RegisterActivity extends BaseFragmentActivity {
 	 * 上传头像
 	 * @param filePath
 	 */
-	public void uploadImage(String imageUrl) {
-		// final Bitmap largeAvatar = BitmapFactory.decodeFile(filePath);
-		// if (largeAvatar != null) {
-		//
-		// RequestParams params = new RequestParams();
-		// int userId = userPreference.getU_id();
-		// if (userId > -1) {
-		// params.put(UserTable.U_ID, String.valueOf(userId));
-		// try {
-		// params.put(UserTable.U_LARGE_AVATAR, picFile);
-		// } catch (FileNotFoundException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler() {
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// ToastTool.showLong(ModifyDataActivity.this, "头像上传成功！");
-		// largeAvatar.recycle();
-		// // 删除本地头像
-		// ImageTools.deleteImageByPath(filePath);
-		// // 获取新头像地址
-		// Map<String, String> map = FastJsonTool.getObject(response,
-		// Map.class);
-		// if (map != null) {
-		// userPreference.setU_large_avatar(map.get(UserTable.U_LARGE_AVATAR));
-		// userPreference.setU_small_avatar(map.get(UserTable.U_SMALL_AVATAR));
-		// // 显示头像
-		// ImageLoader.getInstance().displayImage(AsyncHttpClientTool.getAbsoluteUrl(map.get(UserTable.U_SMALL_AVATAR)),
-		// headImage,
-		// ImageLoaderTool.getHeadImageOptions(3));
-		// } else {
-		// LogTool.e("上传服务器出错" + response);
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("头像上传失败！");
-		// // 删除本地头像
-		// ImageTools.deleteImageByPath(filePath);
-		// }
-		// };
-		// AsyncHttpClientTool.post("user/uploadHeadImg", params,
-		// responseHandler);
-		// }
-		// } else {
-		// ImageTools.deleteImageByPath(filePath);
-		// }
+	public void uploadImage(final String imageUrl) {
 		RegAccountFragment regAccountFragment = (RegAccountFragment) getSupportFragmentManager().findFragmentByTag("RegAccountFragment");
 		regAccountFragment.showHeadImage(imageUrl);
+
+		File dir = new File(imageUrl);
+		if (dir.exists()) {
+			RequestParams params = new RequestParams();
+			int userId = userPreference.getU_id();
+			if (userId > -1) {
+				try {
+					params.put(UserTable.U_LARGE_AVATAR, dir);
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+					@Override
+					public void onSuccess(int statusCode, Header[] headers, String response) {
+						// TODO Auto-generated method stub
+						if (statusCode == 200) {
+							ToastTool.showLong(RegisterActivity.this, "头像上传成功！");
+							// 删除本地头像
+							ImageTools.deleteImageByPath(imageUrl);
+							// 获取新头像地址
+							LogTool.e("头像地址" + response);
+							// Map<String, String> map =
+							// FastJsonTool.getObject(response, Map.class);
+							// if (map != null) {
+							// userPreference.setU_large_avatar(map.get(UserTable.U_LARGE_AVATAR));
+							// userPreference.setU_small_avatar(map.get(UserTable.U_SMALL_AVATAR));
+							// // 显示头像
+							// ImageLoader.getInstance().displayImage(AsyncHttpClientTool.getAbsoluteUrl(map.get(UserTable.U_SMALL_AVATAR)),
+							// headImage,
+							// ImageLoaderTool.getHeadImageOptions(3));
+							// } else {
+							// LogTool.e("上传服务器出错" + response);
+							// }
+						}
+					}
+
+					@Override
+					public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+						// TODO Auto-generated method stub
+						LogTool.e("头像上传失败！");
+						// 删除本地头像
+						ImageTools.deleteImageByPath(imageUrl);
+					}
+				};
+				AsyncHttpClientTool.post("user/uploadHeadImg", params, responseHandler);
+			}
+		} else {
+			LogTool.e("本地文件为空");
+		}
+
 	}
 }

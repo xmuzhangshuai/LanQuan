@@ -89,8 +89,8 @@ public class GuideActivity extends BaseActivity {
 				initView();
 				ServerUtil.getInstance().login(GuideActivity.this, MainActivity.class);
 			} else {// 如果用户没有登录过或者已经注销
-//				startActivity(new Intent(GuideActivity.this, LoginOrRegisterActivity.class));
-				startActivity(new Intent(GuideActivity.this, MainActivity.class));
+				startActivity(new Intent(GuideActivity.this, LoginOrRegisterActivity.class));
+//				startActivity(new Intent(GuideActivity.this, MainActivity.class));
 //				SchoolDbService.getInstance(getApplication()).getSchoolNameById(831);
 			}
 			sharePreferenceUtil.setUseCount(++count);// 次数加1

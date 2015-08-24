@@ -2,7 +2,10 @@ package com.lanquan.base;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -71,4 +74,7 @@ public abstract class BaseV4Fragment extends Fragment {
 	 * 初始化控件
 	 */
 	protected abstract void initView();
+
+
+
 }
