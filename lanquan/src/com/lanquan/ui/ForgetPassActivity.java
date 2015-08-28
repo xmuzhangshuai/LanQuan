@@ -344,44 +344,44 @@ public class ForgetPassActivity extends BaseActivity implements OnClickListener 
 	 * @return
 	 */
 	private void getAuthCode() {
-//		RequestParams params = new RequestParams();
-//		params.put(UserTable.U_TEL, mPhone);
-//		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-//			@Override
-//			public void onStart() {
-//				// TODO Auto-generated method stub
-//				super.onStart();
-//			}
-//
-//			@Override
-//			public void onSuccess(int statusCode, Header[] headers, String response) {
-//				// TODO Auto-generated method stub
-//				LogTool.i("验证码", response);
-//				if (response.length() == 6) {
-//					ToastTool.showShort(ForgetPassActivity.this, "验证码已发送");
-//					authcode = response;
-//				} else if (response.endsWith("-1")) {
-//					ToastTool.showShort(ForgetPassActivity.this, "服务器错误");
-//				} else if (response.endsWith("1")) {
-//					ToastTool.showShort(ForgetPassActivity.this, "手机号码为空");
-//				} else {
-//					LogTool.e("服务器返回错误");
-//				}
-//			}
-//
-//			@Override
-//			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-//				// TODO Auto-generated method stub
-//				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
-//			}
-//
-//			@Override
-//			public void onFinish() {
-//				// TODO Auto-generated method stub
-//				super.onFinish();
-//			}
-//		};
-//		AsyncHttpClientTool.post("user/getValidateCode", params, responseHandler);
+		RequestParams params = new RequestParams();
+		params.put(UserTable.U_TEL, mPhone);
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i("验证码", response);
+				if (response.length() == 6) {
+					ToastTool.showShort(ForgetPassActivity.this, "验证码已发送");
+					authcode = response;
+				} else if (response.endsWith("-1")) {
+					ToastTool.showShort(ForgetPassActivity.this, "服务器错误");
+				} else if (response.endsWith("1")) {
+					ToastTool.showShort(ForgetPassActivity.this, "手机号码为空");
+				} else {
+					LogTool.e("服务器返回错误");
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				super.onFinish();
+			}
+		};
+		AsyncHttpClientTool.post("user/getValidateCode", params, responseHandler);
 		authcode = "111111";
 	}
 

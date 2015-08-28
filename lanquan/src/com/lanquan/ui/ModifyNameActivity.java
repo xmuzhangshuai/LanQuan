@@ -113,7 +113,8 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 			} else {
 				// 没有错误，则修改
 				RequestParams params = new RequestParams();
-				params.put(UserTable.U_ID, userPreference.getU_id());
+				String access_token = userPreference.getAccess_token();
+				params.put(UserTable.U_ACCESS_TOKEN, access_token);
 				params.put(UserTable.U_NICKNAME, name);
 
 				TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
@@ -146,15 +147,16 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 								LogTool.e("修改名字返回-1");
 							}
 						}
+						LogTool.i("修改昵称"+statusCode+"==="+response);
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 						// TODO Auto-generated method stub
-						LogTool.e("修改名字错误");
+						LogTool.e("修改昵称"+statusCode+"==="+errorResponse);
 					}
 				};
-				AsyncHttpClientTool.post("user/infoUpdate", params, responseHandler);
+				AsyncHttpClientTool.post("api/user/modifyNickname", params, responseHandler);
 			}
 		} else {
 			finish();
