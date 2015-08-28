@@ -4,17 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 
 import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -22,7 +20,6 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.InputMethodManager;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -34,7 +31,6 @@ import android.widget.TextView;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
-import com.lanquan.config.Constants;
 import com.lanquan.customwidget.MyMenuDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
@@ -197,6 +193,7 @@ public class RegAccountFragment extends BaseV4Fragment {
 	 * 下一步
 	 */
 	private void next() {
+
 		RequestParams params = new RequestParams();
 		String phone = userPreference.getU_tel();
 		String nickName = userPreference.getU_nickname();
@@ -209,10 +206,6 @@ public class RegAccountFragment extends BaseV4Fragment {
 		params.put(UserTable.AVATAR, avatar);
 		params.put("verify_code", vertifyCode);
 		params.put(UserTable.U_PASSWORD, pass);
-		params.put("sign", MD5For32.GetMD5Code(Constants.SignKey + phone + nickName + avatar + vertifyCode + pass));
-		
-		LogTool.e(Constants.SignKey + phone + nickName + avatar + vertifyCode + pass);
-		LogTool.e(MD5For32.GetMD5Code(Constants.SignKey + phone + nickName + avatar + vertifyCode + pass));
 
 		final ProgressDialog dialog = new ProgressDialog(getActivity());
 		dialog.setMessage("正在注册");
@@ -237,12 +230,18 @@ public class RegAccountFragment extends BaseV4Fragment {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				if (statusCode == 200) {
-					if (!response.isEmpty()) {
-						LogTool.i("返回" + response);
-					} else {
-						LogTool.e("注册返回为空");
-					}
+				LogTool.e("statusCode:  " + statusCode + "response: " + response);
+				try {
+					JSONObject jsonObject = new JSONObject(response);
+					String status = jsonObject.getString("status");
+					String message = jsonObject.getString("message");
+					String access_token = jsonObject.getString("access_token");
+					LogTool.i("status", status);
+					LogTool.i("message", message);
+					LogTool.i("access_token", access_token);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 

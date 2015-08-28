@@ -6,6 +6,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -28,12 +30,14 @@ import android.widget.TextView;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
+import com.lanquan.config.Constants;
 import com.lanquan.config.Constants.Config;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.SIMCardInfo;
 import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
@@ -324,45 +328,57 @@ public class RegPhoneFragment extends BaseV4Fragment {
 	 * @return
 	 */
 	private void getAuthCode() {
-		// RequestParams params = new RequestParams();
-		// params.put(UserTable.U_TEL, mPhone);
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler() {
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		//
-		// if (response.length() == 6) {
-		// responseAuthcode = response;
-		// } else if (response.endsWith("-1")) {
-		// ToastTool.showLong(getActivity(), "服务器出现异常，请稍后再试");
-		// LogTool.e("获取验证码服务器返回-1");
-		// } else if (response.endsWith("1")) {
-		// ToastTool.showShort(getActivity(), "手机号码为空");
-		// } else {
-		// LogTool.e("获取验证码服务器错误");
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" +
-		// errorResponse);
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// super.onFinish();
-		// }
-		// };
-		// AsyncHttpClientTool.post("user/getValidateCode", params,
-		// responseHandler);
-		responseAuthcode = "123456";
+		RequestParams params = new RequestParams();
+		params.put(UserTable.U_TEL, mPhone);
+		params.put("type", 0);
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.e("statusCode:  " + statusCode + "response: " + response);
+				try {
+					JSONObject jsonObject = new JSONObject(response);
+					String status = jsonObject.getString("status");
+					String message = jsonObject.getString("message");
+					String access_token = jsonObject.getString("access_token");
+					LogTool.i("status", status);
+					LogTool.i("message", message);
+					LogTool.i("access_token", access_token);
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				responseAuthcode = "123456";
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
+				try {
+					JSONObject jsonObject = new JSONObject(errorResponse);
+					String status = jsonObject.getString("status");
+					String message = jsonObject.getString("message");
+//					String access_token = jsonObject.getString("access_token");
+					LogTool.i("status", status);
+					LogTool.i("message", message);
+//					LogTool.i("access_token", access_token);
+				} catch (JSONException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				responseAuthcode = "123456";
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				super.onFinish();
+			}
+		};
+		AsyncHttpClientTool.post("api/sms/send", params, responseHandler);
+
 	}
 
 	/**

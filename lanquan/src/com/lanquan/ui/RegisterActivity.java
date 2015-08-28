@@ -65,8 +65,6 @@ public class RegisterActivity extends BaseFragmentActivity {
 		setContentView(R.layout.activity_register);
 		userPreference = BaseApplication.getInstance().getUserPreference();
 
-		LogTool.e(MD5For32.GetMD5Code(Constants.SignKey + 0 + 99 + 1 + "light"));
-
 		findViewById();
 		initView();
 
