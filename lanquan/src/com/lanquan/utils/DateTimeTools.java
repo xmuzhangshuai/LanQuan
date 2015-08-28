@@ -1,9 +1,9 @@
 package com.lanquan.utils;
 
-
 import android.annotation.SuppressLint;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -33,6 +33,18 @@ public class DateTimeTools {
 
 	}
 
+	public static Date StringToDate(String dateString) {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = null;
+		try {
+			date = format.parse(dateString);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return date;
+	}
+
 	/**
 	 * 将日期格式转化为字符串返回
 	 * @param date
@@ -46,7 +58,7 @@ public class DateTimeTools {
 			return "";
 		}
 	}
-	
+
 	public static String DateToStringWithYMD(Date date) {
 		if (date != null) {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
@@ -55,7 +67,6 @@ public class DateTimeTools {
 			return "";
 		}
 	}
-
 
 	public static String DateToStringForCN(Date date) {
 		if (date != null) {
@@ -186,8 +197,7 @@ public class DateTimeTools {
 		long mim1 = date1.getTime();
 		long mim2 = date2.getTime();
 		if (mim1 < mim2) {
-			throw new IllegalArgumentException(String.format("date1[%s] not be less than date2[%s].", mim1 + "", mim2
-					+ ""));
+			throw new IllegalArgumentException(String.format("date1[%s] not be less than date2[%s].", mim1 + "", mim2 + ""));
 		}
 		long m = (mim1 - mim2 + 1) / 1000l;
 		long mday = 24 * 3600;

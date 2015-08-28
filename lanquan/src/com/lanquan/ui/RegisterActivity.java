@@ -192,7 +192,7 @@ public class RegisterActivity extends BaseFragmentActivity {
 			int userId = userPreference.getU_id();
 			if (userId > -1) {
 				try {
-					params.put(UserTable.U_LARGE_AVATAR, dir);
+					params.put(UserTable.AVATAR, dir);
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

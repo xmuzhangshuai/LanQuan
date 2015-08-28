@@ -106,7 +106,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		// TODO Auto-generated method stub
 		navText.setText("帅哥");
 		settingBtn.setOnClickListener(this);
-		imageLoader.displayImage(userPreference.getU_small_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 		headImageView.setOnClickListener(this);
 
 		commentCountTextView.setText("1");
@@ -203,7 +203,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 			break;
 		case R.id.headimage:
 			Intent intent = new Intent(getActivity(), ImageShowerActivity.class);
-			intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, userPreference.getU_small_avatar());
+			intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, userPreference.getU_avatar());
 			startActivity(intent);
 			getActivity().overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);
 			break;

@@ -1,7 +1,6 @@
 package com.lanquan.utils;
 
 import java.util.Date;
-import java.util.Properties;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -29,20 +28,12 @@ public class UserPreference {
 		LogTool.i("用户ID: " + getU_id());
 		LogTool.i("昵称: " + getU_nickname());
 		LogTool.i("密码: " + getU_password());
-		LogTool.i("性别: " + getU_gender());
 		LogTool.i("手机号: " + getU_tel());
-		LogTool.i("邮箱: " + getU_email());
-		LogTool.i("生日: " + DateTimeTools.DateToString(getU_birthday()));
-		LogTool.i("年龄: " + getU_age());
-		LogTool.i("大头像: " + getU_large_avatar());
-		LogTool.i("小头像: " + getU_small_avatar());
-		// LogTool.i("省份ID: " + getU_provinceid());
-		// LogTool.i("省份: " + getProvinceName());
-		// LogTool.i("城市ID: " + getU_cityid());
-		// LogTool.i("城市: " + getCityName());
-		// LogTool.i("学校ID: " + getU_schoolid());
-		// LogTool.i("学校: " + getSchoolName());
-		LogTool.i("简介: " + getU_introduce());
+		LogTool.i("创建时间: " + DateTimeTools.DateToString(getU_CreatTime()));
+		LogTool.i("头像: " + getU_avatar());
+		LogTool.i("内容数量: " + getArticle_count());
+		LogTool.i("频道数量: " + getChannel_count());
+		LogTool.i("access_token: " + getAccess_token());
 	}
 
 	/**
@@ -95,16 +86,6 @@ public class UserPreference {
 		editor.commit();
 	}
 
-	// 性别
-	public String getU_gender() {
-		return sp.getString(UserTable.U_GENDER, "");
-	}
-
-	public void setU_gender(String u_gender) {
-		editor.putString(UserTable.U_GENDER, u_gender);
-		editor.commit();
-	}
-
 	// 手机号
 	public String getU_tel() {
 		return sp.getString(UserTable.U_TEL, "");
@@ -115,60 +96,13 @@ public class UserPreference {
 		editor.commit();
 	}
 
-	// 邮箱
-	public String getU_email() {
-		return sp.getString(UserTable.U_EMAIL, "");
+	// 头像
+	public String getU_avatar() {
+		return sp.getString(UserTable.AVATAR, "drawable://" + R.drawable.headimage6);
 	}
 
-	public void setU_email(String u_email) {
-		editor.putString(UserTable.U_EMAIL, u_email);
-		editor.commit();
-	}
-
-	// 生日
-	public Date getU_birthday() {
-		Long time = sp.getLong(UserTable.U_BIRTHDAY, 0);
-		if (time != 0) {
-			return new Date(time);
-		} else {
-			return null;
-		}
-	}
-
-	public void setU_birthday(Date u_birthday) {
-		if (u_birthday != null) {
-			editor.putLong(UserTable.U_BIRTHDAY, u_birthday.getTime());
-			editor.commit();
-		}
-	}
-
-	// 年龄
-	public int getU_age() {
-		return sp.getInt(UserTable.U_AGE, -1);
-	}
-
-	public void setU_age(int u_age) {
-		editor.putInt(UserTable.U_AGE, u_age);
-		editor.commit();
-	}
-
-	// 大头像
-	public String getU_large_avatar() {
-		return sp.getString(UserTable.U_LARGE_AVATAR, "");
-	}
-
-	public void setU_large_avatar(String u_large_avatar) {
-		editor.putString(UserTable.U_LARGE_AVATAR, u_large_avatar);
-		editor.commit();
-	}
-
-	// 小头像
-	public String getU_small_avatar() {
-		return sp.getString(UserTable.U_SMALL_AVATAR, "drawable://" + R.drawable.headimage6);
-	}
-
-	public void setU_small_avatar(String u_small_avatar) {
-		editor.putString(UserTable.U_SMALL_AVATAR, u_small_avatar);
+	public void setU_avatar(String u_small_avatar) {
+		editor.putString(UserTable.AVATAR, u_small_avatar);
 		editor.commit();
 	}
 
@@ -181,6 +115,94 @@ public class UserPreference {
 		editor.putString(UserTable.U_ACCESS_TOKEN, access_token);
 		editor.commit();
 	}
+
+	// 内容数量
+	public int getArticle_count() {
+		return sp.getInt(UserTable.ARTICLE_COUNT, -1);
+	}
+
+	public void setArticle_count(int count) {
+		editor.putInt(UserTable.ARTICLE_COUNT, count);
+		editor.commit();
+	}
+
+	// 频道数量
+	public int getChannel_count() {
+		return sp.getInt(UserTable.CHANNEL_COUNT, -1);
+	}
+
+	public void setChannel_count(int count) {
+		editor.putInt(UserTable.CHANNEL_COUNT, count);
+		editor.commit();
+	}
+
+	// 创建时间
+	public Date getU_CreatTime() {
+		Long time = sp.getLong(UserTable.U_CREATE_TIME, 0);
+		if (time != 0) {
+			return new Date(time);
+		} else {
+			return null;
+		}
+	}
+
+	public void setU_CreatTime(Date creatTime) {
+		if (creatTime != null) {
+			editor.putLong(UserTable.U_CREATE_TIME, creatTime.getTime());
+			editor.commit();
+		}
+	}
+
+	// 性别
+	// public String getU_gender() {
+	// return sp.getString(UserTable.U_GENDER, "");
+	// }
+	//
+	// public void setU_gender(String u_gender) {
+	// editor.putString(UserTable.U_GENDER, u_gender);
+	// editor.commit();
+	// }
+
+	// 邮箱
+	// public String getU_email() {
+	// return sp.getString(UserTable.U_EMAIL, "");
+	// }
+	//
+	// public void setU_email(String u_email) {
+	// editor.putString(UserTable.U_EMAIL, u_email);
+	// editor.commit();
+	// }
+
+	// 年龄
+	// public int getU_age() {
+	// return sp.getInt(UserTable.U_AGE, -1);
+	// }
+	//
+	// public void setU_age(int u_age) {
+	// editor.putInt(UserTable.U_AGE, u_age);
+	// editor.commit();
+	// }
+
+	// 大头像
+	// public String getU_large_avatar() {
+	// return sp.getString(UserTable.U_LARGE_AVATAR, "");
+	// }
+	//
+	// public void setU_large_avatar(String u_large_avatar) {
+	// editor.putString(UserTable.U_LARGE_AVATAR, u_large_avatar);
+	// editor.commit();
+	// }
+
+	// 小头像
+	// public String getU_small_avatar() {
+	// return sp.getString(UserTable.U_SMALL_AVATAR, "drawable://" +
+	// R.drawable.headimage6);
+	// }
+	//
+	// public void setU_small_avatar(String u_small_avatar) {
+	// editor.putString(UserTable.U_SMALL_AVATAR, u_small_avatar);
+	// editor.commit();
+	// }
 
 	// 省份
 	// public int getU_provinceid() {
@@ -252,12 +274,12 @@ public class UserPreference {
 	// }
 
 	// 用户简介
-	public String getU_introduce() {
-		return sp.getString(UserTable.U_INTRODUCE, "");
-	}
-
-	public void setU_introduce(String u_introduce) {
-		editor.putString(UserTable.U_INTRODUCE, u_introduce);
-		editor.commit();
-	}
+	// public String getU_introduce() {
+	// return sp.getString(UserTable.U_INTRODUCE, "");
+	// }
+	//
+	// public void setU_introduce(String u_introduce) {
+	// editor.putString(UserTable.U_INTRODUCE, u_introduce);
+	// editor.commit();
+	// }
 }

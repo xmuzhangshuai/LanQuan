@@ -1,5 +1,11 @@
 package com.lanquan.ui;
 
+import java.util.Date;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -18,12 +24,17 @@ import android.widget.TextView;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
-import com.lanquan.jsonobject.JsonUser;
+import com.lanquan.table.UserTable;
+import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
+import com.lanquan.utils.DateTimeTools;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.SIMCardInfo;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 /**
  * 类名称：LoginActivity 
@@ -169,8 +180,11 @@ public class LoginActivity extends BaseActivity {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			showProgress(true);
 			login(phone, MD5For32.GetMD5Code(password));
+
+			// 同时存入手机号和密码，用于记住密码登录使用
+			userPreference.setU_tel(phone);
+			userPreference.setU_password(MD5For32.GetMD5Code(password));
 		}
 
 	}
@@ -178,124 +192,140 @@ public class LoginActivity extends BaseActivity {
 	// 登录
 	private void login(String tel, final String pass) {
 
-		// RequestParams params = new RequestParams();
-		// params.put(UserTable.U_TEL, tel);
-		// params.put(UserTable.U_PASSWORD, pass);
-		//
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler() {
-		//
-		// @Override
-		// public void onStart() {
-		// // TODO Auto-generated method stub
-		// super.onStart();
-		// showProgress(true);
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// showProgress(false);
-		// super.onFinish();
-		// }
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// if (!response.isEmpty()) {
-		// if (response.equals("-1")) {
-		// mPasswordView.setError("电话或密码错误！");
-		// mPasswordView.requestFocus();
-		// showProgress(false);
-		// } else {
-		// JsonUser user = FastJsonTool.getObject(response, JsonUser.class);
-		// if (user != null) {
-		// saveUser(user);// 更新用户信息
-		// loginHuanxin("" + user.getU_id(), user.getU_password());
-		// } else {
-		// LogTool.e("登录返回出错,user为空" + response);
-		// }
-		// }
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("服务器错误" + errorResponse);
-		// }
-		// };
-		// AsyncHttpClientTool.post("user/login", params, responseHandler);
-//		userPreference.setUserLogin(true);
-		startActivity(new Intent(LoginActivity.this, MainActivity.class));
-		overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+		RequestParams params = new RequestParams();
+		params.put(UserTable.U_TEL, tel);
+		params.put(UserTable.U_PASSWORD, pass);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				showProgress(true);
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i(statusCode + "===" + response);
+				try {
+					JsonTool jsonTool = new JsonTool(response);
+					JSONObject jsonObject = jsonTool.getJsonObject();
+
+					String status = jsonTool.getStatus();
+					String message = jsonTool.getMessage();
+					if (status.equals("success")) {
+						jsonTool.saveAccess_token();
+						// 登录成功后获取用户信息
+						getUserInfo(jsonObject.getString("user_id"));
+						LogTool.i(message);
+					} else {
+						LogTool.e(message);
+					}
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("服务器错误" + errorResponse);
+			}
+		};
+		AsyncHttpClientTool.post("api/user/login", params, responseHandler);
+	}
+
+	// 获取某个用户信息
+	private void getUserInfo(String userid) {
+
+		RequestParams params = new RequestParams();
+		params.put(UserTable.U_ID, userid);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				showProgress(false);
+				super.onFinish();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i(statusCode + "===" + response);
+				JsonTool jsonTool = new JsonTool(response);
+				JSONObject jsonObject = jsonTool.getJsonObject();
+
+				String status = jsonTool.getStatus();
+				if (status.equals("success")) {
+					saveUser(jsonObject);
+				} else {
+					// LogTool.e(user_info);
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("服务器错误" + errorResponse);
+			}
+		};
+		AsyncHttpClientTool.post("api/user/user", params, responseHandler);
+
 	}
 
 	/**
 	 * 存储自己的信息
 	 */
-	private void saveUser(final JsonUser user) {
+	private void saveUser(final JSONObject jsonUserObject) {
 		// TODO Auto-generated method stub
-		// LogTool.i("ServerUtil", "存储自身信息");
-		// userPreference.setU_id(user.getU_id());
-		// userPreference.setU_nickname(user.getU_nickname());
-		// userPreference.setU_password(user.getU_password());
-		// userPreference.setU_gender(user.getU_gender());
-		// userPreference.setU_tel(user.getU_tel());
-		// userPreference.setU_email(user.getU_email());
-		// userPreference.setU_birthday(user.getU_birthday());
-		// userPreference.setU_age(user.getU_age());
-		// userPreference.setU_large_avatar(user.getU_large_avatar());
-		// userPreference.setU_small_avatar(user.getU_small_avatar());
-		// userPreference.setU_identity(user.getU_identity());
-		// userPreference.setU_love_state(user.getU_love_state());
-		// userPreference.setU_provinceid(user.getU_provinceid());
-		// userPreference.setU_cityid(user.getU_cityid());
-		// userPreference.setU_schoolid(user.getU_schoolid());
-		// userPreference.setU_interests(user.getU_interest_items());
-		// userPreference.setU_skills(user.getU_skill_items());
-		// userPreference.setU_industry(user.getU_industry_item());
-		// userPreference.setU_introduce(user.getU_introduce());
-		// userPreference.setU_student_number(user.getU_student_number());
-		// userPreference.setU_student_pass(user.getU_stundet_pass());
-		// userPreference.setMyConcerned_count(user.getU_my_concern_count());
-		// userPreference.setMyFollower_count(user.getU_my_follower_count());
-		// userPreference.setMyFavor_count(user.getU_my_favor_count());
-		// userPreference.setNewMyFollower_count(user.getU_new_follower_count());
-		// userPreference.setUserLogin(true);
-	}
+		userPreference.setUserLogin(true);
 
-	/**
-	 * 登录环信
-	 */
-	// private void loginHuanxin(String userName, String password) {
-	// EMChatManager.getInstance().login(userName, password, new EMCallBack()
-	// {// 回调
-	// @Override
-	// public void onSuccess() {
-	// LogTool.i("环信", "登陆环信成功！");
-	// Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-	// startActivity(intent);
-	// overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-	// showProgress(false);
-	// }
-	//
-	// @Override
-	// public void onProgress(int progress, String status) {
-	//
-	// }
-	//
-	// @Override
-	// public void onError(int code, String message) {
-	// LogTool.e("环信", "登陆聊天服务器失败！");
-	// showProgress(false);
-	// }
-	// });
-	// }
+		try {
+			String userInfo = jsonUserObject.getString("user_info");
+			JSONObject userInfoJsonObject = new JSONObject(userInfo);
+
+			String nickname = userInfoJsonObject.getString(UserTable.U_NICKNAME);
+			String avatar = userInfoJsonObject.getString(UserTable.AVATAR);
+			String create_time = userInfoJsonObject.getString(UserTable.U_CREATE_TIME);
+			Date date = DateTimeTools.StringToDate(create_time);
+
+			String userid = userInfoJsonObject.getString(UserTable.U_ID);
+
+			// 取出频道相关信息
+			int article_count = jsonUserObject.getInt(UserTable.ARTICLE_COUNT);
+			int channel_count = jsonUserObject.getInt(UserTable.CHANNEL_COUNT);
+
+			userPreference.setU_nickname(nickname);
+			userPreference.setU_avatar(avatar);
+			userPreference.setU_CreatTime(date);
+			if (!userid.isEmpty()) {
+				userPreference.setU_id(Integer.parseInt(userid));
+			} else {
+				LogTool.e("存储用户信息的id有误" + userid);
+			}
+
+			userPreference.setArticle_count(article_count);
+			userPreference.setChannel_count(channel_count);
+			userPreference.printUserInfo();
+			startActivity(new Intent(LoginActivity.this, MainActivity.class));
+			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+	}
 
 	/**
 	 * Shows the progress UI and hides the login form.

@@ -97,7 +97,7 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 		nicknameView.setOnClickListener(this);
 		passView.setOnClickListener(this);
 		phoneView.setOnClickListener(this);
-		imageLoader.displayImage(userPreference.getU_small_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 	}
 
 	@Override
@@ -250,8 +250,8 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 		// } else {
 		// ImageTools.deleteImageByPath(filePath);
 		// }
-		userPreference.setU_small_avatar("file://" + imageUrl);
-		imageLoader.displayImage(userPreference.getU_small_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+		userPreference.setU_avatar("file://" + imageUrl);
+		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 	}
 
 	/**

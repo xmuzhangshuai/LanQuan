@@ -98,7 +98,7 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 		rl_switch_notification.setOnClickListener(this);
 
 		cacheSize.setText("" + FileSizeUtil.getFileOrFilesSize(imageLoader.getDiskCache().getDirectory().getAbsolutePath(), FileSizeUtil.SIZETYPE_MB) + "MB");
-		imageLoader.displayImage(userPreference.getU_small_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 	}
 
 	/**

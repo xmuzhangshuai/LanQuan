@@ -66,7 +66,7 @@ public class GuideActivity extends BaseActivity {
 		int count = sharePreferenceUtil.getUseCount();
 		userPreference = BaseApplication.getInstance().getUserPreference();
 
-		test();
+//		test();
 
 		// 获取定位
 		initLocation();
