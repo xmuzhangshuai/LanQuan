@@ -18,6 +18,7 @@ import com.lanquan.base.BaseApplication;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.ToastTool;
@@ -128,7 +129,7 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 			RequestParams params = new RequestParams();
 			params.put(UserTable.U_PASSWORD, MD5For32.GetMD5Code(oldPass));
 			params.put(UserTable.U_NEW_PASSWORD, MD5For32.GetMD5Code(newPass));
-			params.put(UserTable.U_ID, userPreference.getU_id());
+			params.put(UserTable.U_TEL, userPreference.getU_tel());
 			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
 				Dialog dialog;
 
@@ -147,29 +148,31 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 				}
 
 				@Override
-				public void onSuccess(int arg0, Header[] arg1, String arg2) {
-					// TODO Auto-generated method stub
-					if (arg0 == 200) {
-						if (arg2.equals("1")) {
-							ToastTool.showShort(ModifyPassActivity.this, "修改成功！");
-							reLogin();
-						} else if (arg2.equals("-1")) {
-							mOldPassView.setError("旧密码不正确");
-							focusView = mOldPassView;
-							focusView.requestFocus();
-						} else {
-							LogTool.e("返回错误" + arg2);
-						}
+				public void onSuccess(int statusCode, Header[] headers, String response) {
+					JsonTool jsonTool = new JsonTool(response);
+					String status = jsonTool.getStatus();
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						ToastTool.showShort(ModifyPassActivity.this, "修改成功！");
+						LogTool.i(jsonTool.getMessage());
+						jsonTool.saveAccess_token();
+						userPreference.setU_password(MD5For32.GetMD5Code(newPass));
+						finish();
+
+					} else if (status.equals(JsonTool.STATUS_FAIL)) {
+						LogTool.e(jsonTool.getMessage());
 					}
 				}
 
 				@Override
-				public void onFailure(int arg0, Header[] arg1, String arg2, Throwable arg3) {
+				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 					// TODO Auto-generated method stub
-					LogTool.e("服务器错误");
+					LogTool.e("修改密码服务器错误" + statusCode + errorResponse);
+					mOldPassView.setError("旧密码不正确");
+					focusView = mOldPassView;
+					focusView.requestFocus();
 				}
 			};
-			AsyncHttpClientTool.post("user/updatePwd", params, responseHandler);
+			AsyncHttpClientTool.post("api/user/modifyPassword", params, responseHandler);
 		}
 	}
 

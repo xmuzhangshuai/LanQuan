@@ -35,5 +35,5 @@ public class UserTable {
 	public static final String ARTICLE_COUNT = "article_count";
 	public static final String CHANNEL_COUNT = "channel_count";
 	public static final String U_ACCESS_TOKEN = "access_token";
-	public static final String U_NEW_PASSWORD = "u_new_password";
+	public static final String U_NEW_PASSWORD = "new_password";
 }

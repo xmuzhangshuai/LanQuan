@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.baidu.location.f;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
@@ -55,6 +56,7 @@ public class LoginActivity extends BaseActivity {
 	private TextView forgetPassword;// 忘记密码
 	private TextView registNow;// 立即注册
 	private Button loginButton;// 登录
+	View focusView = null;
 
 	// List<JsonUser> jsonUsers;
 
@@ -149,7 +151,6 @@ public class LoginActivity extends BaseActivity {
 		String password = mPasswordView.getText().toString();
 
 		boolean cancel = false;
-		View focusView = null;
 
 		// Check for a valid password, if the user entered one.
 		if (TextUtils.isEmpty(password)) {
@@ -221,7 +222,11 @@ public class LoginActivity extends BaseActivity {
 						getUserInfo(jsonObject.getString("user_id"));
 						LogTool.i(message);
 					} else {
+						showProgress(false);
 						LogTool.e(message);
+						mPasswordView.setError(message);
+						focusView = mPasswordView;
+						focusView.requestFocus();
 					}
 
 				} catch (JSONException e) {
@@ -233,6 +238,7 @@ public class LoginActivity extends BaseActivity {
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
 				LogTool.e("服务器错误" + errorResponse);
+				showProgress(false);
 			}
 		};
 		AsyncHttpClientTool.post("api/user/login", params, responseHandler);
