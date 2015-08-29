@@ -36,6 +36,7 @@ import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.SIMCardInfo;
@@ -336,19 +337,15 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.e("statusCode:  " + statusCode + "response: " + response);
-				try {
-					JSONObject jsonObject = new JSONObject(response);
-					String status = jsonObject.getString("status");
-					String message = jsonObject.getString("message");
-					String access_token = jsonObject.getString("access_token");
-					LogTool.i("status", status);
-					LogTool.i("message", message);
-					LogTool.i("access_token", access_token);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i(jsonTool.getMessage());
+					jsonTool.saveAccess_token();
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e(jsonTool.getMessage());
 				}
+
 				responseAuthcode = "123456";
 			}
 
@@ -356,18 +353,16 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
 				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
-				try {
-					JSONObject jsonObject = new JSONObject(errorResponse);
-					String status = jsonObject.getString("status");
-					String message = jsonObject.getString("message");
-//					String access_token = jsonObject.getString("access_token");
-					LogTool.i("status", status);
-					LogTool.i("message", message);
-//					LogTool.i("access_token", access_token);
-				} catch (JSONException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i(jsonTool.getMessage());
+					jsonTool.saveAccess_token();
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e(jsonTool.getMessage());
 				}
+
 				responseAuthcode = "123456";
 			}
 

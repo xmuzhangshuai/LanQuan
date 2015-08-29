@@ -37,6 +37,7 @@ import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.UserPreference;
@@ -197,7 +198,7 @@ public class RegAccountFragment extends BaseV4Fragment {
 		RequestParams params = new RequestParams();
 		String phone = userPreference.getU_tel();
 		String nickName = userPreference.getU_nickname();
-		String avatar = "";
+		String avatar = userPreference.getU_avatar();
 		String vertifyCode = "123456";
 		String pass = userPreference.getU_password();
 
@@ -230,18 +231,17 @@ public class RegAccountFragment extends BaseV4Fragment {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.e("statusCode:  " + statusCode + "response: " + response);
-				try {
-					JSONObject jsonObject = new JSONObject(response);
-					String status = jsonObject.getString("status");
-					String message = jsonObject.getString("message");
-					String access_token = jsonObject.getString("access_token");
-					LogTool.i("status", status);
-					LogTool.i("message", message);
-					LogTool.i("access_token", access_token);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i(jsonTool.getMessage());
+					jsonTool.saveAccess_token();
+					userPreference.setUserLogin(true);
+					getActivity().startActivity(new Intent(getActivity(), MainActivity.class));
+					getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+					getActivity().finish();
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e(jsonTool.getMessage());
 				}
 			}
 
@@ -342,7 +342,7 @@ public class RegAccountFragment extends BaseV4Fragment {
 	 */
 	public void showHeadImage(String imageUrl) {
 		LogTool.i("显示头像" + imageUrl);
-		ImageLoader.getInstance().displayImage("file://" + imageUrl, headImage, ImageLoaderTool.getCircleHeadImageOptions());
+		ImageLoader.getInstance().displayImage(imageUrl, headImage, ImageLoaderTool.getCircleHeadImageOptions());
 		headImage.setVisibility(View.VISIBLE);
 		cameraImage.setVisibility(View.GONE);
 	}

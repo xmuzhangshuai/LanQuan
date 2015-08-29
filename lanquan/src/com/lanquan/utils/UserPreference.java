@@ -98,7 +98,7 @@ public class UserPreference {
 
 	// 头像
 	public String getU_avatar() {
-		return sp.getString(UserTable.AVATAR, "drawable://" + R.drawable.headimage6);
+		return sp.getString(UserTable.AVATAR, "drawable://" + R.drawable.photoconor);
 	}
 
 	public void setU_avatar(String u_small_avatar) {

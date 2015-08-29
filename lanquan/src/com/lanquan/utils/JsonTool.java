@@ -7,6 +7,8 @@ import com.lanquan.base.BaseApplication;
 
 public class JsonTool {
 	public final static String STATUS = "status";
+	public final static String STATUS_SUCCESS = "success";
+	public final static String STATUS_FAIL = "fail";
 	public final static String MESSAGE = "message";
 	public final static String ACCESS_TOKEN = "access_token";
 

@@ -69,7 +69,7 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 		super.onResume();
 		nameTextView.setText(userPreference.getU_nickname());
 		phoneTextView.setText(userPreference.getU_tel());
-
+		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 	}
 
 	@Override
@@ -85,11 +85,9 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 		topNavigation = (TextView) rootView.findViewById(R.id.nav_text);
 		leftImageButton = (View) rootView.findViewById(R.id.left_btn_bg);
 		settingClearCache = rootView.findViewById(R.id.setting_clear_cache);
-
 		headImageView = (ImageView) rootView.findViewById(R.id.headimage);
 		nameTextView = (TextView) rootView.findViewById(R.id.name);
 		phoneTextView = (TextView) rootView.findViewById(R.id.phone);
-
 		settingLogout = rootView.findViewById(R.id.setting_logout);
 		cacheSize = (TextView) rootView.findViewById(R.id.cache_size);
 		rl_switch_notification = (RelativeLayout) rootView.findViewById(R.id.rl_switch_notification);
