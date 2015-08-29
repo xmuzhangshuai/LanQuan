@@ -33,6 +33,9 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 	private View leftImageButton;// 导航栏左侧按钮
 
 	private ImageView headImageView;
+	private TextView nameTextView;
+	private TextView phoneTextView;
+
 	private View settingData;// 资料
 	private View settingGrade;// 聊天设置
 	private View settingTellFriend;// 告诉小伙伴
@@ -61,6 +64,15 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 	}
 
 	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		nameTextView.setText(userPreference.getU_nickname());
+		phoneTextView.setText(userPreference.getU_tel());
+
+	}
+
+	@Override
 	public void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
@@ -73,7 +85,11 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 		topNavigation = (TextView) rootView.findViewById(R.id.nav_text);
 		leftImageButton = (View) rootView.findViewById(R.id.left_btn_bg);
 		settingClearCache = rootView.findViewById(R.id.setting_clear_cache);
+
 		headImageView = (ImageView) rootView.findViewById(R.id.headimage);
+		nameTextView = (TextView) rootView.findViewById(R.id.name);
+		phoneTextView = (TextView) rootView.findViewById(R.id.phone);
+
 		settingLogout = rootView.findViewById(R.id.setting_logout);
 		cacheSize = (TextView) rootView.findViewById(R.id.cache_size);
 		rl_switch_notification = (RelativeLayout) rootView.findViewById(R.id.rl_switch_notification);

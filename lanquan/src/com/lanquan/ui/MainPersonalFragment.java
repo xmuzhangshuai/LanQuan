@@ -90,6 +90,14 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 	}
 
 	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		navText.setText(userPreference.getU_nickname());
+		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+	}
+	
+	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
 		navText = (TextView) rootView.findViewById(R.id.nav_text);
@@ -104,9 +112,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 	@Override
 	protected void initView() {
 		// TODO Auto-generated method stub
-		navText.setText("帅哥");
 		settingBtn.setOnClickListener(this);
-		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 		headImageView.setOnClickListener(this);
 
 		commentCountTextView.setText("1");

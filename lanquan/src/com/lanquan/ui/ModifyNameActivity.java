@@ -1,10 +1,12 @@
 package com.lanquan.ui;
 
 import org.apache.http.Header;
+import org.json.JSONObject;
 
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -16,6 +18,7 @@ import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
@@ -137,17 +140,23 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 					@Override
 					public void onSuccess(int statusCode, Header[] headers, String response) {
 						// TODO Auto-generated method stub
-						if (statusCode == 200) {
-							if (response.equals("1")) {
-								ToastTool.showShort(ModifyNameActivity.this, "修改成功！");
-								userPreference.setU_nickname(name);
-								finish();
-								overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-							} else if (response.equals("-1")) {
-								LogTool.e("修改名字返回-1");
-							}
+						
+						JsonTool jsonTool = new JsonTool(response);
+						String status = jsonTool.getStatus();
+						String message = jsonTool.getMessage();
+						if(status.equals("success")){
+							ToastTool.showShort(ModifyNameActivity.this, "修改成功！");
+							LogTool.i(message);
+							jsonTool.saveAccess_token();
+							userPreference.setU_nickname(name);
+							//修改成功之后不停留在当前activity
+							finish();
+							//动画效果往右滑出
+							overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
 						}
-						LogTool.i("修改昵称"+statusCode+"==="+response);
+						else {
+							LogTool.e("修改用户名之后的操作失败"+message);
+						}
 					}
 
 					@Override

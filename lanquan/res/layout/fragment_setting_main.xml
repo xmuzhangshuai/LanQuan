@@ -47,7 +47,6 @@
                     android:layout_marginTop="20dp"
                     android:layout_toRightOf="@+id/headimage"
                     android:gravity="center_vertical"
-                    android:text="帅哥"
                     android:textColor="@color/font_gray_dark"
                     android:textSize="14sp" />
 
@@ -59,7 +58,6 @@
                     android:layout_alignParentBottom="true"
                     android:drawableLeft="@drawable/setting_phone"
                     android:paddingBottom="20dp"
-                    android:text="+86-18650113340"
                     android:textColor="@color/font_gray"
                     android:textSize="14sp" />
 
