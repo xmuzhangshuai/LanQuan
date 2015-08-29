@@ -32,6 +32,7 @@ import com.lanquan.config.Constants.Config;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.SIMCardInfo;
 import com.lanquan.utils.ToastTool;
@@ -256,47 +257,6 @@ public class ForgetPassActivity extends BaseActivity implements OnClickListener 
 			focusView = mPhoneView;
 			cancel = true;
 		} else {
-			// 检查手机号是否被注册
-//			RequestParams params = new RequestParams();
-//			params.put(UserTable.U_TEL, mPhone);
-//			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-//
-//				@Override
-//				public void onSuccess(int arg0, Header[] arg1, String arg2) {
-//					// TODO Auto-generated method stub
-//					if (arg0 == 200) {
-//						if (arg2.equals("-1")) {
-//							getAuthCode();
-//
-//							recLen = Config.AUTN_CODE_TIME;
-//							authCodeButton.setEnabled(false);
-//							timer = new Timer();
-//							timer.schedule(new TimerTask() {
-//
-//								@Override
-//								public void run() {
-//									// TODO Auto-generated method stub
-//									recLen--;
-//									Message message = new Message();
-//									message.what = 1;
-//									timeHandler.sendMessage(message);
-//								}
-//							}, 1000, 1000);
-//						} else {
-//							mPhoneView.setError(getString(R.string.no_reg_phone));
-//							mPhoneView.requestFocus();
-//						}
-//					}
-//				}
-//
-//				@Override
-//				public void onFailure(int arg0, Header[] arg1, String arg2, Throwable arg3) {
-//					// TODO Auto-generated method stub
-//					ToastTool.showLong(ForgetPassActivity.this, "服务器错误");
-//				}
-//			};
-//			AsyncHttpClientTool.post("regist/telrepeat", params, responseHandler);
-			
 			getAuthCode();
 
 			recLen = Config.AUTN_CODE_TIME;
@@ -318,6 +278,50 @@ public class ForgetPassActivity extends BaseActivity implements OnClickListener 
 		if (cancel) {
 			// 如果错误，则提示错误
 			focusView.requestFocus();
+		}
+	}
+
+	/**
+	 * 验证输入
+	 */
+	private void attepmtAccount() {
+		// 重置错误
+		mPhoneView.setError(null);
+		authCodeView.setError(null);
+
+		// 存储用户值
+		mPhone = mPhoneView.getText().toString();
+		authcode = authCodeView.getText().toString();
+		boolean cancel = false;
+
+		// 检查手机号
+		if (TextUtils.isEmpty(mPhone)) {
+			mPhoneView.setError(getString(R.string.error_field_required));
+			focusView = mPhoneView;
+			cancel = true;
+		} else if (!CommonTools.isMobileNO(mPhone)) {
+			mPhoneView.setError(getString(R.string.error_phone));
+			focusView = mPhoneView;
+			cancel = true;
+		}
+
+		// 检查验证码
+		else if (TextUtils.isEmpty(authcode)) {
+			authCodeView.setError(getString(R.string.error_field_required));
+			focusView = authCodeView;
+			cancel = true;
+		} else if (authcode.length() != 6) {
+			authCodeView.setError("验证码长度为6位");
+			focusView = authCodeView;
+			cancel = true;
+		}
+
+		if (cancel) {
+			// 如果错误，则提示错误
+			focusView.requestFocus();
+		} else {
+			// 通过先调用短信接口获取验证码后，继续调用短信登录接口获取token
+			getAccess_Token();
 		}
 	}
 
@@ -346,26 +350,19 @@ public class ForgetPassActivity extends BaseActivity implements OnClickListener 
 	private void getAuthCode() {
 		RequestParams params = new RequestParams();
 		params.put(UserTable.U_TEL, mPhone);
+		params.put("type", 1);
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-			@Override
-			public void onStart() {
-				// TODO Auto-generated method stub
-				super.onStart();
-			}
 
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.i("验证码", response);
-				if (response.length() == 6) {
-					ToastTool.showShort(ForgetPassActivity.this, "验证码已发送");
-					authcode = response;
-				} else if (response.endsWith("-1")) {
-					ToastTool.showShort(ForgetPassActivity.this, "服务器错误");
-				} else if (response.endsWith("1")) {
-					ToastTool.showShort(ForgetPassActivity.this, "手机号码为空");
-				} else {
-					LogTool.e("服务器返回错误");
+				LogTool.i("获取短信成功" + statusCode + response);
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i(jsonTool.getMessage());
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e(jsonTool.getMessage());
 				}
 			}
 
@@ -373,6 +370,16 @@ public class ForgetPassActivity extends BaseActivity implements OnClickListener 
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
 				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
+
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i(jsonTool.getMessage());
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e(jsonTool.getMessage());
+				}
+
+				authcode = "123456";
 			}
 
 			@Override
@@ -381,24 +388,66 @@ public class ForgetPassActivity extends BaseActivity implements OnClickListener 
 				super.onFinish();
 			}
 		};
-		AsyncHttpClientTool.post("user/getValidateCode", params, responseHandler);
-		authcode = "111111";
+		AsyncHttpClientTool.post("api/sms/send", params, responseHandler);
 	}
 
 	/**
-	 * 验证验证码
+	 * 获取短信登录接口的access_token
 	 * @return
 	 */
-	private boolean vertifyAuthCode(String code) {
-		if (!TextUtils.isEmpty(authcode)) {
-			if (authcode.equals(code)) {
-				return true;
-			} else {
-				return false;
+	private void getAccess_Token() {
+		RequestParams params = new RequestParams();
+		params.put(UserTable.U_TEL, mPhone);
+		params.put(UserTable.U_VERIFY_CODE, authcode);
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i("获取短信登录access_token" + statusCode + response);
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i("获取短信登录access_token" + status);
+					jsonTool.saveAccess_token();
+					userPreference.setU_tel(mPhone);
+					next();
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e("获取短信登录access_token" + status);
+					authCodeView.setError("验证码错误");
+					authCodeView.requestFocus();
+				}
 			}
-		} else {
-			return false;
-		}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("短信登录接口", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
+
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i("获取短信登录access_token失败" + status);
+					jsonTool.saveAccess_token();
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e("获取短信登录access_token失败" + status);
+					authCodeView.setError("验证码错误");
+					authCodeView.requestFocus();
+				}
+
+			}
+		};
+		AsyncHttpClientTool.post("api/sms/login", params, responseHandler);
+	}
+
+	/**
+	 * 下一步
+	 */
+	public void next() {
+		Intent intent = new Intent(ForgetPassActivity.this, ResetPassActivity.class);
+		intent.putExtra(UserTable.U_TEL, mPhone);
+		startActivity(intent);
+		overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 	}
 
 	@Override
@@ -410,15 +459,18 @@ public class ForgetPassActivity extends BaseActivity implements OnClickListener 
 			overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
 			break;
 		case R.id.next:
-			if (vertifyAuthCode(authCodeView.getText().toString())) {
-				Intent intent = new Intent(ForgetPassActivity.this, ResetPassActivity.class);
-				intent.putExtra(UserTable.U_TEL, mPhone);
-				startActivity(intent);
-				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-			} else {
-				authCodeView.setError("验证码错误");
-				authCodeView.requestFocus();
-			}
+			attepmtAccount();
+			// if (vertifyAuthCode(authCodeView.getText().toString())) {
+			// Intent intent = new Intent(ForgetPassActivity.this,
+			// ResetPassActivity.class);
+			// intent.putExtra(UserTable.U_TEL, mPhone);
+			// startActivity(intent);
+			// overridePendingTransition(R.anim.push_left_in,
+			// R.anim.push_left_out);
+			// } else {
+			// authCodeView.setError("验证码错误");
+			// authCodeView.requestFocus();
+			// }
 			break;
 		case R.id.reg_now:
 			Intent intent = new Intent(ForgetPassActivity.this, RegisterActivity.class);

@@ -19,6 +19,7 @@ import com.lanquan.base.BaseApplication;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.ToastTool;
@@ -126,51 +127,47 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 			// 如果错误，则提示错误
 			focusView.requestFocus();
 		} else {
-			// 没有错误，则修改
-			// RequestParams params = new RequestParams();
-			// params.put(UserTable.U_NEW_PASSWORD,
-			// MD5For32.GetMD5Code(newPass));
-			// params.put(UserTable.U_TEL, mPhone);
-			// TextHttpResponseHandler responseHandler = new
-			// TextHttpResponseHandler() {
-			// Dialog dialog;
-			//
-			// @Override
-			// public void onStart() {
-			// // TODO Auto-generated method stub
-			// super.onStart();
-			// dialog = showProgressDialog("请稍后...");
-			// }
-			//
-			// @Override
-			// public void onFinish() {
-			// // TODO Auto-generated method stub
-			// dialog.dismiss();
-			// super.onFinish();
-			// }
-			//
-			// @Override
-			// public void onSuccess(int arg0, Header[] arg1, String arg2) {
-			// // TODO Auto-generated method stub
-			// if (arg0 == 200) {
-			// if (arg2.equals("1")) {
-			// ToastTool.showShort(ResetPassActivity.this, "重置密码成功！");
-			// reLogin();
-			// } else {
-			// LogTool.e("重置密码失败！");
-			// }
-			// }
-			// }
-			//
-			// @Override
-			// public void onFailure(int arg0, Header[] arg1, String arg2,
-			// Throwable arg3) {
-			// // TODO Auto-generated method stub
-			// ToastTool.showLong(ResetPassActivity.this, "服务器错误");
-			// }
-			// };
-			// AsyncHttpClientTool.post("user/resetPwd", params,
-			// responseHandler);
+			RequestParams params = new RequestParams();
+			params.put(UserTable.U_NEW_PASSWORD, MD5For32.GetMD5Code(newPass));
+			params.put(UserTable.U_ACCESS_TOKEN, userPreference.getAccess_token());
+
+			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, String response) {
+					// TODO Auto-generated method stub
+
+					LogTool.i("重置密码" + statusCode + response);
+					JsonTool jsonTool = new JsonTool(response);
+					String status = jsonTool.getStatus();
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						userPreference.setU_password(MD5For32.GetMD5Code(newPass));
+						jsonTool.saveAccess_token();
+						reLogin();
+					} 
+				}
+
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+					// TODO Auto-generated method stub
+					LogTool.e("重置密码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
+//
+//					JsonTool jsonTool = new JsonTool(errorResponse);
+//					String status = jsonTool.getStatus();
+//					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+//						LogTool.e("重置密码失败" + status);
+//					} else if (status.equals(JsonTool.STATUS_FAIL)) {
+//						LogTool.e("重置密码失败" + status);
+//					}
+				}
+
+				@Override
+				public void onFinish() {
+					// TODO Auto-generated method stub
+					super.onFinish();
+				}
+			};
+			AsyncHttpClientTool.post("api/user/resetPassword", params, responseHandler);
 			reLogin();
 		}
 	}
@@ -180,7 +177,6 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 	 */
 	private void reLogin() {
 		// 设置用户不曾登录
-		// BaseApplication.getInstance().logout();
 		userPreference.clear();
 		Intent intent = new Intent(ResetPassActivity.this, LoginActivity.class);
 		startActivity(intent);
