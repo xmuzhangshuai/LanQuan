@@ -3,6 +3,10 @@ package com.lanquan.ui;
 import java.util.Date;
 import java.util.LinkedList;
 
+import org.apache.http.Header;
+
+import android.R.integer;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -37,7 +41,12 @@ import com.lanquan.jsonobject.JsonChannel;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /** 
@@ -402,6 +411,49 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	 *关注 
 	 */
 	private void concern() {
+		RequestParams params = new RequestParams();
+		params.put("channel_id", jsonChannel.getChannel_id());
+		params.put("access_token", userPreference.getAccess_token());
+		final Dialog dialog = showProgressDialog("请稍后...");
+		dialog.setCancelable(false);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				dialog.show();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
+				}else {
+					LogTool.e(jsonTool.getMessage());
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("关注频道" + errorResponse);
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				super.onFinish();
+				dialog.dismiss();
+			}
+		};
+		AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/channel/focus", params, responseHandler);
+		
+		
 		infoBtn.setVisibility(View.VISIBLE);
 		concernBtn.setVisibility(View.GONE);
 	}
