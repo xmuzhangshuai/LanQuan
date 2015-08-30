@@ -155,14 +155,11 @@ public class MainFindNewFragment extends BaseV4Fragment {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
-
 					JSONObject jsonObject = jsonTool.getJsonObject();
 					try {
-
 						JsonChannelTools jsonChannelTools = new JsonChannelTools(jsonObject.getString("data"));
 						List<JsonChannel> temp = jsonChannelTools.getJsonChannelList();
 						// 如果是首次获取数据
@@ -269,10 +266,20 @@ public class MainFindNewFragment extends BaseV4Fragment {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(), ChannelPhotoActivity.class);
-					intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
-					startActivity(intent);
-					getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+					int type = jsonChannel.getType();
+					Intent intent = null;
+					if (type == 0) {// 图文
+						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+					} else if (type == 1) {
+						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+					} else if (type == 2) {
+						intent = new Intent(getActivity(), ChannelPunchCardActivity.class);
+					}
+					if (intent != null) {
+						intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
+						startActivity(intent);
+						getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+					}
 				}
 			});
 

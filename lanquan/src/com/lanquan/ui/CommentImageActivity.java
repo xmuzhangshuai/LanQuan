@@ -33,6 +33,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 	private View takePhoto;
 	private View choosePhoto;
 	private String photoUri;// 图片地址
+	private int channel_id;
 	private List<String> recentImages;
 	private View imageContainer;
 	private ImageView[] recentImageViews = new ImageView[10];
@@ -44,7 +45,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 		setContentView(R.layout.activity_comment_image);
 		recentImages = new ArrayList<String>();
 		getRecentPhotos();
-
+		channel_id = getIntent().getIntExtra("channel_id", -1);
 		findViewById();
 		initView();
 	}
@@ -75,7 +76,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 		if (recentImages.size() < 1) {
 			imageContainer.setVisibility(View.GONE);
 		} else {
-			try {//防止内存溢出造成的崩溃
+			try {// 防止内存溢出造成的崩溃
 				for (int i = 0; i < recentImages.size(); i++) {
 					final String path = recentImages.get(i);
 					recentImageViews[i].setVisibility(View.VISIBLE);
@@ -85,10 +86,14 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 						@Override
 						public void onClick(View v) {
 							// TODO Auto-generated method stub
-							Intent intent = new Intent(CommentImageActivity.this, PublishCommentActivity.class);
-							intent.putExtra("path", path);
-							startActivity(intent);
-							finish();
+							if (channel_id > 0) {
+								Intent intent = new Intent(CommentImageActivity.this, PublishCommentActivity.class);
+								intent.putExtra("path", path);
+								intent.putExtra("channel_id", channel_id);
+								startActivity(intent);
+								finish();
+							}
+
 						}
 					});
 				}
@@ -108,6 +113,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 		if (requestCode == TAKE_PICTURE) {// 拍照
 			intent = new Intent(CommentImageActivity.this, PublishCommentActivity.class);
 			intent.putExtra("path", photoUri);
+			intent.putExtra("channel_id", channel_id);
 		} else if (requestCode == CHOOSE_PICTURE) {// 相册
 			try {
 				Uri selectedImage = data.getData();
@@ -120,6 +126,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 				cursor.close();
 				intent = new Intent(CommentImageActivity.this, PublishCommentActivity.class);
 				intent.putExtra("path", photoUri);
+				intent.putExtra("channel_id", channel_id);
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();

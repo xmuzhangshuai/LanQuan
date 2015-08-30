@@ -1,37 +1,20 @@
 package com.lanquan.ui;
 
-import org.apache.http.Header;
-
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.widget.TextView;
 
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.baidu.location.LocationClientOption;
-import com.baidu.location.LocationClientOption.LocationMode;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
-import com.lanquan.config.Constants;
-import com.lanquan.config.DefaultKeys;
 import com.lanquan.db.CopyDataBase;
-import com.lanquan.table.UserTable;
-import com.lanquan.utils.AsyncHttpClientTool;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.MD5For32;
+import com.lanquan.utils.LocationTool;
 import com.lanquan.utils.ServerUtil;
 import com.lanquan.utils.SharePreferenceUtil;
 import com.lanquan.utils.UserPreference;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 /**
  * 类名称：GuideActivity
@@ -45,8 +28,6 @@ import com.loopj.android.http.TextHttpResponseHandler;
  */
 
 public class GuideActivity extends BaseActivity {
-	public LocationClient mLocationClient = null;
-	public BDLocationListener myListener = new MyLocationListener();
 	public SharedPreferences locationPreferences;// 记录用户位置
 	SharedPreferences.Editor locationEditor;
 	private SharePreferenceUtil sharePreferenceUtil;
@@ -54,7 +35,10 @@ public class GuideActivity extends BaseActivity {
 	private String province;// 省份
 	private String city;// 城市
 	private String detailLocation;// 详细地址
-	private TextView versionInfotTextView;
+
+	private String latitude;
+	private String longtitude;
+	LocationTool locationTool;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +49,6 @@ public class GuideActivity extends BaseActivity {
 		sharePreferenceUtil = new SharePreferenceUtil(this, SharePreferenceUtil.USE_COUNT);
 		int count = sharePreferenceUtil.getUseCount();
 		userPreference = BaseApplication.getInstance().getUserPreference();
-
-//		test();
-
-		// 获取定位
-		initLocation();
 
 		// 开启百度推送服务
 		// PushManager.startWork(getApplicationContext(),
@@ -112,107 +91,13 @@ public class GuideActivity extends BaseActivity {
 	}
 
 	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-	}
-
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
-
-	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
-		// versionInfotTextView = (TextView) findViewById(R.id.version_info);
 	}
 
 	@Override
 	protected void initView() {
 		// TODO Auto-generated method stub
-		// versionInfotTextView.setText("一线牵\n\n"+getVersion());
-	}
-
-	@Override
-	public void onDestroy() {
-		stopListener();// 停止监听
-		super.onDestroy();
-	}
-
-	/**
-	 * 停止，减少资源消耗
-	 */
-	public void stopListener() {
-		if (mLocationClient != null && mLocationClient.isStarted()) {
-			mLocationClient.stop();// 关闭定位SDK
-			mLocationClient = null;
-		}
-	}
-
-	private void test() {
-		RequestParams params = new RequestParams();
-
-		params.put("user_id", "31");
-		// params.put("type", 0);
-		params.put("sign", MD5For32.GetMD5Code(Constants.SignKey + "31"));
-
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				LogTool.e("statusCode:  " + statusCode + "response: " + response);
-				if (statusCode == 200) {
-					if (!response.isEmpty()) {
-						LogTool.i("返回" + response);
-					} else {
-						LogTool.e("注册返回为空");
-					}
-				}
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("注册服务器错误" + statusCode + errorResponse);
-			}
-		};
-//		AsyncHttpClientTool.post("api/user/user", params, responseHandler);
-	}
-
-	/**
-	 * 初始化定位
-	 */
-	public void initLocation() {
-		mLocationClient = new LocationClient(getApplicationContext());
-		// 声明LocationClient类
-		mLocationClient.registerLocationListener(myListener); // 注册监听函数
-		LocationClientOption option = new LocationClientOption();
-		option.setOpenGps(true);// 打开GPS
-		option.setIsNeedAddress(true);// 返回的定位结果包含地址信息
-		option.setCoorType("bd09ll");// 返回的定位结果是百度经纬度,默认值gcj02
-		option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
-		option.setScanSpan(5 * 60 * 60 * 1000);// 设置发起定位请求的间隔时间为3000ms
-		mLocationClient.setLocOption(option);// 使用设置
-		mLocationClient.start();// 开启定位SDK
-		mLocationClient.requestLocation();// 开始请求位置
-
-		locationPreferences = getSharedPreferences("location", Context.MODE_PRIVATE);
-		locationEditor = locationPreferences.edit();
 	}
 
 	/**
@@ -229,25 +114,6 @@ public class GuideActivity extends BaseActivity {
 		} catch (Exception e) {
 			e.printStackTrace();
 			return this.getString(R.string.can_not_find_version_name);
-		}
-	}
-
-	/**
-	 * 位置监听类
-	 */
-	public class MyLocationListener implements BDLocationListener {
-		@Override
-		public void onReceiveLocation(BDLocation location) {
-			if (location != null) {
-				province = location.getProvince();
-				city = location.getCity();
-				detailLocation = location.getAddrStr();// 详细地址
-				locationEditor.putString(DefaultKeys.USER_PROVINCE, province);
-				locationEditor.putString(DefaultKeys.USER_CITY, city);
-				locationEditor.putString(DefaultKeys.USER_DETAIL_LOCATION, detailLocation);
-				locationEditor.commit();
-			}
-
 		}
 	}
 

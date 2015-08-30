@@ -1,9 +1,19 @@
 package com.lanquan.ui;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -13,14 +23,25 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
+import com.lanquan.config.DefaultKeys;
 import com.lanquan.customwidget.MyAlertDialog;
+import com.lanquan.table.UserTable;
+import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LocationTool;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 /** 
@@ -40,8 +61,14 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	private ImageView publishImageView;
 	private TextView textCountTextView;
 
+	public LocationClient mLocationClient = null;
+	public BDLocationListener myListener = new MyLocationListener();
 	private UserPreference userPreference;
 	private String imagePath;
+	private String detailLocation;// 详细地址
+	private String latitude;
+	private String longtitude;
+	private int channel_id;
 
 	/**************用户变量**************/
 	public static final int NUM = 200;
@@ -55,6 +82,10 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		setContentView(R.layout.activity_publish_comment);
 		userPreference = BaseApplication.getInstance().getUserPreference();
 		imagePath = getIntent().getStringExtra("path");
+		mLocationClient = LocationTool.initLocation(getApplicationContext());
+		mLocationClient.registerLocationListener(myListener);
+
+		channel_id = getIntent().getIntExtra("channel_id", -1);
 
 		findViewById();
 		initView();
@@ -127,6 +158,32 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		giveUpPublish();
 	}
 
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		if (mLocationClient != null && mLocationClient.isStarted()) {
+			mLocationClient.stop();// 关闭定位SDK
+			mLocationClient = null;
+		}
+	}
+
+	/**
+	 * 位置监听类
+	 */
+	public class MyLocationListener implements BDLocationListener {
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			if (location != null) {
+				latitude = location.getLatitude() + "";
+				longtitude = location.getLongitude() + "";
+				detailLocation = location.getAddrStr();// 详细地址
+				publishEditeEditText.setText("经纬度获取=www===纬度" + latitude + "经度" + longtitude + "\n位置" + detailLocation);
+			}
+
+		}
+	}
+
 	/**
 	 * 放弃发布
 	 */
@@ -161,91 +218,125 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	 * 发布
 	 */
 	private void publish() {
-		// String content = publishEditeEditText.getText().toString().trim();
-		// List<File> photoFiles = new ArrayList<File>();
-		// // File[] photoFiles = new File[] {};
-		// for (int i = 0; i < 6; i++) {
-		// if (!TextUtils.isEmpty(photoUris[i])) {
-		// LogTool.i("地址", photoUris[i]);
-		// photoFiles.add(new File(photoUris[i]));
-		// }
-		// }
-		//
-		// dialog = showProgressDialog("正在发布，请稍后...");
-		// dialog.setCancelable(false);
-		//
-		// RequestParams params = new RequestParams();
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler("utf-8") {
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// if (response.equals("1")) {
-		// ToastTool.showShort(PublishCommentActivity.this, "发布成功！");
-		// finish();
-		// overridePendingTransition(R.anim.push_right_in,
-		// R.anim.push_right_out);
-		// } else {
-		// LogTool.e("服务器处理失败" + response);
-		// }
-		//
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// ToastTool.showShort(PublishCommentActivity.this, "发布失败！");
-		// LogTool.e("发布时失败！" + statusCode + "\n");
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// super.onFinish();
-		// if (dialog != null) {
-		// dialog.dismiss();
-		// }
-		// }
-		//
-		// @Override
-		// public void onCancel() {
-		// // TODO Auto-generated method stub
-		// super.onCancel();
-		// if (dialog != null) {
-		// dialog.dismiss();
-		// }
-		// }
-		//
-		// };
-		// params.put(PostTable.P_USERID, userPreference.getU_id());
-		// params.put(PostTable.P_CONTENT, content);
-		// for (int i = 0; i < photoFiles.size(); i++) {
-		// File file = photoFiles.get(i);
-		// if (file != null && file.exists()) {
-		// try {
-		// params.put(PostTable.P_BIG_PHOTO + i, file);
-		// } catch (FileNotFoundException e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
-		// }
-		// if (!content.isEmpty() || photoFiles.size() > 0) {
-		// if (photoFiles.size() > 0) {
-		// AsyncHttpClientTool.post("post/add", params, responseHandler);
-		// } else {
-		// AsyncHttpClientTool.post("post/add_no_pic", params, responseHandler);
-		// }
-		//
-		// } else {
-		// ToastTool.showLong(PublishCommentActivity.this, "请填写内容或图片");
-		// dialog.dismiss();
-		// }
+		if (channel_id > 0) {
+			uploadImage(imagePath);
+		}
+	}
+
+	/**
+	 * 上传图片
+	 * @param filePath
+	 */
+	public void uploadImage(final String imageUrl) {
+		String tempPath = Environment.getExternalStorageDirectory() + "/lanquan/image";
+		String photoName = "temp" + ".jpg";
+		File file = ImageTools.compressForFile(tempPath, photoName, imageUrl, 400);
+		dialog = showProgressDialog("正在发布...");
+		dialog.setCancelable(false);
+
+		if (file.exists()) {
+			RequestParams params = new RequestParams();
+			try {
+				params.put("userfile", file);
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+				@Override
+				public void onStart() {
+					// TODO Auto-generated method stub
+					super.onStart();
+					dialog.show();
+				}
+
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, String response) {
+					// TODO Auto-generated method stub
+					LogTool.i("" + statusCode + response);
+					JsonTool jsonTool = new JsonTool(response);
+					String status = jsonTool.getStatus();
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						JSONObject jsonObject = jsonTool.getJsonObject();
+						if (jsonObject != null) {
+							String url;
+							try {
+								url = jsonObject.getString("url");
+								LogTool.i("url" + url);
+								// 图片上传成功后调用评论
+								comment(url);
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					} else if (status.equals(JsonTool.STATUS_FAIL)) {
+						LogTool.e("上传fail");
+					}
+				}
+
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+					// TODO Auto-generated method stub
+					LogTool.e("图像上传失败！" + errorResponse);
+				}
+			};
+			AsyncHttpClientTool.post("api/file/upload", params, responseHandler);
+		} else {
+			LogTool.e("本地文件为空");
+		}
+
+	}
+
+	/**
+	 * 发布评论
+	 */
+	public void comment(String url) {
+
+		RequestParams params = new RequestParams();
+		params.put("message", publishEditeEditText.getText().toString().trim());
+		params.put("image_url", url);
+		params.put("address", detailLocation);
+		params.put("latitude", latitude);
+		params.put("longtitude", longtitude);
+		params.put("access_token", userPreference.getAccess_token());
+		params.put("channel_id", channel_id);
+
+		LogTool.e("channel_id" + channel_id);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				super.onFinish();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i(jsonTool.getMessage());
+					jsonTool.saveAccess_token();
+					userPreference.setUserLogin(true);
+					startActivity(new Intent(PublishCommentActivity.this, MainActivity.class));
+					overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+					finish();
+				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					LogTool.e(jsonTool.getMessage());
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("注册服务器错误" + statusCode + errorResponse);
+			}
+		};
+		AsyncHttpClientTool.post("api/article/create", params, responseHandler);
 
 	}
 
