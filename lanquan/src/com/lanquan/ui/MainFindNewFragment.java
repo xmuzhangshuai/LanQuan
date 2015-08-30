@@ -276,9 +276,11 @@ public class MainFindNewFragment extends BaseV4Fragment {
 				}
 			});
 
-			if (jsonChannel.getIcon() != null && !jsonChannel.getIcon().isEmpty()) {
-				LogTool.i("进入");
-				imageLoader.displayImage(jsonChannel.getIcon(), holder.channelIconImageView, ImageLoaderTool.getHeadImageOptions(10));
+			String icon = jsonChannel.getIcon();
+			if (icon != null && !icon.isEmpty() && !icon.equals("null")) {
+				imageLoader.displayImage(icon, holder.channelIconImageView, ImageLoaderTool.getCircleHeadImageOptions());
+			} else {
+				imageLoader.displayImage("drawable://" + R.drawable.photoconor, holder.channelIconImageView, ImageLoaderTool.getCircleHeadImageOptions());
 			}
 			holder.titleTextView.setText(jsonChannel.getTitle());
 

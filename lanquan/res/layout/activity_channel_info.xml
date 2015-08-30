@@ -40,7 +40,7 @@
             android:textSize="16sp" />
 
         <TextView
-            android:id="@+id/my_concren_count"
+            android:id="@+id/nickname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -49,7 +49,6 @@
             android:ellipsize="end"
             android:maxLength="10"
             android:singleLine="true"
-            android:text="简介急急急急急急到底"
             android:textColor="@color/system_sky_blue" />
     </RelativeLayout>
 
@@ -93,7 +92,6 @@
             android:ellipsize="end"
             android:maxLength="10"
             android:singleLine="true"
-            android:text="哦哦哦哦哦哦哦哦哦哦 "
             android:textColor="@color/font_gray" />
     </RelativeLayout>
 
@@ -135,7 +133,6 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
             android:maxEms="12"
-            android:text="上的奇偶覅是降低工商登记佛给给给给给给给给给给给给给给给给给给给给给给给给给给给给给给给给给搜搜秀voioosd 上的佛ISOIDif哦上的皮肤破损对方"
             android:textColor="@color/font_gray" />
     </RelativeLayout>
 

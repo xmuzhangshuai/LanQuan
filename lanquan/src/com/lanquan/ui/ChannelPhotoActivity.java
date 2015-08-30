@@ -120,14 +120,14 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	@Override
 	protected void initView() {
 		// TODO Auto-generated method stub
-		titleTextView.setText(jsonChannel.getC_title());
+		titleTextView.setText(jsonChannel.getTitle());
 		leftButton.setOnClickListener(this);
 		concernBtn.setOnClickListener(this);
 		infoBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
 		addImageBtn.setOnClickListener(this);
 
-		choicenessMenuPopupWindow = new ChoicenessMenuPopupWindow(ChannelPhotoActivity.this, jsonChannel.getC_title());
+		choicenessMenuPopupWindow = new ChoicenessMenuPopupWindow(ChannelPhotoActivity.this, jsonChannel.getTitle());
 
 		titleTextView.setOnClickListener(new OnClickListener() {
 
@@ -224,7 +224,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			concern();
 			break;
 		case R.id.right_btn_bg2:
-			startActivity(new Intent(ChannelPhotoActivity.this, ChannelInfoActivity.class));
+			startActivity(new Intent(ChannelPhotoActivity.this, ChannelInfoActivity.class).putExtra(JSONCHANNEL, jsonChannel));
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 		case R.id.send_btn:
@@ -492,7 +492,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 							// intent.putExtra(UserTable.U_SMALL_AVATAR,
 							// jsonPostItem.getP_small_avatar());
 							// startActivity(intent);
-							// getActivity().overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);
+							// getActivity().overridePendingTransition(R.anim.zoomin2,
+							// R.anim.zoomout);
 						}
 					});
 				}

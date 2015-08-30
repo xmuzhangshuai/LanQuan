@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
+import com.lanquan.jsonobject.JsonChannel;
 
 /** 
  * 类描述 ：频道信息
@@ -23,6 +24,10 @@ public class ChannelInfoActivity extends BaseActivity implements OnClickListener
 	private View leftButton;// 导航栏左侧按钮
 	private TextView navText;
 	private View channelShareView;
+	private JsonChannel jsonChannel;
+	private TextView nicknameTextView;
+	private TextView channelNameTextView;
+	private TextView channelDescription;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,11 @@ public class ChannelInfoActivity extends BaseActivity implements OnClickListener
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_channel_info);
+		jsonChannel = (JsonChannel) getIntent().getSerializableExtra(ChannelPhotoActivity.JSONCHANNEL);
+		if (jsonChannel == null) {
+			finish();
+			return;
+		}
 
 		findViewById();
 		initView();
@@ -42,6 +52,9 @@ public class ChannelInfoActivity extends BaseActivity implements OnClickListener
 		leftButton = findViewById(R.id.left_btn_bg);
 		navText = (TextView) findViewById(R.id.nav_text);
 		channelShareView = findViewById(R.id.channel_share);
+		nicknameTextView = (TextView) findViewById(R.id.nickname);
+		channelNameTextView = (TextView) findViewById(R.id.channel_name_txt);
+		channelDescription = (TextView) findViewById(R.id.channel_explian_txt);
 	}
 
 	@Override
@@ -50,6 +63,9 @@ public class ChannelInfoActivity extends BaseActivity implements OnClickListener
 		navText.setText("返回");
 		leftButton.setOnClickListener(this);
 		channelShareView.setOnClickListener(this);
+		nicknameTextView.setText(jsonChannel.getNickame());
+		channelNameTextView.setText(jsonChannel.getTitle());
+		channelDescription.setText(jsonChannel.getDescription());
 	}
 
 	@Override
@@ -60,7 +76,7 @@ public class ChannelInfoActivity extends BaseActivity implements OnClickListener
 			finish();
 			break;
 		case R.id.channel_share:
-			startActivity(new Intent(ChannelInfoActivity.this,ShareQrCodeActivity.class));
+			startActivity(new Intent(ChannelInfoActivity.this, ShareQrCodeActivity.class));
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 		default:
