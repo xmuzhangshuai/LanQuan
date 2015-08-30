@@ -64,19 +64,19 @@ public class CreatChannelChooseActivity extends BaseActivity implements OnClickL
 			finish();
 			break;
 		case R.id.photo_btn:
-			intent.putExtra(CreatChannelActivity.CHANNAL_TYPE, "1");
+			intent.putExtra(CreatChannelActivity.CHANNAL_TYPE, "0");
 			startActivity(intent);
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 
 		case R.id.txt_btn:
-			intent.putExtra(CreatChannelActivity.CHANNAL_TYPE, "2");
+			intent.putExtra(CreatChannelActivity.CHANNAL_TYPE, "1");
 			startActivity(intent);
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 
 		case R.id.punch_btn:
-			intent.putExtra(CreatChannelActivity.CHANNAL_TYPE, "3");
+			intent.putExtra(CreatChannelActivity.CHANNAL_TYPE, "2");
 			startActivity(intent);
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;

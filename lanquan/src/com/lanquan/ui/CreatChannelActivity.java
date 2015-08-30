@@ -1,6 +1,10 @@
 package com.lanquan.ui;
 
+import org.apache.http.Header;
+
+import android.app.Dialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -10,7 +14,16 @@ import android.widget.TextView;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
+import com.lanquan.config.Constants.Config;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.CommonTools;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.MD5For32;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 /** 
  * 类描述 ：创建频道
@@ -30,7 +43,9 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 	private TextView navTextView;// 导航名称
 	private EditText titleEditText;// 频道名称
 	private EditText detailEditText;// 频道介绍
-	private String type = "";// 1为图文频道，2为文字频道，3为打卡频道
+	private String type = "";// 0为图文频道，1为文字频道，2为打卡频道
+	private String title;
+	private String detail;
 	private UserPreference userPreference;
 
 	@Override
@@ -66,11 +81,11 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 		rightBtnText.setText("创建");
 		leftButton.setOnClickListener(this);
 		rightBtn.setOnClickListener(this);
-		if (type.equals("1")) {
+		if (type.equals("0")) {
 			navTextView.setText("创建图文频道");
-		} else if (type.equals("2")) {
+		} else if (type.equals("1")) {
 			navTextView.setText("创建文字频道");
-		} else if (type.equals("3")) {
+		} else if (type.equals("2")) {
 			navTextView.setText("创建打卡频道");
 		}
 	}
@@ -82,10 +97,99 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 		case R.id.left_btn_bg:
 			finish();
 			break;
-
+		case R.id.right_btn_bg:
+			attemptCreate();
+			break;
 		default:
 			break;
 		}
 	}
 
+	public void attemptCreate() {
+		// Reset errors.
+		titleEditText.setError(null);
+		detailEditText.setError(null);
+		View focusView = null;
+
+		// Store values at the time of the login attempt.
+		title = titleEditText.getText().toString();
+		detail = detailEditText.getText().toString();
+
+		boolean cancel = false;
+
+		// Check for a valid password, if the user entered one.
+		if (TextUtils.isEmpty(title)) {
+			titleEditText.setError(getString(R.string.error_field_required));
+			focusView = titleEditText;
+			cancel = true;
+		}
+
+		// Check for a valid email address.
+		else if (TextUtils.isEmpty(detail)) {
+			detailEditText.setError(getString(R.string.error_field_required));
+			focusView = detailEditText;
+			cancel = true;
+		}
+
+		if (cancel) {
+			// There was an error; don't attempt login and focus the first
+			// form field with an error.
+			focusView.requestFocus();
+		} else {
+			createChannel();
+		}
+
+	}
+
+	/**
+	 *创建频道 
+	 */
+	private void createChannel() {
+		RequestParams params = new RequestParams();
+		params.put("title", title);
+		params.put("description", detail);
+		params.put("type", type);
+		params.put("access_token", userPreference.getAccess_token());
+		final Dialog dialog = showProgressDialog("正在创建，请稍后...");
+		dialog.setCancelable(false);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				dialog.show();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i("创建频道:" + statusCode + response);
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					LogTool.i(jsonTool.getMessage());
+					ToastTool.showShort(CreatChannelActivity.this, "创建成功");
+					finish();
+				}else {
+					LogTool.e(jsonTool.getMessage());
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("创建频道" + errorResponse);
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				super.onFinish();
+				dialog.dismiss();
+			}
+		};
+		AsyncHttpClientTool.post(CreatChannelActivity.this, "api/channel/create", params, responseHandler);
+	}
 }

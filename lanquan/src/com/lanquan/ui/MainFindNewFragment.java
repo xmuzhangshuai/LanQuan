@@ -2,14 +2,19 @@ package com.lanquan.ui;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -22,9 +27,18 @@ import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
+import com.lanquan.config.Constants.Config;
 import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.table.UserTable;
+import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.JsonChannelTools;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /** 
@@ -115,6 +129,8 @@ public class MainFindNewFragment extends BaseV4Fragment {
 
 				if (pageNow >= 0)
 					++pageNow;
+				if (pageNow < 0)
+					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -124,93 +140,74 @@ public class MainFindNewFragment extends BaseV4Fragment {
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
-		// final int page = p;
-		// RequestParams params = new RequestParams();
-		// params.put("page", pageNow);
-		// params.put(UserTable.U_ID, userPreference.getU_id());
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler("utf-8") {
-		//
-		// @Override
-		// public void onStart() {
-		// // TODO Auto-generated method stub
-		// super.onStart();
-		// // postListView.setRefreshing();
-		// }
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// List<JsonPostItem> temp = FastJsonTool.getObjectList(response,
-		// JsonPostItem.class);
-		// if (temp != null) {
-		// LogTool.i("获取圈子帖子列表长度" + temp.size());
-		// // 如果是首次获取数据
-		// if (page == 0) {
-		// if (temp.size() < Config.PAGE_NUM) {
-		// pageNow = -1;
-		// }
-		// jsonPostItemList = new LinkedList<JsonPostItem>();
-		// jsonPostItemList.addAll(temp);
-		// refresh();
-		// }
-		// // 如果是获取更多
-		// else if (page > 0) {
-		// if (temp.size() < Config.PAGE_NUM) {
-		// pageNow = -1;
-		// ToastTool.showShort(getActivity(), "没有更多了！");
-		// }
-		// jsonPostItemList.addAll(temp);
-		// }
-		// mAdapter.notifyDataSetChanged();
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("获取圈子帖子列表失败" + errorResponse);
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// super.onFinish();
-		// postListView.onRefreshComplete();
-		// }
-		//
-		// };
-		// AsyncHttpClientTool.post(getActivity(), "post/getQuanziPost", params,
-		// responseHandler);
-		JsonChannel channel1 = new JsonChannel(1, 1, "帅哥", "drawable://" + R.drawable.headimage1, "drawable://" + R.drawable.headimage1, "库里值不值MVP",
-				"drawable://" + R.drawable.channel1, new Date(), 23);
+		final int page = p;
+		RequestParams params = new RequestParams();
+		params.put("pageIndex", page);
+		params.put("pageSize", Config.PAGE_NUM);
+		params.put("sort", "create_time");
+		params.put("from", 0);
+		params.put("recommend", 0);
+		params.put("user_id", userPreference.getU_id());
+		LogTool.i("pageIndex:" + page + "   pageSize:" + Config.PAGE_NUM);
 
-		JsonChannel channel2 = new JsonChannel(1, 1, "啦啦", "drawable://" + R.drawable.headimage2, "drawable://" + R.drawable.headimage2, "什么装备值得买",
-				"drawable://" + R.drawable.channel2, new Date(), 23);
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
-		JsonChannel channel3 = new JsonChannel(1, 1, "玛丽", "drawable://" + R.drawable.headimage3, "drawable://" + R.drawable.headimage3, "如何提高篮球技术",
-				"drawable://" + R.drawable.channel3, new Date(), 23);
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
 
-		JsonChannel channel4 = new JsonChannel(1, 1, "没灭", "drawable://" + R.drawable.headimage4, "drawable://" + R.drawable.headimage4, "詹姆斯到底有多强",
-				"drawable://" + R.drawable.channel4, new Date(), 23);
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 
-		JsonChannel channel5 = new JsonChannel(1, 1, "轩辕", "drawable://" + R.drawable.headimage5, "drawable://" + R.drawable.headimage5, "出来打球", "drawable://"
-				+ R.drawable.channel5, new Date(), 23);
+					JSONObject jsonObject = jsonTool.getJsonObject();
+					try {
 
-		JsonChannel channel6 = new JsonChannel(1, 1, "小泽", "drawable://" + R.drawable.headimage6, "drawable://" + R.drawable.headimage6, "投篮技术", "drawable://"
-				+ R.drawable.channel6, new Date(), 23);
-		jsonChannelList.add(channel1);
-		jsonChannelList.add(channel2);
-		jsonChannelList.add(channel3);
-		jsonChannelList.add(channel4);
-		jsonChannelList.add(channel5);
-		jsonChannelList.add(channel6);
-		// mAdapter.notifyDataSetChanged();
-		postListView.onRefreshComplete();
+						JsonChannelTools jsonChannelTools = new JsonChannelTools(jsonObject.getString("data"));
+						List<JsonChannel> temp = jsonChannelTools.getJsonChannelList();
+						// 如果是首次获取数据
+						if (page == 0) {
+							if (temp.size() < Config.PAGE_NUM) {
+								pageNow = -1;
+							}
+							jsonChannelList = new LinkedList<JsonChannel>();
+							jsonChannelList.addAll(temp);
+							mAdapter.notifyDataSetChanged();
+						}
+						// 如果是获取更多
+						else if (page > 0) {
+							if (temp.size() < Config.PAGE_NUM) {
+								pageNow = -1;
+								ToastTool.showShort(getActivity(), "没有更多了！");
+							}
+							jsonChannelList.addAll(temp);
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					LogTool.e("最新频道列表:" + statusCode + response);
+				}
+
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("获取最新频道列表失败" + errorResponse);
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				super.onFinish();
+				postListView.onRefreshComplete();
+			}
+
+		};
+		AsyncHttpClientTool.post(getActivity(), "api/channel/channels", params, responseHandler);
 	}
 
 	/** 
@@ -279,8 +276,11 @@ public class MainFindNewFragment extends BaseV4Fragment {
 				}
 			});
 
-			imageLoader.displayImage(jsonChannel.getC_small_avatar(), holder.channelIconImageView, ImageLoaderTool.getHeadImageOptions(10));
-			holder.titleTextView.setText(jsonChannel.getC_title());
+			if (jsonChannel.getIcon() != null && !jsonChannel.getIcon().isEmpty()) {
+				LogTool.i("进入");
+				imageLoader.displayImage(jsonChannel.getIcon(), holder.channelIconImageView, ImageLoaderTool.getHeadImageOptions(10));
+			}
+			holder.titleTextView.setText(jsonChannel.getTitle());
 
 			return view;
 		}
