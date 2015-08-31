@@ -178,7 +178,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				latitude = "" + location.getLatitude();
 				longtitude = "" + location.getLongitude();
 				detailLocation = location.getAddrStr();// 详细地址
-				publishEditeEditText.setText("经纬度获取=www===纬度" + latitude + "经度" + longtitude + "\n位置" + detailLocation);
 			}
 
 		}
@@ -292,7 +291,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	 * 发布评论
 	 */
 	public void comment(String url) {
-
 		RequestParams params = new RequestParams();
 		params.put("message", publishEditeEditText.getText().toString().trim());
 		params.put("image_url", url);

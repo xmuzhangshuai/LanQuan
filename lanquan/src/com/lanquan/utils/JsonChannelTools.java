@@ -70,7 +70,7 @@ public class JsonChannelTools {
 					object.getString("longitude"), object.getString("address"), Integer.parseInt(object.getString("light")), DateTimeTools.StringToDate(object
 							.getString("create_time")), DateTimeTools.StringToDate(object.getString("update_time")), Integer.parseInt(object
 							.getString("user_id")), Integer.parseInt(object.getString("status")), Integer.parseInt(object.getString("recommend")),
-					object.getString("nickname"), object.getString("avatar"));
+					object.getString("nickname"), object.getString("avatar"), Integer.parseInt(object.getString("is_light")));
 			return jsonChannelComment;
 		} catch (JSONException e1) {
 			// TODO Auto-generated catch block

@@ -18,9 +18,11 @@ public class JsonChannelComment {
 	private int recommend;// (0=>不推荐,1=>推荐)
 	private String nickame;
 	private String avatar;
-
+	private int islight; //(0==>未点亮,1==>点亮)
+	
+	
 	public JsonChannelComment(int article_id, int channel_id, String image_url, String message, String latitude, String longitude, String address, int light,
-			Date create_time, Date update_time, int user_id, int status, int recommend, String nickame, String avatar) {
+			Date create_time, Date update_time, int user_id, int status, int recommend, String nickame, String avatar, int islight) {
 		super();
 		this.article_id = article_id;
 		this.channel_id = channel_id;
@@ -37,6 +39,7 @@ public class JsonChannelComment {
 		this.recommend = recommend;
 		this.nickame = nickame;
 		this.avatar = avatar;
+		this.islight = islight;
 	}
 
 	public int getArticle_id() {
@@ -157,6 +160,14 @@ public class JsonChannelComment {
 
 	public void setAvatar(String avatar) {
 		this.avatar = avatar;
+	}
+
+	public int getIslight() {
+		return islight;
+	}
+
+	public void setIslight(int islight) {
+		this.islight = islight;
 	}
 
 }
