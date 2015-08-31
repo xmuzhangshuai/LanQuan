@@ -152,11 +152,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	private void getDataTask(int p) {
 		final int page = p;
 		RequestParams params = new RequestParams();
-		// params.put("pageIndex", page);
-		// params.put("pageSize", Config.PAGE_NUM);
-		// params.put("sort", "create_time");
-		// params.put("from", 0);
-		// params.put("recommend", 0);
 		params.put("access_token", userPreference.getAccess_token());
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
@@ -164,7 +159,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
@@ -289,6 +283,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 					}
 					if (intent != null) {
 						intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
+						intent.putExtra("from", 1);
 						startActivity(intent);
 						getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 					}

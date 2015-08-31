@@ -1,5 +1,6 @@
 package com.lanquan.ui;
 
+import java.text.Normalizer.Form;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -95,6 +96,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	private String detailLocation;// 详细地址
 	private String latitude;
 	private String longtitude;
+	private int from;// 0来自于发现页面，1来自于我的篮圈页面
+	private int position;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +111,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		jsonChannelCommentList = new LinkedList<JsonChannelComment>();
 		jsonChannel = (JsonChannel) getIntent().getSerializableExtra(JSONCHANNEL);
+		from = getIntent().getIntExtra("from", -1);
+		position = getIntent().getIntExtra("position", -1);
 
 		if (jsonChannel == null) {
 			finish();
@@ -154,6 +159,18 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		infoBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
 		addImageBtn.setOnClickListener(this);
+		if (from == 1) {
+			concernBtn.setVisibility(View.GONE);
+			infoBtn.setVisibility(View.VISIBLE);
+		} else if (from == 0) {
+			if (jsonChannel.getIs_focus() == 1) {
+				concernBtn.setVisibility(View.GONE);
+				infoBtn.setVisibility(View.VISIBLE);
+			} else {
+				concernBtn.setVisibility(View.VISIBLE);
+				infoBtn.setVisibility(View.GONE);
+			}
+		}
 
 		choicenessMenuPopupWindow = new ChoicenessMenuPopupWindow(ChannelPhotoActivity.this, jsonChannel.getTitle());
 
@@ -261,9 +278,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			comment(commentEditText.getText().toString());
 			break;
 		case R.id.add_image:
-
 			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()));
-
 			break;
 		default:
 			break;
@@ -350,7 +365,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
-
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("channel_id", jsonChannel.getChannel_id());
@@ -365,7 +379,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.i("获取频道评论" + response);
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
@@ -444,6 +457,11 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
+					jsonChannel.setIs_focus(1);
+					Intent mIntent = new Intent();
+					mIntent.putExtra("position", position);
+					mIntent.putExtra("is_focus", 1);
+					setResult(202, mIntent);
 				} else {
 					LogTool.e(jsonTool.getMessage());
 				}

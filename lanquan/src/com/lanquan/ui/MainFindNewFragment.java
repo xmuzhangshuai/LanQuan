@@ -98,6 +98,22 @@ public class MainFindNewFragment extends BaseV4Fragment {
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 201 && resultCode == 202) {
+			if (data != null) {
+				int position = data.getIntExtra("position", -1);
+				int is_focus = data.getIntExtra("is_focus", 0);
+				if (position > -1) {
+					jsonChannelList.get(position).setIs_focus(is_focus);
+					mAdapter.notifyDataSetChanged();
+				}
+			}
+		}
+	}
+
+	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
 		postListView = (PullToRefreshListView) rootView.findViewById(R.id.new_channel_list);
@@ -148,7 +164,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 		params.put("from", 0);
 		params.put("recommend", 0);
 		params.put("user_id", userPreference.getU_id());
-		LogTool.i("pageIndex:" + page + "   pageSize:" + Config.PAGE_NUM);
+		params.put("access_token", userPreference.getAccess_token());
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
@@ -161,7 +177,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 					JSONObject jsonObject = jsonTool.getJsonObject();
 					try {
 						JsonChannelTools jsonChannelTools = new JsonChannelTools(jsonObject.getString("data"));
-						List<JsonChannel> temp = jsonChannelTools.getJsonChannelList();
+						List<JsonChannel> temp = jsonChannelTools.getJsonChannelListWithFoucs();
 						// 如果是首次获取数据
 						if (page == 0) {
 							if (temp.size() < Config.PAGE_NUM) {
@@ -242,7 +258,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			View view = convertView;
 			final JsonChannel jsonChannel = jsonChannelList.get(position);
@@ -277,7 +293,9 @@ public class MainFindNewFragment extends BaseV4Fragment {
 					}
 					if (intent != null) {
 						intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
-						startActivity(intent);
+						intent.putExtra("from", 0);
+						intent.putExtra("position", position);
+						startActivityForResult(intent, 201);
 						getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 					}
 				}
