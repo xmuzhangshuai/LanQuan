@@ -175,8 +175,8 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		@Override
 		public void onReceiveLocation(BDLocation location) {
 			if (location != null) {
-				latitude = location.getLatitude() + "";
-				longtitude = location.getLongitude() + "";
+				latitude = "" + location.getLatitude();
+				longtitude = "" + location.getLongitude();
 				detailLocation = location.getAddrStr();// 详细地址
 				publishEditeEditText.setText("经纬度获取=www===纬度" + latitude + "经度" + longtitude + "\n位置" + detailLocation);
 			}
@@ -298,11 +298,9 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		params.put("image_url", url);
 		params.put("address", detailLocation);
 		params.put("latitude", latitude);
-		params.put("longtitude", longtitude);
+		params.put("longitude", longtitude);
 		params.put("access_token", userPreference.getAccess_token());
 		params.put("channel_id", channel_id);
-
-		LogTool.e("channel_id" + channel_id);
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
 
@@ -320,10 +318,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
-					jsonTool.saveAccess_token();
 					userPreference.setUserLogin(true);
-					startActivity(new Intent(PublishCommentActivity.this, MainActivity.class));
-					overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 					finish();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());
@@ -333,7 +328,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
-				LogTool.e("注册服务器错误" + statusCode + errorResponse);
+				LogTool.e("创建评论错误" + statusCode + errorResponse);
 			}
 		};
 		AsyncHttpClientTool.post("api/article/create", params, responseHandler);

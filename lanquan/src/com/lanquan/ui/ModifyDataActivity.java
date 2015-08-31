@@ -2,7 +2,12 @@ package com.lanquan.ui;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,10 +30,15 @@ import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseFragmentActivity;
 import com.lanquan.customwidget.MyMenuDialog;
+import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 /** 
  * 类描述 ：修改资料
@@ -194,64 +204,55 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 	 * 上传头像
 	 * @param filePath
 	 */
-	public void uploadImage(String imageUrl) {
-		// final Bitmap largeAvatar = BitmapFactory.decodeFile(filePath);
-		// if (largeAvatar != null) {
-		//
-		// RequestParams params = new RequestParams();
-		// int userId = userPreference.getU_id();
-		// if (userId > -1) {
-		// params.put(UserTable.U_ID, String.valueOf(userId));
-		// try {
-		// params.put(UserTable.U_LARGE_AVATAR, picFile);
-		// } catch (FileNotFoundException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler() {
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// ToastTool.showLong(ModifyDataActivity.this, "头像上传成功！");
-		// largeAvatar.recycle();
-		// // 删除本地头像
-		// ImageTools.deleteImageByPath(filePath);
-		// // 获取新头像地址
-		// Map<String, String> map = FastJsonTool.getObject(response,
-		// Map.class);
-		// if (map != null) {
-		// userPreference.setU_large_avatar(map.get(UserTable.U_LARGE_AVATAR));
-		// userPreference.setU_small_avatar(map.get(UserTable.U_SMALL_AVATAR));
-		// // 显示头像
-		// ImageLoader.getInstance().displayImage(AsyncHttpClientTool.getAbsoluteUrl(map.get(UserTable.U_SMALL_AVATAR)),
-		// headImage,
-		// ImageLoaderTool.getHeadImageOptions(3));
-		// } else {
-		// LogTool.e("上传服务器出错" + response);
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("头像上传失败！");
-		// // 删除本地头像
-		// ImageTools.deleteImageByPath(filePath);
-		// }
-		// };
-		// AsyncHttpClientTool.post("user/uploadHeadImg", params,
-		// responseHandler);
-		// }
-		// } else {
-		// ImageTools.deleteImageByPath(filePath);
-		// }
-		userPreference.setU_avatar("file://" + imageUrl);
-		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+	public void uploadImage(final String imageUrl) {
+		File dir = new File(imageUrl);
+		if (dir.exists()) {
+			RequestParams params = new RequestParams();
+			try {
+				params.put("userfile", dir);
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, String response) {
+					// TODO Auto-generated method stub
+					LogTool.i("" + statusCode + response);
+					JsonTool jsonTool = new JsonTool(response);
+					String status = jsonTool.getStatus();
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						ToastTool.showLong(ModifyDataActivity.this, "头像上传成功！");
+						JSONObject jsonObject = jsonTool.getJsonObject();
+						if (jsonObject != null) {
+							try {
+								userPreference.setU_avatar(jsonObject.getString("url"));
+								imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+					} else if (status.equals(JsonTool.STATUS_FAIL)) {
+						LogTool.e("上传头像fail");
+					}
+					// 删除本地头像
+					ImageTools.deleteImageByPath(imageUrl);
+				}
+
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+					// TODO Auto-generated method stub
+					LogTool.e("头像上传失败！" + errorResponse);
+					// 删除本地头像
+					ImageTools.deleteImageByPath(imageUrl);
+				}
+			};
+			AsyncHttpClientTool.post("api/file/upload", params, responseHandler);
+		} else {
+			LogTool.e("本地文件为空");
+		}
+
 	}
 
 	/**

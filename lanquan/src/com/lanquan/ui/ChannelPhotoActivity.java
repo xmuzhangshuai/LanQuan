@@ -42,6 +42,7 @@ import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.config.Constants.Config;
 import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.jsonobject.JsonChannelComment;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.ImageLoaderTool;
@@ -78,7 +79,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	private Button sendBtn;
 	private ImageView addImageBtn;
 
-	private LinkedList<JsonChannel> jsonChannelList;
+	private LinkedList<JsonChannelComment> jsonChannelCommentList;
 	private int pageNow = 0;// 控制页数
 	private CommentAdapter mAdapter;
 	private JsonChannel jsonChannel;
@@ -93,9 +94,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		setContentView(R.layout.activity_photo_channel_detail);
 		userPreference = BaseApplication.getInstance().getUserPreference();
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-		jsonChannelList = new LinkedList<JsonChannel>();
+		jsonChannelCommentList = new LinkedList<JsonChannelComment>();
 		jsonChannel = (JsonChannel) getIntent().getSerializableExtra(JSONCHANNEL);
-		
+
 		if (jsonChannel == null) {
 			finish();
 		}
@@ -222,7 +223,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 
 				if (pageNow >= 0)
 					++pageNow;
-				if(pageNow < 0)pageNow = 0;
+				if (pageNow < 0)
+					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -247,12 +249,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			comment(commentEditText.getText().toString());
 			break;
 		case R.id.add_image:
-			
-			
+
 			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()));
-			
-			
-			
+
 			break;
 		default:
 			break;
@@ -330,7 +329,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
-		
+
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("channel_id", jsonChannel.getChannel_id());
@@ -344,39 +343,38 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.i(response);
-//				JsonTool jsonTool = new JsonTool(response);
-//				String status = jsonTool.getStatus();
-//				if (status.equals(JsonTool.STATUS_SUCCESS)) {
-//					JSONObject jsonObject = jsonTool.getJsonObject();
-//					try {
-//						JsonChannelTools jsonChannelTools = new JsonChannelTools(jsonObject.getString("data"));
-//						List<JsonChannel> temp = jsonChannelTools.getJsonChannelList();
-//						// 如果是首次获取数据
-//						if (page == 0) {
-//							if (temp.size() < Config.PAGE_NUM) {
-//								pageNow = -1;
-//							}
-//							jsonChannelList = new LinkedList<JsonChannel>();
-//							jsonChannelList.addAll(temp);
-//							mAdapter.notifyDataSetChanged();
-//						}
-//						// 如果是获取更多
-//						else if (page > 0) {
-//							if (temp.size() < Config.PAGE_NUM) {
-//								pageNow = -1;
-//								ToastTool.showShort(getActivity(), "没有更多了！");
-//							}
-//							jsonChannelList.addAll(temp);
-//						}
-//
-//					} catch (JSONException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-//				} else {
-//					LogTool.e("最新频道列表:" + statusCode + response);
-//				}
+				JsonTool jsonTool = new JsonTool(response);
+				String status = jsonTool.getStatus();
+				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					JSONObject jsonObject = jsonTool.getJsonObject();
+					try {
+						JsonChannelTools jsonChannelTools = new JsonChannelTools(jsonObject.getString("data"));
+						List<JsonChannelComment> temp = jsonChannelTools.getJsonChannelCommentList();
+						// 如果是首次获取数据
+						if (page == 0) {
+							if (temp.size() < Config.PAGE_NUM) {
+								pageNow = -1;
+							}
+							jsonChannelCommentList = new LinkedList<JsonChannelComment>();
+							jsonChannelCommentList.addAll(temp);
+							mAdapter.notifyDataSetChanged();
+						}
+						// 如果是获取更多
+						else if (page > 0) {
+							if (temp.size() < Config.PAGE_NUM) {
+								pageNow = -1;
+								ToastTool.showShort(ChannelPhotoActivity.this, "没有更多了！");
+							}
+							jsonChannelCommentList.addAll(temp);
+						}
+
+					} catch (JSONException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				} else {
+					LogTool.e("最新频道列表:" + statusCode + response);
+				}
 
 			}
 
@@ -395,34 +393,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 
 		};
 		AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/article/articles", params, responseHandler);
-		
-		
-		
-//		JsonChannel channel1 = new JsonChannel(1, 1, "帅哥", "drawable://" + R.drawable.headimage1, "drawable://" + R.drawable.headimage1, "库里值不值MVP",
-//				"drawable://" + R.drawable.channel1, new Date(), 23);
-//
-//		JsonChannel channel2 = new JsonChannel(1, 1, "啦啦", "drawable://" + R.drawable.headimage2, "drawable://" + R.drawable.headimage2, "什么装备值得买",
-//				"drawable://" + R.drawable.channel2, new Date(), 23);
-//
-//		JsonChannel channel3 = new JsonChannel(1, 1, "玛丽", "drawable://" + R.drawable.headimage3, "drawable://" + R.drawable.headimage3, "如何提高篮球技术",
-//				"drawable://" + R.drawable.channel3, new Date(), 23);
-//
-//		JsonChannel channel4 = new JsonChannel(1, 1, "没灭", "drawable://" + R.drawable.headimage4, "drawable://" + R.drawable.headimage4, "詹姆斯到底有多强",
-//				"drawable://" + R.drawable.channel4, new Date(), 23);
-//
-//		JsonChannel channel5 = new JsonChannel(1, 1, "轩辕", "drawable://" + R.drawable.headimage5, "drawable://" + R.drawable.headimage5, "出来打球", "drawable://"
-//				+ R.drawable.channel5, new Date(), 23);
-//
-//		JsonChannel channel6 = new JsonChannel(1, 1, "小泽", "drawable://" + R.drawable.headimage6, "drawable://" + R.drawable.headimage6, "投篮技术", "drawable://"
-//				+ R.drawable.channel6, new Date(), 23);
-//		jsonChannelList.add(channel1);
-//		jsonChannelList.add(channel2);
-//		jsonChannelList.add(channel3);
-//		jsonChannelList.add(channel4);
-//		jsonChannelList.add(channel5);
-//		jsonChannelList.add(channel6);
-//		// mAdapter.notifyDataSetChanged();
-//		channelListView.onRefreshComplete();
 	}
 
 	/**
@@ -451,7 +421,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
-				}else {
+				} else {
 					LogTool.e(jsonTool.getMessage());
 				}
 			}
@@ -470,8 +440,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 		};
 		AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/channel/focus", params, responseHandler);
-		
-		
+
 		infoBtn.setVisibility(View.VISIBLE);
 		concernBtn.setVisibility(View.GONE);
 	}
@@ -501,13 +470,13 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return jsonChannelList.size();
+			return jsonChannelCommentList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
 			// TODO Auto-generated method stub
-			return jsonChannelList.get(position);
+			return jsonChannelCommentList.get(position);
 		}
 
 		@Override
@@ -520,7 +489,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		public View getView(int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			View view = convertView;
-			final JsonChannel channel = jsonChannelList.get(position);
+			final JsonChannelComment channel = jsonChannelCommentList.get(position);
 			if (channel == null) {
 				return null;
 			}
@@ -544,9 +513,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 
 			// 设置头像
-			if (!TextUtils.isEmpty(channel.getC_small_avatar())) {
-				imageLoader.displayImage(channel.getC_small_avatar(), holder.headImageView, ImageLoaderTool.getCircleHeadImageOptions());
-				if (userPreference.getU_id() != channel.getC_userid()) {
+			if (!TextUtils.isEmpty(channel.getAvatar())) {
+				imageLoader.displayImage(channel.getAvatar(), holder.headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+				if (userPreference.getU_id() != channel.getUser_id()) {
 					// 点击头像进入详情页面
 					holder.headImageView.setOnClickListener(new OnClickListener() {
 
@@ -570,26 +539,26 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 
 			// 设置内容
-			holder.contentTextView.setText(channel.getC_title());
+			holder.contentTextView.setText(channel.getMessage());
 
 			// 设置姓名
-			holder.nameTextView.setText(channel.getC_username());
+			holder.nameTextView.setText(channel.getNickame());
 
 			// 设置日期
-			holder.timeTextView.setText(DateTimeTools.getInterval(channel.getC_time()));
+			holder.timeTextView.setText(DateTimeTools.getInterval(channel.getCreate_time()));
 
 			// 设置被赞次数
-			holder.favorCountTextView.setText("" + channel.getC_favor_count());
+			holder.favorCountTextView.setText("" + channel.getLight());
 
 			// 设置图片
-			imageLoader.displayImage(channel.getC_big_photo(), holder.itemImageView, ImageLoaderTool.getImageOptions());
+			imageLoader.displayImage(channel.getImage_url(), holder.itemImageView, ImageLoaderTool.getImageOptions());
 			holder.itemImageView.setOnClickListener(new OnClickListener() {
 
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
 					Intent intent = new Intent(ChannelPhotoActivity.this, ImageShowerActivity.class);
-					intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, channel.getC_big_photo());
+					intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, channel.getImage_url());
 					startActivity(intent);
 					overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);
 				}
