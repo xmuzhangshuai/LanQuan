@@ -101,7 +101,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
-		if (requestCode == 201 && resultCode == 202) {
+		if (requestCode == 201 && resultCode == 10) {
 			if (data != null) {
 				int position = data.getIntExtra("position", -1);
 				int is_focus = data.getIntExtra("is_focus", 0);
@@ -293,7 +293,6 @@ public class MainFindNewFragment extends BaseV4Fragment {
 					}
 					if (intent != null) {
 						intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
-						intent.putExtra("from", 0);
 						intent.putExtra("position", position);
 						startActivityForResult(intent, 201);
 						getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);

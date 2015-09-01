@@ -75,7 +75,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		rootView = inflater.inflate(R.layout.fragment_mainlanquan, container, false);
-
 		findViewById();// 初始化views
 		initView();
 
@@ -94,6 +93,37 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		// TODO Auto-generated method stub
 		super.onResume();
 		postListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 100 && resultCode == 10) {
+			if (data != null) {
+				int position = data.getIntExtra("position", -1);
+				int is_focus = data.getIntExtra("is_focus", 0);
+				if (position > -1) {
+					jsonChannelList.get(position).setIs_focus(is_focus);
+					refresh();
+				}
+			}
+		}
+	}
+
+	/**
+	 * 刷新
+	 */
+	private void refresh() {
+		for (int i = 0; i < jsonChannelList.size(); i++) {
+			JsonChannel jsonChannel = jsonChannelList.get(i);
+			if (jsonChannel != null) {
+				if (jsonChannel.getIs_focus() == 0) {
+					jsonChannelList.remove(i);
+				}
+			}
+		}
+		mAdapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -283,8 +313,8 @@ public class MainLanquanFragment extends BaseV4Fragment {
 					}
 					if (intent != null) {
 						intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
-						intent.putExtra("from", 1);
-						startActivity(intent);
+						intent.putExtra("position", position);
+						startActivityForResult(intent, 100);
 						getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 					}
 				}

@@ -96,7 +96,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	private String detailLocation;// 详细地址
 	private String latitude;
 	private String longtitude;
-	private int from;// 0来自于发现页面，1来自于我的篮圈页面
 	private int position;
 
 	@Override
@@ -111,7 +110,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		jsonChannelCommentList = new LinkedList<JsonChannelComment>();
 		jsonChannel = (JsonChannel) getIntent().getSerializableExtra(JSONCHANNEL);
-		from = getIntent().getIntExtra("from", -1);
 		position = getIntent().getIntExtra("position", -1);
 
 		if (jsonChannel == null) {
@@ -134,6 +132,43 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		// TODO Auto-generated method stub
 		super.onResume();
 		channelListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
+		if (jsonChannel.getIs_focus() == 1) {
+			concernBtn.setVisibility(View.GONE);
+			infoBtn.setVisibility(View.VISIBLE);
+		} else {
+			concernBtn.setVisibility(View.VISIBLE);
+			infoBtn.setVisibility(View.GONE);
+		}
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 1 && resultCode == 2) {
+			if (data != null) {
+				int is_focus = data.getIntExtra("is_focus", 1);
+				jsonChannel.setIs_focus(is_focus);
+				if (is_focus == 1) {
+					concernBtn.setVisibility(View.GONE);
+					infoBtn.setVisibility(View.VISIBLE);
+				} else if (is_focus == 0) {
+					concernBtn.setVisibility(View.VISIBLE);
+					infoBtn.setVisibility(View.GONE);
+				}
+			}
+		}
+	}
+
+	// 跳转时执行setresult
+	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		Intent mIntent = new Intent();
+		mIntent.putExtra("position", position);
+		mIntent.putExtra("is_focus", jsonChannel.getIs_focus());
+		setResult(10, mIntent);
+		super.onBackPressed();
 	}
 
 	@Override
@@ -159,18 +194,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		infoBtn.setOnClickListener(this);
 		sendBtn.setOnClickListener(this);
 		addImageBtn.setOnClickListener(this);
-		if (from == 1) {
-			concernBtn.setVisibility(View.GONE);
-			infoBtn.setVisibility(View.VISIBLE);
-		} else if (from == 0) {
-			if (jsonChannel.getIs_focus() == 1) {
-				concernBtn.setVisibility(View.GONE);
-				infoBtn.setVisibility(View.VISIBLE);
-			} else {
-				concernBtn.setVisibility(View.VISIBLE);
-				infoBtn.setVisibility(View.GONE);
-			}
-		}
 
 		choicenessMenuPopupWindow = new ChoicenessMenuPopupWindow(ChannelPhotoActivity.this, jsonChannel.getTitle());
 
@@ -264,6 +287,10 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.left_btn_bg:
+			Intent mIntent = new Intent();
+			mIntent.putExtra("position", position);
+			mIntent.putExtra("is_focus", jsonChannel.getIs_focus());
+			setResult(10, mIntent);
 			finish();
 			overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
 			break;
@@ -271,7 +298,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			concern();
 			break;
 		case R.id.right_btn_bg2:
-			startActivity(new Intent(ChannelPhotoActivity.this, ChannelInfoActivity.class).putExtra(JSONCHANNEL, jsonChannel));
+			startActivityForResult(new Intent(ChannelPhotoActivity.this, ChannelInfoActivity.class).putExtra(JSONCHANNEL, jsonChannel), 1);
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 		case R.id.send_btn:
@@ -303,7 +330,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				longtitude = "" + location.getLongitude();
 				detailLocation = location.getAddrStr();// 详细地址
 			}
-
 		}
 	}
 
@@ -458,10 +484,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
 					jsonChannel.setIs_focus(1);
-					Intent mIntent = new Intent();
-					mIntent.putExtra("position", position);
-					mIntent.putExtra("is_focus", 1);
-					setResult(202, mIntent);
 				} else {
 					LogTool.e(jsonTool.getMessage());
 				}

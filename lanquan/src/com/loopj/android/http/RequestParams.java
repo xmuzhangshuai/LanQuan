@@ -624,7 +624,6 @@ public class RequestParams implements Serializable {
 
 		lparams.add(new BasicNameValuePair("sign", MD5For32.GetMD5Code(Constants.SignKey + md5String.toString())));
 		lparams.addAll(getParamsList(null, urlParamsWithObjects));
-		LogTool.i("生成：" + md5String.toString());
 
 		return lparams;
 	}

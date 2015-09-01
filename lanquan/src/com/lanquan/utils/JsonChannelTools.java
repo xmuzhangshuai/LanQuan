@@ -86,6 +86,7 @@ public class JsonChannelTools {
 							.getString("create_time")), DateTimeTools.StringToDate(object.getString("update_time")), Integer.parseInt(object
 							.getString("recommend")), object.getString("icon"), Integer.parseInt(object.getString("from")), object.getString("nickname"),
 					object.getString("avatar"));
+			jsonChannel.setIs_focus(1);
 
 			return jsonChannel;
 		} catch (JSONException e1) {
