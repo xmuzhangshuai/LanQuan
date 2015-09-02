@@ -284,7 +284,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		} else {
 			LogTool.e("本地文件为空");
 		}
-
 	}
 
 	/**

@@ -344,11 +344,19 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	}
 
 	/**
+	 * 网络获取channel
+	 * @param channelId
+	 */
+	private void getChannel(int channelId) {
+
+	}
+
+	/**
 	 * 评论
 	 */
 	private void comment(String content) {
 		RequestParams params = new RequestParams();
-		params.put("message", commentEditText.getText().toString().trim());
+		params.put("message", content);
 		params.put("image_url", "");
 		params.put("address", detailLocation);
 		params.put("latitude", latitude);
@@ -394,7 +402,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 		};
 		AsyncHttpClientTool.post("api/article/create", params, responseHandler);
-
 	}
 
 	/**
@@ -494,6 +501,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
 					jsonChannel.setIs_focus(1);
+					infoBtn.setVisibility(View.VISIBLE);
+					concernBtn.setVisibility(View.GONE);
 				} else {
 					LogTool.e(jsonTool.getMessage());
 				}
@@ -513,9 +522,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 		};
 		AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/channel/focus", params, responseHandler);
-
-		infoBtn.setVisibility(View.VISIBLE);
-		concernBtn.setVisibility(View.GONE);
 	}
 
 	/** 
@@ -536,7 +542,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			public CheckBox favorBtn;
 			public TextView favorCountTextView;
 			public ImageView deleteBtn;
-			public TextView commentCountTextView;
 			public ImageView itemImageView;
 		}
 
@@ -579,7 +584,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				holder.favorBtn = (CheckBox) view.findViewById(R.id.favor_btn);
 				holder.favorCountTextView = (TextView) view.findViewById(R.id.favor_count);
 				holder.deleteBtn = (ImageView) view.findViewById(R.id.delete_btn);
-				holder.commentCountTextView = (TextView) view.findViewById(R.id.comment_count);
 				view.setTag(holder); // 给View添加一个格外的数据
 			} else {
 				holder = (ViewHolder) view.getTag(); // 把数据取出来
@@ -636,7 +640,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 									channel.setLight(channel.getLight() - 1);
 									// 标记为未亮
 									channel.setIslight(0);
-									LogTool.e("jjjjjjjjj" + channel.getLight());
 									holder.favorCountTextView.setText("" + channel.getLight());
 								}
 								holder.favorCountTextView.setVisibility(View.VISIBLE);
