@@ -126,6 +126,10 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 			detailEditText.setError(getString(R.string.error_field_required));
 			focusView = detailEditText;
 			cancel = true;
+		} else if (detail.length() < 10) {
+			detailEditText.setError("频道介绍至少为10个字");
+			focusView = detailEditText;
+			cancel = true;
 		}
 
 		if (cancel) {
@@ -135,7 +139,6 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 		} else {
 			createChannel();
 		}
-
 	}
 
 	/**
@@ -169,7 +172,7 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 					LogTool.i(jsonTool.getMessage());
 					ToastTool.showShort(CreatChannelActivity.this, "创建成功");
 					finish();
-				}else {
+				} else {
 					LogTool.e(jsonTool.getMessage());
 				}
 			}
