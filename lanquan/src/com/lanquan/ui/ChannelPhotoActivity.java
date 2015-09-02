@@ -84,6 +84,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	private EditText commentEditText;
 	private Button sendBtn;
 	private ImageView addImageBtn;
+	private View inputBar;
 
 	private LinkedList<JsonChannelComment> jsonChannelCommentList;
 	private int pageNow = 0;// 控制页数
@@ -132,13 +133,21 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		// TODO Auto-generated method stub
 		super.onResume();
 		channelListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
-		if (jsonChannel.getIs_focus() == 1) {
-			concernBtn.setVisibility(View.GONE);
-			infoBtn.setVisibility(View.VISIBLE);
+		if (userPreference.getUserLogin()) {
+			if (jsonChannel.getIs_focus() == 1) {
+				concernBtn.setVisibility(View.GONE);
+				infoBtn.setVisibility(View.VISIBLE);
+			} else {
+				concernBtn.setVisibility(View.VISIBLE);
+				infoBtn.setVisibility(View.GONE);
+			}
+			inputBar.setVisibility(View.VISIBLE);
 		} else {
-			concernBtn.setVisibility(View.VISIBLE);
+			concernBtn.setVisibility(View.GONE);
 			infoBtn.setVisibility(View.GONE);
+			inputBar.setVisibility(View.GONE);
 		}
+
 	}
 
 	@Override
@@ -183,6 +192,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		commentEditText = (EditText) findViewById(R.id.msg_et);
 		sendBtn = (Button) findViewById(R.id.send_btn);
 		addImageBtn = (ImageView) findViewById(R.id.add_image);
+		inputBar = findViewById(R.id.inputBar);
 	}
 
 	@Override

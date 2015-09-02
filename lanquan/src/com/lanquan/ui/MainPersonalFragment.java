@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.http.Header;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -25,11 +27,16 @@ import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
+import com.lanquan.config.Constants.Config;
 import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 /** 
  * 类描述 ：主页面--个人中心页面
@@ -96,7 +103,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		navText.setText(userPreference.getU_nickname());
 		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 	}
-	
+
 	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
@@ -297,69 +304,66 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		 * 网络获取数据
 		 */
 		public void getDataTask(int p) {
-			// final int page = p;
-			// RequestParams params = new RequestParams();
-			// params.put("page", pageNow);
-			// params.put(UserTable.U_ID, userPreference.getU_id());
-			// TextHttpResponseHandler responseHandler = new
-			// TextHttpResponseHandler("utf-8") {
-			//
-			// @Override
-			// public void onStart() {
-			// // TODO Auto-generated method stub
-			// super.onStart();
-			// // postListView.setRefreshing();
-			// }
-			//
-			// @Override
-			// public void onSuccess(int statusCode, Header[] headers, String
-			// response) {
-			// // TODO Auto-generated method stub
-			// if (statusCode == 200) {
-			// List<JsonPostItem> temp = FastJsonTool.getObjectList(response,
-			// JsonPostItem.class);
-			// if (temp != null) {
-			// LogTool.i("获取圈子帖子列表长度" + temp.size());
-			// // 如果是首次获取数据
-			// if (page == 0) {
-			// if (temp.size() < Config.PAGE_NUM) {
-			// pageNow = -1;
-			// }
-			// jsonPostItemList = new LinkedList<JsonPostItem>();
-			// jsonPostItemList.addAll(temp);
-			// refresh();
-			// }
-			// // 如果是获取更多
-			// else if (page > 0) {
-			// if (temp.size() < Config.PAGE_NUM) {
-			// pageNow = -1;
-			// ToastTool.showShort(getActivity(), "没有更多了！");
-			// }
-			// jsonPostItemList.addAll(temp);
-			// }
-			// mAdapter.notifyDataSetChanged();
-			// }
-			// }
-			// }
-			//
-			// @Override
-			// public void onFailure(int statusCode, Header[] headers, String
-			// errorResponse, Throwable e) {
-			// // TODO Auto-generated method stub
-			// LogTool.e("获取圈子帖子列表失败" + errorResponse);
-			// }
-			//
-			// @Override
-			// public void onFinish() {
-			// // TODO Auto-generated method stub
-			// super.onFinish();
-			// postListView.onRefreshComplete();
-			// }
-			//
-			// };
-			// AsyncHttpClientTool.post(getActivity(), "post/getQuanziPost",
-			// params,
-			// responseHandler);
+//			// final int page = p;
+//			RequestParams params = new RequestParams();
+//			params.put("access_token", userPreference.getAccess_token());
+//			// params.put("page", pageNow);
+//			// params.put(UserTable.U_ID, userPreference.getU_id());
+//			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+//
+//				@Override
+//				public void onStart() {
+//					// TODO Auto-generated method stub
+//					super.onStart();
+//					// postListView.setRefreshing();
+//				}
+//
+//				@Override
+//				public void onSuccess(int statusCode, Header[] headers, String response) {
+//					// TODO Auto-generated method stub
+//					LogTool.i("--->" + statusCode + response);
+//					// if (statusCode == 200) {
+//					// List<JsonPostItem> temp =
+//					// FastJsonTool.getObjectList(response, JsonPostItem.class);
+//					// if (temp != null) {
+//					// LogTool.i("获取圈子帖子列表长度" + temp.size());
+//					// // 如果是首次获取数据
+//					// if (page == 0) {
+//					// if (temp.size() < Config.PAGE_NUM) {
+//					// pageNow = -1;
+//					// }
+//					// jsonPostItemList = new LinkedList<JsonPostItem>();
+//					// jsonPostItemList.addAll(temp);
+//					// refresh();
+//					// }
+//					// // 如果是获取更多
+//					// else if (page > 0) {
+//					// if (temp.size() < Config.PAGE_NUM) {
+//					// pageNow = -1;
+//					// ToastTool.showShort(getActivity(), "没有更多了！");
+//					// }
+//					// jsonPostItemList.addAll(temp);
+//					// }
+//					// mAdapter.notifyDataSetChanged();
+//					// }
+//					// }
+//				}
+//
+//				@Override
+//				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+//					// TODO Auto-generated method stub
+//				}
+//
+////				@Override
+////				public void onFinish() {
+////					// TODO Auto-generated method stub
+////					super.onFinish();
+////					postListView.onRefreshComplete();
+////				}
+//
+//			};
+//			AsyncHttpClientTool.post(getActivity(), "api/user/message", params, responseHandler);
+			
 			JsonChannel channel1 = new JsonChannel(1, 1, "帅哥", "drawable://" + R.drawable.headimage1, "drawable://" + R.drawable.headimage1, "库里值不值MVP",
 					"drawable://" + R.drawable.channel1, new Date(), 23);
 

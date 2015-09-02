@@ -3,6 +3,8 @@ package com.lanquan.ui;
 import java.util.Date;
 import java.util.LinkedList;
 
+import org.apache.http.Header;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -28,7 +30,10 @@ import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.LogTool;
 import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /** 
@@ -127,60 +132,67 @@ public class MainMsgFragment extends BaseV4Fragment {
 	 */
 	private void getDataTask(int p) {
 		// final int page = p;
-		// RequestParams params = new RequestParams();
+		RequestParams params = new RequestParams();
+		params.put("access_token", userPreference.getAccess_token());
 		// params.put("page", pageNow);
 		// params.put(UserTable.U_ID, userPreference.getU_id());
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler("utf-8") {
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// List<JsonMyMessage> temp = FastJsonTool.getObjectList(response,
-		// JsonMyMessage.class);
-		// if (temp != null) {
-		// LogTool.i("消息", "长度" + temp.size());
-		// // 如果是首次获取数据
-		// if (page == 0) {
-		// if (temp.size() < Config.PAGE_NUM) {
-		// pageNow = -1;
-		// }
-		// messageList = new LinkedList<JsonMyMessage>();
-		// messageList.addAll(temp);
-		// }
-		// // 如果是获取更多
-		// else if (page > 0) {
-		// if (temp.size() < Config.PAGE_NUM) {
-		// pageNow = -1;
-		// ToastTool.showShort(getActivity(), "没有更多了！");
-		// }
-		// messageList.addAll(temp);
-		// }
-		// mAdapter.notifyDataSetChanged();
-		// } else {
-		// LogTool.e("消息", "获取列表失败返回为：" + response);
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("消息", "获取列表失败");
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// super.onFinish();
-		// messageListView.onRefreshComplete();
-		// }
-		// };
-		// AsyncHttpClientTool.post(getActivity(), "user/getMsg", params,
-		// responseHandler);
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				// postListView.setRefreshing();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i("--->" + statusCode + response);
+				// if (statusCode == 200) {
+				// List<JsonPostItem> temp =
+				// FastJsonTool.getObjectList(response, JsonPostItem.class);
+				// if (temp != null) {
+				// LogTool.i("获取圈子帖子列表长度" + temp.size());
+				// // 如果是首次获取数据
+				// if (page == 0) {
+				// if (temp.size() < Config.PAGE_NUM) {
+				// pageNow = -1;
+				// }
+				// jsonPostItemList = new LinkedList<JsonPostItem>();
+				// jsonPostItemList.addAll(temp);
+				// refresh();
+				// }
+				// // 如果是获取更多
+				// else if (page > 0) {
+				// if (temp.size() < Config.PAGE_NUM) {
+				// pageNow = -1;
+				// ToastTool.showShort(getActivity(), "没有更多了！");
+				// }
+				// jsonPostItemList.addAll(temp);
+				// }
+				// mAdapter.notifyDataSetChanged();
+				// }
+				// }
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("--->" + statusCode + errorResponse);
+			}
+
+//			@Override
+//			public void onFinish() {
+//				// TODO Auto-generated method stub
+//				super.onFinish();
+//				postListView.onRefreshComplete();
+//			}
+
+		};
+//		AsyncHttpClientTool.post(getActivity(), "api/user/message", params, responseHandler);
+		
+		
 		JsonMyMessage jsonMyMessage1 = new JsonMyMessage(1, "drawable://" + R.drawable.channel1, "如何提高篮球技术", 1, "帅哥", "男", "drawable://"
 				+ R.drawable.headimage3, new Date());
 		JsonMyMessage jsonMyMessage2 = new JsonMyMessage(1, "drawable://" + R.drawable.channel2, "什么装备值得买", 1, "坤坤", "男",
