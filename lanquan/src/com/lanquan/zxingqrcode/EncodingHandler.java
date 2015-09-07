@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.text.StaticLayout;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -62,7 +63,7 @@ public final class EncodingHandler {
 		try {
 			Bitmap src;
 			src = createQRCode("帅哥就是帅！", 625);
-			int width = top.getWidth(), height = 1500;
+			int width = top.getWidth(), height = (int) (width*1.8);
 			
 			System.out.println(width);
 			//創建一個新的和SRC長度寬度一樣的位圖
@@ -100,7 +101,12 @@ public final class EncodingHandler {
 			//頻道內容
 			p.setColor(Color.DKGRAY);
 			p.setTextSize(40);
-			canvas.drawText("如何从一个菜鸟蜕变成一个灌篮高手呢?", 50, top.getHeight()+content.getHeight()+middle.getHeight()+50, p);
+			
+			String text = "如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?";
+//			StaticLayout sl= new StaticLayout(text, p, newBitmap.getWidth()-8, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
+//	        canvas.translate(6, 40);
+//	        sl.draw(canvas);
+			canvas.drawText(text , 50, top.getHeight()+content.getHeight()+middle.getHeight()+50, p);
 			//二維碼
 			
 			
