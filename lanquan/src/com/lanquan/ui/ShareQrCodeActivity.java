@@ -1,6 +1,7 @@
 package com.lanquan.ui;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -39,6 +40,8 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	private String channelTitle;
 	private String channelDetail;
 
+	
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -64,13 +67,16 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	protected void initView() {
 		// TODO Auto-generated method stub
 		topNavText.setText("分享二维码");
-		try {
-			qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
-			qrImageView.setImageBitmap(qrCodeBitmap);
-		} catch (WriterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
+		Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.lanquan_checked);
+		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
+		Bitmap blue_content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content_blue);
+		Bitmap middle = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_middle);
+		
+		Bitmap bottom = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_card_bleow);
+		//			qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
+					qrCodeBitmap = EncodingHandler.createChannelCode(top,icon,content,blue_content, middle,bottom);
+					qrImageView.setImageBitmap(qrCodeBitmap);
 		
 //		if (!TextUtils.isEmpty(userPreference.getU_tel())) {
 //
