@@ -76,6 +76,7 @@ public final class EncodingHandler {
 			int _top_content_middle = top.getHeight()+content.getHeight()+middle.getHeight();
 			int _top_content_middle_bluecontent = top.getHeight()+content.getHeight()+middle.getHeight()+blue_content.getHeight();
 			
+			System.out.println(_top_content_middle_bluecontent+"height");
 			//框架
 			canvas.drawBitmap(top, 0, 0, null);
 			canvas.drawBitmap(content, 0, _top, null);
@@ -90,7 +91,10 @@ public final class EncodingHandler {
 			p.setTextSize(50);
 			
 			p.setColor(Color.DKGRAY);
-			canvas.drawText("怎么给篮球技术一个质的提高", 150, 130, p);
+			int w_icon = icon.getWidth();
+			int h_icon = icon.getHeight(); 
+			
+			canvas.drawText("怎么给篮球技术一个质的提高", 70 + w_icon, 70 + h_icon/2, p);
 			
 			
 			//頻道內容
@@ -98,7 +102,11 @@ public final class EncodingHandler {
 			p.setTextSize(40);
 			canvas.drawText("如何从一个菜鸟蜕变成一个灌篮高手呢?", 50, top.getHeight()+content.getHeight()+middle.getHeight()+50, p);
 			//二維碼
-			canvas.drawBitmap(src, 120,  380, null);
+			
+			
+			int w_src = src.getWidth();
+			int h_src = src.getHeight();
+			canvas.drawBitmap(src, width/2-w_src/2,  _top_content_middle_bluecontent-50, null);
 			
 			canvas.save(Canvas.ALL_SAVE_FLAG);
 			canvas.restore();
