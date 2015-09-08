@@ -29,6 +29,7 @@ public class GuidePagerActivity extends BaseFragmentActivity {
 	private ViewPager mViewPager;
 	private Button loginButton;
 	private Button registerButton;
+	private View dots;
 
 	// 这5个是底部显示当前状态点imageView
 	private ImageView mPage0;
@@ -55,6 +56,7 @@ public class GuidePagerActivity extends BaseFragmentActivity {
 		mViewPager = (ViewPager) findViewById(R.id.whatsnew_viewpager);
 
 		mViewPager.setOnPageChangeListener(new MyOnPageChangeListener());
+		dots = findViewById(R.id.dots);
 		mPage0 = (ImageView) findViewById(R.id.page0);
 		mPage1 = (ImageView) findViewById(R.id.page1);
 		mPage2 = (ImageView) findViewById(R.id.page2);
@@ -100,9 +102,9 @@ public class GuidePagerActivity extends BaseFragmentActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-//				Intent intent = new Intent(GuidePagerActivity.this, LoginActivity.class);
-//				startActivity(intent);
-//				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+				Intent intent = new Intent(GuidePagerActivity.this, LoginActivity.class);
+				startActivity(intent);
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			}
 		});
 
@@ -111,9 +113,9 @@ public class GuidePagerActivity extends BaseFragmentActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-//				Intent intent = new Intent(GuidePagerActivity.this, RegisterActivity.class);
-//				startActivity(intent);
-//				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+				Intent intent = new Intent(GuidePagerActivity.this, RegisterActivity.class);
+				startActivity(intent);
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			}
 		});
 	}
@@ -134,13 +136,15 @@ public class GuidePagerActivity extends BaseFragmentActivity {
 				mPage2.setImageDrawable(getResources().getDrawable(R.drawable.page));
 				break;
 			case 2:
+				dots.setVisibility(View.VISIBLE);
 				mPage2.setImageDrawable(getResources().getDrawable(R.drawable.page_now));
 				mPage1.setImageDrawable(getResources().getDrawable(R.drawable.page));
 				mPage3.setImageDrawable(getResources().getDrawable(R.drawable.page));
 				break;
 			case 3:
-				mPage3.setImageDrawable(getResources().getDrawable(R.drawable.page_now));
-				mPage2.setImageDrawable(getResources().getDrawable(R.drawable.page));
+//				mPage3.setImageDrawable(getResources().getDrawable(R.drawable.page_now));
+//				mPage2.setImageDrawable(getResources().getDrawable(R.drawable.page));
+				dots.setVisibility(View.GONE);
 				break;
 			}
 		}
