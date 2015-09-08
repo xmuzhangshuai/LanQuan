@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +33,7 @@ import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
@@ -56,6 +60,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 	private MyMessageAdapter mAdapter;
 	private UserPreference userPreference;
 	private LinkedList<JsonMyMessage> messageList;
+	private int unread_count = 0;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +80,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 		// 获取数据
 		getDataTask(pageNow);
 
-		messageListView.setMode(Mode.BOTH);
+		messageListView.setMode(Mode.PULL_FROM_START);
 		mAdapter = new MyMessageAdapter();
 		messageListView.setAdapter(mAdapter);
 		return rootView;
@@ -109,14 +114,9 @@ public class MainMsgFragment extends BaseV4Fragment {
 			@Override
 			public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
-				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
-
-				if (pageNow >= 0)
-					++pageNow;
-				getDataTask(pageNow);
+				
 			}
+
 		});
 	}
 
@@ -139,41 +139,34 @@ public class MainMsgFragment extends BaseV4Fragment {
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
 			@Override
-			public void onStart() {
-				// TODO Auto-generated method stub
-				super.onStart();
-				// postListView.setRefreshing();
-			}
-
-			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.i("--->" + statusCode + response);
-				// if (statusCode == 200) {
-				// List<JsonPostItem> temp =
-				// FastJsonTool.getObjectList(response, JsonPostItem.class);
-				// if (temp != null) {
-				// LogTool.i("获取圈子帖子列表长度" + temp.size());
-				// // 如果是首次获取数据
-				// if (page == 0) {
-				// if (temp.size() < Config.PAGE_NUM) {
-				// pageNow = -1;
-				// }
-				// jsonPostItemList = new LinkedList<JsonPostItem>();
-				// jsonPostItemList.addAll(temp);
-				// refresh();
-				// }
-				// // 如果是获取更多
-				// else if (page > 0) {
-				// if (temp.size() < Config.PAGE_NUM) {
-				// pageNow = -1;
-				// ToastTool.showShort(getActivity(), "没有更多了！");
-				// }
-				// jsonPostItemList.addAll(temp);
-				// }
-				// mAdapter.notifyDataSetChanged();
-				// }
-				// }
+				try {
+					JSONObject jsonObject = new JSONObject(response);
+					String status = jsonObject.getString("status");
+					unread_count = jsonObject.getInt("unread_count");
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						messageList.clear();
+						String data = jsonObject.getString("data");
+						JSONArray jsonArray = new JSONArray(data);
+						if (jsonArray != null) {
+							for (int i = 0; i < jsonArray.length(); i++) {
+								JsonMyMessage jsonMyMessage = JsonMyMessage.getJsonMyMessage(jsonArray.getJSONObject(i));
+								if (jsonMyMessage != null) {
+									messageList.add(jsonMyMessage);
+								} else {
+									LogTool.e("转化jsonmessage为空");
+								}
+							}
+						}
+						mAdapter.notifyDataSetChanged();
+					} else {
+						LogTool.e("获取消息列表失败");
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			@Override
@@ -182,110 +175,82 @@ public class MainMsgFragment extends BaseV4Fragment {
 				LogTool.e("--->" + statusCode + errorResponse);
 			}
 
-//			@Override
-//			public void onFinish() {
-//				// TODO Auto-generated method stub
-//				super.onFinish();
-//				postListView.onRefreshComplete();
-//			}
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				super.onFinish();
+				messageListView.onRefreshComplete();
+			}
 
 		};
-//		AsyncHttpClientTool.post(getActivity(), "api/user/message", params, responseHandler);
-		
-		
-		JsonMyMessage jsonMyMessage1 = new JsonMyMessage(1, "drawable://" + R.drawable.channel1, "如何提高篮球技术", 1, "帅哥", "男", "drawable://"
-				+ R.drawable.headimage3, new Date());
-		JsonMyMessage jsonMyMessage2 = new JsonMyMessage(1, "drawable://" + R.drawable.channel2, "什么装备值得买", 1, "坤坤", "男",
-				"drawable://" + R.drawable.headimage1, new Date());
-		JsonMyMessage jsonMyMessage3 = new JsonMyMessage(1, "", "库里值不值MVP", 1, "蔑视", "男", "drawable://" + R.drawable.headimage7, new Date());
-		JsonMyMessage jsonMyMessage4 = new JsonMyMessage(1, "drawable://" + R.drawable.channel4, "詹姆斯到底有多强", 1, "嘟嘟", "男", "drawable://"
-				+ R.drawable.headimage6, new Date());
-		JsonMyMessage jsonMyMessage5 = new JsonMyMessage(1, "", "如何提高篮球技术", 1, "冰冰", "男", "drawable://" + R.drawable.headimage4, new Date());
-		messageList.add(jsonMyMessage1);
-		messageList.add(jsonMyMessage2);
-		messageList.add(jsonMyMessage3);
-		messageList.add(jsonMyMessage4);
-		messageList.add(jsonMyMessage5);
-		messageListView.onRefreshComplete();
+		AsyncHttpClientTool.post(getActivity(), "api/user/message", params, responseHandler);
 	}
 
 	/**
 	 * 进入详情页面
 	 */
 	private void goToDetail(final int type, int pa_id, int pa_user_id) {
-		// RequestParams params = new RequestParams();
-		// final ProgressDialog dialog = new ProgressDialog(getActivity());
-		// dialog.setMessage("正在加载...");
-		// dialog.setCancelable(false);
-		// if (type == 0) {
-		// params.put(PostTable.P_POSTID, pa_id);
-		// params.put(PostTable.P_USERID, pa_user_id);
-		// } else if (type == 1) {
-		// params.put(ActivityTable.A_ACTID, pa_id);
-		// params.put(ActivityTable.A_USERID, pa_user_id);
-		// } else {
-		// return;
-		// }
-		//
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler("utf-8") {
-		// @Override
-		// public void onStart() {
-		// // TODO Auto-generated method stub
-		// super.onStart();
-		// dialog.show();
-		// }
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// if (type == 0) {
-		// JsonPostItem jsonPostItem = FastJsonTool.getObject(response,
-		// JsonPostItem.class);
-		// if (jsonPostItem != null) {
-		// startActivity(new Intent(getActivity(),
-		// PostDetailActivity.class).putExtra(
-		// PostDetailActivity.POST_ITEM, jsonPostItem));
-		// getActivity().overridePendingTransition(R.anim.push_left_in,
-		// R.anim.push_left_out);
-		// } else {
-		// LogTool.e("返回帖子数据出错" + response);
-		// }
-		// } else if (type == 1) {
-		// JsonActItem jsonActItem = FastJsonTool.getObject(response,
-		// JsonActItem.class);
-		// if (jsonActItem != null) {
-		// startActivity(new Intent(getActivity(),
-		// ActDetailActivity.class).putExtra(
-		// ActDetailActivity.ACT_ITEM, jsonActItem));
-		// getActivity().overridePendingTransition(R.anim.push_left_in,
-		// R.anim.push_left_out);
-		// } else {
-		// LogTool.e("返回帖子数据出错" + response);
-		// }
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("获取学校帖子列表失败" + errorResponse);
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// dialog.dismiss();
-		// super.onFinish();
-		// }
-		//
-		// };
-		// AsyncHttpClientTool.post(getActivity(), "post/getSchoolPosts",
-		// params, responseHandler);
+//		RequestParams params = new RequestParams();
+//		final ProgressDialog dialog = new ProgressDialog(getActivity());
+//		dialog.setMessage("正在加载...");
+//		dialog.setCancelable(false);
+//		if (type == 0) {
+//			params.put(PostTable.P_POSTID, pa_id);
+//			params.put(PostTable.P_USERID, pa_user_id);
+//		} else if (type == 1) {
+//			params.put(ActivityTable.A_ACTID, pa_id);
+//			params.put(ActivityTable.A_USERID, pa_user_id);
+//		} else {
+//			return;
+//		}
+//
+//		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+//			@Override
+//			public void onStart() {
+//				// TODO Auto-generated method stub
+//				super.onStart();
+//				dialog.show();
+//			}
+//
+//			@Override
+//			public void onSuccess(int statusCode, Header[] headers, String response) {
+//				// TODO Auto-generated method stub
+//				if (statusCode == 200) {
+//					if (type == 0) {
+//						JsonPostItem jsonPostItem = FastJsonTool.getObject(response, JsonPostItem.class);
+//						if (jsonPostItem != null) {
+//							startActivity(new Intent(getActivity(), PostDetailActivity.class).putExtra(PostDetailActivity.POST_ITEM, jsonPostItem));
+//							getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//						} else {
+//							LogTool.e("返回帖子数据出错" + response);
+//						}
+//					} else if (type == 1) {
+//						JsonActItem jsonActItem = FastJsonTool.getObject(response, JsonActItem.class);
+//						if (jsonActItem != null) {
+//							startActivity(new Intent(getActivity(), ActDetailActivity.class).putExtra(ActDetailActivity.ACT_ITEM, jsonActItem));
+//							getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//						} else {
+//							LogTool.e("返回帖子数据出错" + response);
+//						}
+//					}
+//				}
+//			}
+//
+//			@Override
+//			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+//				// TODO Auto-generated method stub
+//				LogTool.e("获取学校帖子列表失败" + errorResponse);
+//			}
+//
+//			@Override
+//			public void onFinish() {
+//				// TODO Auto-generated method stub
+//				dialog.dismiss();
+//				super.onFinish();
+//			}
+//
+//		};
+//		AsyncHttpClientTool.post(getActivity(), "post/getSchoolPosts", params, responseHandler);
 	}
 
 	/**
@@ -359,42 +324,43 @@ public class MainMsgFragment extends BaseV4Fragment {
 			});
 
 			// 设置头像
-			if (!TextUtils.isEmpty(jsonMyMessage.getSmall_avatar())) {
-
-				imageLoader.displayImage(jsonMyMessage.getSmall_avatar(), holder.headImageView, ImageLoaderTool.getHeadImageOptions(10));
-
-				if (userPreference.getU_id() != jsonMyMessage.getUserid()) {
-					// 点击头像进入详情页面
-					holder.headImageView.setOnClickListener(new OnClickListener() {
-
-						@Override
-						public void onClick(View v) {
-							// TODO Auto-generated method stub
-							// Intent intent = new Intent(getActivity(),
-							// PersonDetailActivity.class);
-							// intent.putExtra(UserTable.U_ID,
-							// jsonMyMessage.getUserid());
-							// intent.putExtra(UserTable.U_NICKNAME,
-							// jsonMyMessage.getUsername());
-							// intent.putExtra(UserTable.U_SMALL_AVATAR,
-							// jsonMyMessage.getSmall_avatar());
-							// startActivity(intent);
-							// getActivity().overridePendingTransition(R.anim.zoomin2,
-							// R.anim.zoomout);
-						}
-					});
-				}
-			}
+			// if (!TextUtils.isEmpty(jsonMyMessage.getSmall_avatar())) {
+			//
+			// imageLoader.displayImage(jsonMyMessage.getSmall_avatar(),
+			// holder.headImageView, ImageLoaderTool.getHeadImageOptions(10));
+			//
+			// if (userPreference.getU_id() != jsonMyMessage.getUserid()) {
+			// // 点击头像进入详情页面
+			// holder.headImageView.setOnClickListener(new OnClickListener() {
+			//
+			// @Override
+			// public void onClick(View v) {
+			// // TODO Auto-generated method stub
+			// // Intent intent = new Intent(getActivity(),
+			// // PersonDetailActivity.class);
+			// // intent.putExtra(UserTable.U_ID,
+			// // jsonMyMessage.getUserid());
+			// // intent.putExtra(UserTable.U_NICKNAME,
+			// // jsonMyMessage.getUsername());
+			// // intent.putExtra(UserTable.U_SMALL_AVATAR,
+			// // jsonMyMessage.getSmall_avatar());
+			// // startActivity(intent);
+			// // getActivity().overridePendingTransition(R.anim.zoomin2,
+			// // R.anim.zoomout);
+			// }
+			// });
+			// }
+			// }
 
 			// 设置姓名
-			holder.nameTextView.setText(jsonMyMessage.getUsername());
+			holder.nameTextView.setText(jsonMyMessage.getMessage());
 
 			// 设置日期
-			holder.timeTextView.setText(DateTimeTools.getMonAndDay(jsonMyMessage.getFavortime()));
+			holder.timeTextView.setText(DateTimeTools.getMonAndDay(jsonMyMessage.getCreate_time()));
 
 			// 设置的内容
-			if (jsonMyMessage.getImage() != null && !jsonMyMessage.getImage().isEmpty()) {// 如果有图片
-				imageLoader.displayImage(jsonMyMessage.getImage(), holder.itemImageView, ImageLoaderTool.getImageOptions());
+			if (!TextUtils.isEmpty(jsonMyMessage.getImage_url())) {// 如果有图片
+				imageLoader.displayImage(jsonMyMessage.getImage_url(), holder.itemImageView, ImageLoaderTool.getImageOptions());
 				holder.commentTextView.setText("赞了你的图片");
 				holder.itemTextView.setVisibility(View.GONE);
 				holder.itemImageView.setVisibility(View.VISIBLE);

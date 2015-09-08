@@ -2,52 +2,130 @@ package com.lanquan.jsonobject;
 
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.lanquan.utils.DateTimeTools;
+
+import android.text.StaticLayout;
+
 //我的消息实体
 public class JsonMyMessage {
 
 	// 消息主体
-	private int messageid;
-	private String image;// 图片
-	private String content;// 内容
+	private int message_id;
+	private String message;// 内容
+	private int from_user_id;
+	private int to_user_id;
+	private int is_read;
+	private Date create_time;
+	private Date update_time;
+	private int object_type;
+	private int object_id;
+	private String content;
+	private String image_url;// 图片
 
-	// 点赞人的具体内容
-	private int userid;
-	private String username;
-	private String gender;
-	private String small_avatar;
-	private Date favortime;
-
-	public JsonMyMessage() {
+	public JsonMyMessage(int message_id, String message, int from_user_id, int to_user_id, int is_read, Date create_time, Date update_time, int object_type,
+			int object_id, String content, String image_url) {
 		super();
-		// TODO Auto-generated constructor stub
-	}
-
-	public JsonMyMessage(int messageid, String image, String content, int userid, String username, String gender, String small_avatar, Date favortime) {
-		super();
-		this.messageid = messageid;
-		this.image = image;
+		this.message_id = message_id;
+		this.message = message;
+		this.from_user_id = from_user_id;
+		this.to_user_id = to_user_id;
+		this.is_read = is_read;
+		this.create_time = create_time;
+		this.update_time = update_time;
+		this.object_type = object_type;
+		this.object_id = object_id;
 		this.content = content;
-		this.userid = userid;
-		this.username = username;
-		this.gender = gender;
-		this.small_avatar = small_avatar;
-		this.favortime = favortime;
+		this.image_url = image_url;
 	}
 
-	public int getMessageid() {
-		return messageid;
+	public static JsonMyMessage getJsonMyMessage(JSONObject jsonObject) {
+		JsonMyMessage jsonMyMessage = null;
+		try {
+			jsonMyMessage = new JsonMyMessage(Integer.parseInt(jsonObject.getString("message_id")), jsonObject.getString("message"),
+					Integer.parseInt(jsonObject.getString("from_user_id")), Integer.parseInt(jsonObject.getString("to_user_id")), Integer.parseInt(jsonObject
+							.getString("is_read")), DateTimeTools.StringToDate(jsonObject.getString("create_time")), DateTimeTools.StringToDate(jsonObject
+							.getString("update_time")), Integer.parseInt(jsonObject.getString("object_type")), Integer.parseInt(jsonObject
+							.getString("object_id")), jsonObject.getString("content"), jsonObject.getString("image_url"));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return jsonMyMessage;
 	}
 
-	public void setMessageid(int messageid) {
-		this.messageid = messageid;
+	public int getMessage_id() {
+		return message_id;
 	}
 
-	public String getImage() {
-		return image;
+	public void setMessage_id(int message_id) {
+		this.message_id = message_id;
 	}
 
-	public void setImage(String image) {
-		this.image = image;
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public int getFrom_user_id() {
+		return from_user_id;
+	}
+
+	public void setFrom_user_id(int from_user_id) {
+		this.from_user_id = from_user_id;
+	}
+
+	public int getTo_user_id() {
+		return to_user_id;
+	}
+
+	public void setTo_user_id(int to_user_id) {
+		this.to_user_id = to_user_id;
+	}
+
+	public int getIs_read() {
+		return is_read;
+	}
+
+	public void setIs_read(int is_read) {
+		this.is_read = is_read;
+	}
+
+	public Date getCreate_time() {
+		return create_time;
+	}
+
+	public void setCreate_time(Date create_time) {
+		this.create_time = create_time;
+	}
+
+	public Date getUpdate_time() {
+		return update_time;
+	}
+
+	public void setUpdate_time(Date update_time) {
+		this.update_time = update_time;
+	}
+
+	public int getObject_type() {
+		return object_type;
+	}
+
+	public void setObject_type(int object_type) {
+		this.object_type = object_type;
+	}
+
+	public int getObject_id() {
+		return object_id;
+	}
+
+	public void setObject_id(int object_id) {
+		this.object_id = object_id;
 	}
 
 	public String getContent() {
@@ -58,44 +136,12 @@ public class JsonMyMessage {
 		this.content = content;
 	}
 
-	public int getUserid() {
-		return userid;
+	public String getImage_url() {
+		return image_url;
 	}
 
-	public void setUserid(int userid) {
-		this.userid = userid;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getGender() {
-		return gender;
-	}
-
-	public void setGender(String gender) {
-		this.gender = gender;
-	}
-
-	public String getSmall_avatar() {
-		return small_avatar;
-	}
-
-	public void setSmall_avatar(String small_avatar) {
-		this.small_avatar = small_avatar;
-	}
-
-	public Date getFavortime() {
-		return favortime;
-	}
-
-	public void setFavortime(Date favortime) {
-		this.favortime = favortime;
+	public void setImage_url(String image_url) {
+		this.image_url = image_url;
 	}
 
 }
