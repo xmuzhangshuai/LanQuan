@@ -163,8 +163,10 @@ public class MainFindNewFragment extends BaseV4Fragment {
 		params.put("sort", "create_time");
 		params.put("from", 0);
 		params.put("recommend", 0);
-		params.put("user_id", userPreference.getU_id());
-		params.put("access_token", userPreference.getAccess_token());
+		if (userPreference.getUserLogin()) {
+			params.put("user_id", userPreference.getU_id());
+			params.put("access_token", userPreference.getAccess_token());
+		}
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
@@ -177,23 +179,31 @@ public class MainFindNewFragment extends BaseV4Fragment {
 					JSONObject jsonObject = jsonTool.getJsonObject();
 					try {
 						JsonChannelTools jsonChannelTools = new JsonChannelTools(jsonObject.getString("data"));
-						List<JsonChannel> temp = jsonChannelTools.getJsonChannelListWithFoucs();
-						// 如果是首次获取数据
-						if (page == 0) {
-							if (temp.size() < Config.PAGE_NUM) {
-								pageNow = -1;
-							}
-							jsonChannelList = new LinkedList<JsonChannel>();
-							jsonChannelList.addAll(temp);
-							mAdapter.notifyDataSetChanged();
+						List<JsonChannel> temp;
+						if (userPreference.getUserLogin()) {
+							temp = jsonChannelTools.getJsonChannelListWithFoucs();
+						} else {
+							temp = jsonChannelTools.getJsonChannelList();
 						}
-						// 如果是获取更多
-						else if (page > 0) {
-							if (temp.size() < Config.PAGE_NUM) {
-								pageNow = -1;
-								ToastTool.showShort(getActivity(), "没有更多了！");
+
+						// 如果是首次获取数据
+						if (temp != null) {
+							if (page == 0) {
+								if (temp.size() < Config.PAGE_NUM) {
+									pageNow = -1;
+								}
+								jsonChannelList = new LinkedList<JsonChannel>();
+								jsonChannelList.addAll(temp);
+								mAdapter.notifyDataSetChanged();
 							}
-							jsonChannelList.addAll(temp);
+							// 如果是获取更多
+							else if (page > 0) {
+								if (temp.size() < Config.PAGE_NUM) {
+									pageNow = -1;
+									ToastTool.showShort(getActivity(), "没有更多了！");
+								}
+								jsonChannelList.addAll(temp);
+							}
 						}
 
 					} catch (JSONException e) {

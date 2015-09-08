@@ -422,8 +422,10 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		} else {
 			params.put("sort", "create_time");
 		}
-		params.put("user_id", userPreference.getU_id());
-		params.put("access_token", userPreference.getAccess_token());
+		if (userPreference.getUserLogin()) {
+			params.put("user_id", userPreference.getU_id());
+			params.put("access_token", userPreference.getAccess_token());
+		}
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
