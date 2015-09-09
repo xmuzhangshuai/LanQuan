@@ -1,34 +1,38 @@
 package com.lanquan.ui;
 
+import com.lanquan.R;
+import com.lanquan.base.BaseActivity;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.utils.UserPreference;
+import com.lanquan.zxingqrcode.EncodingHandler;
+
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.zxing.WriterException;
-import com.lanquan.R;
-import com.lanquan.base.BaseActivity;
-import com.lanquan.base.BaseApplication;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.UserPreference;
-import com.lanquan.zxingqrcode.EncodingHandler;
-
-/** 
- * 类描述 ：分享频道二维码
- * 类名： ShareQrCodeActivity.java  
- * Copyright:   Copyright (c)2015    
- * Company:     zhangshuai   
- * @author:     zhangshuai    
- * @version:    1.0    
- * 创建时间:    2015-8-18 下午10:08:26  
-*/
+/**
+ * 类描述 ：分享频道二维码 类名： ShareQrCodeActivity.java 
+ * Copyright: Copyright (c)2015
+ * Company: zhangshuai
+ * 
+ * @author: zhangshuai
+ * @version: 1.0 创建时间: 2015-8-18 下午10:08:26
+ */
 public class ShareQrCodeActivity extends BaseActivity implements android.view.View.OnClickListener {
 
 	private ImageView qrImageView;
+	private ImageView weiboView;
+	private ImageView wechatView;
+	private ImageView friendView;
+	private ImageView photoView;
 	private UserPreference userPreference;
 	Bitmap qrCodeBitmap = null;
 	private View left_btn_bg;// 导航条左边按钮
@@ -40,8 +44,6 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	private String channelTitle;
 	private String channelDetail;
 
-	
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -59,6 +61,10 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	protected void findViewById() {
 		// TODO Auto-generated method stub
 		qrImageView = (ImageView) findViewById(R.id.qrcode);
+		weiboView = (ImageView) findViewById(R.id.weibo);
+		wechatView = (ImageView) findViewById(R.id.wechat);
+		friendView = (ImageView) findViewById(R.id.friend);
+		photoView = (ImageView) findViewById(R.id.photo);
 		left_btn_bg = findViewById(R.id.left_btn_bg);
 		topNavText = (TextView) findViewById(R.id.nav_text);
 	}
@@ -67,7 +73,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	protected void initView() {
 		// TODO Auto-generated method stub
 		topNavText.setText("分享二维码");
-		//获取频道名称以及频道简介
+		// 获取频道名称以及频道简介
 		channelTitle = getIntent().getStringExtra("channelName");
 		channelDetail = getIntent().getStringExtra("channelInfo");
 		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
@@ -75,26 +81,19 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
 		Bitmap blue_content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content_blue);
 		Bitmap middle = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_middle);
-		
+
 		Bitmap bottom = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_card_bleow);
-		//			qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
-					qrCodeBitmap = EncodingHandler.createChannelCode(top,icon,content,blue_content, middle,bottom,channelTitle,channelDetail,"帅哥就是帅");
-					qrImageView.setImageBitmap(qrCodeBitmap);
-		
-//		if (!TextUtils.isEmpty(userPreference.getU_tel())) {
-//
-//			try {
-//				qrCodeBitmap = EncodingHandler.createQRCode(userPreference.getU_tel(), 800);
-//				qrImageView.setImageBitmap(qrCodeBitmap);
-//			} catch (WriterException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		} else {
-//			LogTool.e("号码为空");
-//		}
+		// qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
+		qrCodeBitmap = EncodingHandler.createChannelCode(top, icon, content, blue_content, middle, bottom, channelTitle, channelDetail, "帅哥就是帅");
+		qrImageView.setImageBitmap(qrCodeBitmap);
 
 		left_btn_bg.setOnClickListener(this);
+
+		weiboView.setOnClickListener(this);
+		wechatView.setOnClickListener(this);
+		friendView.setOnClickListener(this);
+		photoView.setOnClickListener(this);
+
 	}
 
 	@Override
@@ -113,7 +112,16 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		case R.id.left_btn_bg:
 			finish();
 			break;
-
+		case R.id.weibo:
+			break;
+		case R.id.wechat:
+			break;
+		case R.id.friend:
+			break;
+		case R.id.photo:
+			MediaStore.Images.Media.insertImage(getContentResolver(), qrCodeBitmap, System.currentTimeMillis() + "", "");
+			sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+			break;
 		default:
 			break;
 		}

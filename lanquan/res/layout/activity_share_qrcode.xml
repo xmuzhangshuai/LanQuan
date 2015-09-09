@@ -2,26 +2,81 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:paddingBottom="15dp" >
 
     <include
         layout="@layout/top_navigation4"
         android:focusable="true" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="top"
-        android:layout_weight="7"
-        android:background="@color/white"
-        android:orientation="vertical"
-        android:padding="30dp" >
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:layout_weight="5" >
 
         <ImageView
             android:id="@+id/qrcode"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerInside" />
-    </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:paddingTop="20dp" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:gravity="center_horizontal"
+            android:text="分享二维码，邀请好友来一起畅谈篮球"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp" >
+
+            <ImageView
+                android:id="@+id/weibo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/sel_share_weibo" />
+
+            <ImageView
+                android:id="@+id/wechat"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/sel_share_wechat" />
+
+            <ImageView
+                android:id="@+id/friend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/sel_share_friend" />
+
+            <ImageView
+                android:id="@+id/photo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:src="@drawable/sel_share_photo" />
+        </LinearLayout>
+    </RelativeLayout>
 
 </LinearLayout>

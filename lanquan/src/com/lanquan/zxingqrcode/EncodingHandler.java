@@ -52,7 +52,6 @@ public final class EncodingHandler {
 	public static Bitmap createChannelCode(Bitmap top, Bitmap icon, Bitmap content, Bitmap blue_content, Bitmap middle,
 			Bitmap bottom, String channelName, String channelInfo, String qrcode) {
 
-		System.out.println("==="+channelInfo.length());
 		Matrix matrix = new Matrix();
 		matrix.postScale(1.0f, 10.0f);
 		content = Bitmap.createBitmap(content, 0, 0, content.getWidth(), content.getHeight(), matrix, true);
@@ -71,20 +70,21 @@ public final class EncodingHandler {
 		try {
 			Bitmap src;
 			src = createQRCode(qrcode, 650);
-			int width = top.getWidth(), height = (int) (width * 1.7);
-
-			System.out.println(width);
-			// 創建一個新的和SRC長度寬度一樣的位圖
-			Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-			Canvas canvas = new Canvas(bitmap);
-
+			
 			int _top = top.getHeight();
 			int _top_content = top.getHeight() + content.getHeight();
 			int _top_content_middle = top.getHeight() + content.getHeight() + middle.getHeight();
 			int _top_content_middle_bluecontent = top.getHeight() + content.getHeight() + middle.getHeight()
 					+ blue_content.getHeight();
+			
+			int width = top.getWidth(), height = _top_content_middle_bluecontent+ bottom.getHeight();
 
-			System.out.println(_top_content_middle_bluecontent + "height");
+			// 創建一個新的和SRC長度寬度一樣的位圖
+			Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+			Canvas canvas = new Canvas(bitmap);
+
+			
+
 			// 框架
 			canvas.drawBitmap(top, 0, 0, null);
 			canvas.drawBitmap(content, 0, _top, null);
