@@ -1,7 +1,6 @@
 package com.lanquan.ui;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +8,27 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
+import com.lanquan.R;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.base.BaseV4Fragment;
+import com.lanquan.config.Constants.Config;
+import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.jsonobject.JsonMyArticle;
+import com.lanquan.jsonobject.JsonMyChannel;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.DateTimeTools;
+import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
+import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -22,28 +42,6 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TextView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
-import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
-import com.lanquan.R;
-import com.lanquan.base.BaseApplication;
-import com.lanquan.base.BaseV4Fragment;
-import com.lanquan.config.Constants.Config;
-import com.lanquan.jsonobject.JsonChannel;
-import com.lanquan.jsonobject.JsonMyArticle;
-import com.lanquan.jsonobject.JsonMyChannel;
-import com.lanquan.jsonobject.JsonMyMessage;
-import com.lanquan.utils.AsyncHttpClientTool;
-import com.lanquan.utils.DateTimeTools;
-import com.lanquan.utils.ImageLoaderTool;
-import com.lanquan.utils.JsonTool;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
-import com.lanquan.utils.UserPreference;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 /**
  * 类描述 ：主页面--个人中心页面 类名： MainPersonalFragment.java Copyright: Copyright (c)2015
