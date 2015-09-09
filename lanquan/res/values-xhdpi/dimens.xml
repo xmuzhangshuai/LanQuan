@@ -1,0 +1,6 @@
+<resources>
+
+    <dimen name="share_title_size">22sp</dimen>
+    <dimen name="share_content_size">20sp</dimen>
+
+</resources>
