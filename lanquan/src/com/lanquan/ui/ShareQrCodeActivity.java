@@ -67,6 +67,10 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	protected void initView() {
 		// TODO Auto-generated method stub
 		topNavText.setText("分享二维码");
+		//获取频道名称以及频道简介
+		channelTitle = getIntent().getStringExtra("channelName");
+		channelDetail = getIntent().getStringExtra("channelInfo");
+		
 		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
 		Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.lanquan_checked);
 		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
@@ -75,7 +79,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		
 		Bitmap bottom = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_card_bleow);
 		//			qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
-					qrCodeBitmap = EncodingHandler.createChannelCode(top,icon,content,blue_content, middle,bottom);
+					qrCodeBitmap = EncodingHandler.createChannelCode(top,icon,content,blue_content, middle,bottom,channelTitle,channelDetail,"帅哥就是帅");
 					qrImageView.setImageBitmap(qrCodeBitmap);
 		
 //		if (!TextUtils.isEmpty(userPreference.getU_tel())) {

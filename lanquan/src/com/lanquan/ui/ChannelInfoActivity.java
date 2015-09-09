@@ -94,7 +94,8 @@ public class ChannelInfoActivity extends BaseActivity implements OnClickListener
 			finish();
 			break;
 		case R.id.channel_share:
-			startActivity(new Intent(ChannelInfoActivity.this, ShareQrCodeActivity.class));
+			startActivity(new Intent(ChannelInfoActivity.this, ShareQrCodeActivity.class).putExtra("channelName", channelNameTextView.getText())
+					.putExtra("channelInfo", channelDescription.getText()));
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 		case R.id.cancel_concern_btn:

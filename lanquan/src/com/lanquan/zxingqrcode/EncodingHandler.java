@@ -3,12 +3,12 @@ package com.lanquan.zxingqrcode;
 import java.util.Hashtable;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
+import android.text.Layout.Alignment;
 import android.text.StaticLayout;
+import android.text.TextPaint;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -17,7 +17,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 /**
  * @author Ryan Tang
- *
+ * @author Lee ks 重绘特殊二维码
  */
 public final class EncodingHandler {
 	private static final int BLACK = 0xff000000;
@@ -49,21 +49,22 @@ public final class EncodingHandler {
 	
 	
 	//在二维码基础上继续重绘频道二维码
-	public static Bitmap createChannelCode(Bitmap top, Bitmap icon, Bitmap content,Bitmap blue_content,Bitmap middle,Bitmap bottom){
+	public static Bitmap createChannelCode(Bitmap top, Bitmap icon, Bitmap content,Bitmap blue_content,Bitmap middle,Bitmap bottom,
+			String channelName, String channelInfo, String qrcode){
 		
 		 Matrix matrix=new Matrix();  
          matrix.postScale(1.0f, 10.0f);  
          content = Bitmap.createBitmap(content, 0, 0, content.getWidth(),  
         		 content.getHeight(),matrix,true);  
 		
-         matrix.postScale(1.0f, 1.0f);  
+         matrix.postScale(1.0f, 2.0f);  
          blue_content = Bitmap.createBitmap(blue_content, 0, 0, blue_content.getWidth(),  
         		 blue_content.getHeight(),matrix,true);  
          
 		try {
 			Bitmap src;
-			src = createQRCode("帅哥就是帅！", 625);
-			int width = top.getWidth(), height = (int) (width*1.8);
+			src = createQRCode(qrcode, 650);
+			int width = top.getWidth(), height = (int) (width*1.7);
 			
 			System.out.println(width);
 			//創建一個新的和SRC長度寬度一樣的位圖
@@ -87,36 +88,31 @@ public final class EncodingHandler {
 			
 			//頻道icon
 			canvas.drawBitmap(icon, 50, 50, null);
-			//頻道名稱
-			Paint p = new Paint();
-			p.setTextSize(50);
 			
-			p.setColor(Color.DKGRAY);
+			//二維碼
+			int w_src = src.getWidth();
+			canvas.drawBitmap(src, width/2-w_src/2,  _top_content_middle_bluecontent-50, null);
+			
+			
+			//頻道名稱
+			TextPaint textPaint = new TextPaint();
+			textPaint.setTextSize(50);
+			
+			textPaint.setColor(Color.DKGRAY);
 			int w_icon = icon.getWidth();
 			int h_icon = icon.getHeight(); 
-			
-			canvas.drawText("怎么给篮球技术一个质的提高", 70 + w_icon, 70 + h_icon/2, p);
-			
-			
+			canvas.drawText(channelName, 70 + w_icon, 70 + h_icon/2, textPaint);
 			//頻道內容
-			p.setColor(Color.DKGRAY);
-			p.setTextSize(40);
-			
-			String text = "如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?";
-//			StaticLayout sl= new StaticLayout(text, p, newBitmap.getWidth()-8, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
-//	        canvas.translate(6, 40);
-//	        sl.draw(canvas);
-			canvas.drawText(text , 50, top.getHeight()+content.getHeight()+middle.getHeight()+50, p);
-			//二維碼
-			
-			
-			int w_src = src.getWidth();
-			int h_src = src.getHeight();
-			canvas.drawBitmap(src, width/2-w_src/2,  _top_content_middle_bluecontent-50, null);
+			textPaint.setColor(Color.DKGRAY);
+			textPaint.setTextSize(40);
+			//String text = "如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?";
+			StaticLayout layout = new StaticLayout(channelInfo, textPaint, width-150, Alignment.ALIGN_NORMAL,
+					1.0f, 0.0f, true);
+			canvas.translate(100, top.getHeight()+content.getHeight()+middle.getHeight()+50);
+			layout.draw(canvas);
 			
 			canvas.save(Canvas.ALL_SAVE_FLAG);
 			canvas.restore();
-			System.out.println("調用");
 			
 			return bitmap;
 		} catch (WriterException e) {
@@ -124,6 +120,5 @@ public final class EncodingHandler {
 		}
 		return null;
 	}
-	
 	
 }
