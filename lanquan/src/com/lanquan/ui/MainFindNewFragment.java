@@ -1,12 +1,31 @@
 package com.lanquan.ui;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.lanquan.R;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.base.BaseV4Fragment;
+import com.lanquan.config.Constants.Config;
+import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.JsonChannelTools;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
+import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,27 +38,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.lanquan.R;
-import com.lanquan.base.BaseApplication;
-import com.lanquan.base.BaseV4Fragment;
-import com.lanquan.config.Constants.Config;
-import com.lanquan.jsonobject.JsonChannel;
-import com.lanquan.table.UserTable;
-import com.lanquan.utils.AsyncHttpClientTool;
-import com.lanquan.utils.ImageLoaderTool;
-import com.lanquan.utils.JsonChannelTools;
-import com.lanquan.utils.JsonTool;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
-import com.lanquan.utils.UserPreference;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /** 
  * 类描述 ：主页面——发现页面——最新页面
@@ -164,7 +162,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 		params.put("from", 0);
 		params.put("recommend", 0);
 		if (userPreference.getUserLogin()) {
-			params.put("user_id", userPreference.getU_id());
+//			params.put("user_id", userPreference.getU_id());
 			params.put("access_token", userPreference.getAccess_token());
 		}
 
