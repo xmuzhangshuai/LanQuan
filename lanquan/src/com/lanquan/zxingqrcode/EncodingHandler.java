@@ -98,6 +98,7 @@ public final class EncodingHandler {
 			TextPaint textPaint = new TextPaint();
 			textPaint.setTextSize(50);
 			
+			
 			textPaint.setColor(Color.DKGRAY);
 			int w_icon = icon.getWidth();
 			int h_icon = icon.getHeight(); 

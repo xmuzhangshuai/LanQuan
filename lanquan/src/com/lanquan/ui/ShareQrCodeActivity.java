@@ -70,7 +70,6 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		//获取频道名称以及频道简介
 		channelTitle = getIntent().getStringExtra("channelName");
 		channelDetail = getIntent().getStringExtra("channelInfo");
-		
 		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
 		Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.lanquan_checked);
 		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
