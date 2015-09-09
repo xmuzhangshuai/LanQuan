@@ -82,10 +82,17 @@
             android:windowSoftInputMode="stateHidden|adjustResize" >
         </activity>
 
+        <!-- 文字频道详情页面 -->
+        <activity
+            android:name="com.lanquan.ui.ChannelTextActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+        </activity>
+
         <!-- 打卡频道详情页面 -->
         <activity
             android:name="com.lanquan.ui.ChannelPunchCardActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
 
         <!-- 选择创建频道页面 -->

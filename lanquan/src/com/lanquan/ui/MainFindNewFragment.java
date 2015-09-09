@@ -295,7 +295,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 					if (type == 0) {// 图文
 						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
 					} else if (type == 1) {
-						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+						intent = new Intent(getActivity(), ChannelTextActivity.class);
 					} else if (type == 2) {
 						intent = new Intent(getActivity(), ChannelPunchCardActivity.class);
 					}

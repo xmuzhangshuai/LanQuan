@@ -1,24 +1,11 @@
 package com.lanquan.ui;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.format.DateUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -40,15 +27,25 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
-/** 
- * 类描述 ：主页面--篮圈页面
- * 类名： MainLanquanFragment.java  
- * Copyright:   Copyright (c)2015    
- * Company:     zhangshuai   
- * @author:     zhangshuai    
- * @version:    1.0    
- * 创建时间:    2015-8-6 上午10:58:57  
-*/
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
+
+/**
+ * 类描述 ：主页面--篮圈页面 类名： MainLanquanFragment.java Copyright: Copyright (c)2015
+ * Company: zhangshuai
+ * 
+ * @author: zhangshuai
+ * @version: 1.0 创建时间: 2015-8-6 上午10:58:57
+ */
 public class MainLanquanFragment extends BaseV4Fragment {
 	private View rootView;// 根View
 	private TextView navText;
@@ -152,8 +149,8 @@ public class MainLanquanFragment extends BaseV4Fragment {
 			@Override
 			public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
 				pageNow = 0;
@@ -163,8 +160,8 @@ public class MainLanquanFragment extends BaseV4Fragment {
 			@Override
 			public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
 				if (pageNow >= 0)
@@ -183,6 +180,11 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("access_token", userPreference.getAccess_token());
+		params.put("pageIndex", page);
+		params.put("pageSize", Config.PAGE_NUM);
+		params.put("sort", "create_time");
+		params.put("from", 0);
+		params.put("recommend", 0);
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
@@ -244,15 +246,13 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		AsyncHttpClientTool.post(getActivity(), "api/user/focus", params, responseHandler);
 	}
 
-	/** 
-	 * 类描述 ：推荐列表频道适配器
-	 * 类名： MainFindRecommendFragment.java  
-	 * Copyright:   Copyright (c)2015    
-	 * Company:     zhangshuai   
-	 * @author:     zhangshuai    
-	 * @version:    1.0    
-	 * 创建时间:    2015-8-7 上午9:55:03  
-	*/
+	/**
+	 * 类描述 ：推荐列表频道适配器 类名： MainFindRecommendFragment.java Copyright: Copyright
+	 * (c)2015 Company: zhangshuai
+	 * 
+	 * @author: zhangshuai
+	 * @version: 1.0 创建时间: 2015-8-7 上午9:55:03
+	 */
 	class ChannelAdapter extends BaseAdapter {
 
 		private class ViewHolder {
@@ -308,7 +308,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 					if (type == 0) {// 图文
 						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
 					} else if (type == 1) {
-						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+						intent = new Intent(getActivity(), ChannelTextActivity.class);
 					} else if (type == 2) {
 						intent = new Intent(getActivity(), ChannelPunchCardActivity.class);
 					}
