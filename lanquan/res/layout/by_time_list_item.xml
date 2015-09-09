@@ -51,9 +51,9 @@
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignLeft="@+id/name"
+                    android:layout_marginLeft="@dimen/day_recommend_dot_space"
                     android:layout_alignParentBottom="true"
-                    android:layout_below="@+id/name"
+                    android:layout_below="@+id/title"
                     android:gravity="bottom"
                     android:textColor="@color/font_gray"
                     android:textSize="12sp" />
@@ -92,7 +92,8 @@
             android:layout_marginRight="@dimen/personal_timecapsule_padding"
             android:paddingBottom="@dimen/new_msg"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/new_msg" >
+            android:paddingTop="@dimen/new_msg"
+            android:visibility="gone" >
 
             <ImageView
                 android:id="@+id/delete_btn"

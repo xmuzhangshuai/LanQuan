@@ -214,6 +214,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 								ToastTool.showShort(getActivity(), "没有更多了！");
 							}
 							jsonChannelList.addAll(temp);
+							mAdapter.notifyDataSetChanged();
 						}
 
 					} catch (JSONException e) {

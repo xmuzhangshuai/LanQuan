@@ -41,10 +41,8 @@ public class UserPreference {
 	 */
 	public void clear() {
 		String tel = getU_tel();
-		String token = getAccess_token();
 		editor.clear();
 		setU_tel(tel);
-		setAccess_token(token);
 		editor.commit();
 	}
 

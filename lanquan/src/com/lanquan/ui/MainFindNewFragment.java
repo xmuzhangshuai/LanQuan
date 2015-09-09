@@ -194,7 +194,6 @@ public class MainFindNewFragment extends BaseV4Fragment {
 								}
 								jsonChannelList = new LinkedList<JsonChannel>();
 								jsonChannelList.addAll(temp);
-								mAdapter.notifyDataSetChanged();
 							}
 							// 如果是获取更多
 							else if (page > 0) {
@@ -204,6 +203,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 								}
 								jsonChannelList.addAll(temp);
 							}
+							mAdapter.notifyDataSetChanged();
 						}
 
 					} catch (JSONException e) {

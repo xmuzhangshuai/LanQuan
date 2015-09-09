@@ -24,9 +24,11 @@ public class JsonMyMessage {
 	private int object_id;
 	private String content;
 	private String image_url;// 图片
+	private String nickname;
+	private String avatar;
 
-	public JsonMyMessage(int message_id, String message, int from_user_id, int to_user_id, int is_read, Date create_time, Date update_time, int object_type,
-			int object_id, String content, String image_url) {
+	public JsonMyMessage(int message_id, String message, int from_user_id, int to_user_id, int is_read, Date create_time, Date update_time, int object_type, int object_id,
+			String content, String image_url, String nickname, String avatar) {
 		super();
 		this.message_id = message_id;
 		this.message = message;
@@ -39,16 +41,18 @@ public class JsonMyMessage {
 		this.object_id = object_id;
 		this.content = content;
 		this.image_url = image_url;
+		this.nickname = nickname;
+		this.avatar = avatar;
 	}
 
 	public static JsonMyMessage getJsonMyMessage(JSONObject jsonObject) {
 		JsonMyMessage jsonMyMessage = null;
 		try {
 			jsonMyMessage = new JsonMyMessage(Integer.parseInt(jsonObject.getString("message_id")), jsonObject.getString("message"),
-					Integer.parseInt(jsonObject.getString("from_user_id")), Integer.parseInt(jsonObject.getString("to_user_id")), Integer.parseInt(jsonObject
-							.getString("is_read")), DateTimeTools.StringToDate(jsonObject.getString("create_time")), DateTimeTools.StringToDate(jsonObject
-							.getString("update_time")), Integer.parseInt(jsonObject.getString("object_type")), Integer.parseInt(jsonObject
-							.getString("object_id")), jsonObject.getString("content"), jsonObject.getString("image_url"));
+					Integer.parseInt(jsonObject.getString("from_user_id")), Integer.parseInt(jsonObject.getString("to_user_id")), Integer.parseInt(jsonObject.getString("is_read")),
+					DateTimeTools.StringToDate(jsonObject.getString("create_time")), DateTimeTools.StringToDate(jsonObject.getString("update_time")),
+					Integer.parseInt(jsonObject.getString("object_type")), Integer.parseInt(jsonObject.getString("object_id")), jsonObject.getString("content"),
+					jsonObject.getString("image_url"), jsonObject.getString("nickname"), jsonObject.getString("avatar"));
 		} catch (JSONException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -142,6 +146,22 @@ public class JsonMyMessage {
 
 	public void setImage_url(String image_url) {
 		this.image_url = image_url;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
+	}
+
+	public String getAvatar() {
+		return avatar;
+	}
+
+	public void setAvatar(String avatar) {
+		this.avatar = avatar;
 	}
 
 }
