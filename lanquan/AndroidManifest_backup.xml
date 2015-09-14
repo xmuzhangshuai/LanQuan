@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.lanquan"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="21" />
+
+    <!-- ###################声明SDK使用的相关权限###################### -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.REORDER_TASKS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.READ_LOGS" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.BAIDU_LOCATION_SERVICE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:name="com.lanquan.base.BaseApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.lanquan.ui.GuideActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- 注册或登录页面 -->
+        <activity
+            android:name="com.lanquan.ui.LoginOrRegisterActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+
+        <!-- 首次安装运行页面 -->
+        <activity
+            android:name="com.lanquan.ui.GuidePagerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+
+        <!-- 主页面 -->
+        <activity
+            android:name="com.lanquan.ui.MainActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <!-- 图文频道详情页面 -->
+        <activity
+            android:name="com.lanquan.ui.ChannelPhotoActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+        </activity>
+
+        <!-- 文字频道详情页面 -->
+        <activity
+            android:name="com.lanquan.ui.ChannelTextActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+        </activity>
+
+        <!-- 打卡频道详情页面 -->
+        <activity
+            android:name="com.lanquan.ui.ChannelPunchCardActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <!-- 选择创建频道页面 -->
+        <activity
+            android:name="com.lanquan.ui.CreatChannelChooseActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyDialogStyle" >
+        </activity>
+
+        <!-- 创建频道页面 -->
+        <activity
+            android:name="com.lanquan.ui.CreatChannelActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 频道信息页面 -->
+        <activity
+            android:name="com.lanquan.ui.ChannelInfoActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <!-- 登录页面 -->
+        <activity
+            android:name="com.lanquan.ui.LoginActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lanquan.ui.LoginOrRegisterActivity" />
+        </activity>
+
+        <!-- 注册页面 -->
+        <activity
+            android:name="com.lanquan.ui.RegisterActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.lanquan.ui.LoginOrRegisterActivity" />
+        </activity>
+
+        <!-- 忘记密码页面 -->
+        <activity
+            android:name="com.lanquan.ui.ForgetPassActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <!-- 重置密码页面 -->
+        <activity
+            android:name="com.lanquan.ui.ResetPassActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 设置页面 -->
+        <activity
+            android:name="com.lanquan.ui.SettingActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 修改资料页面 -->
+        <activity
+            android:name="com.lanquan.ui.ModifyDataActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 修改昵称页面 -->
+        <activity
+            android:name="com.lanquan.ui.ModifyNameActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 修改密码页面 -->
+        <activity
+            android:name="com.lanquan.ui.ModifyPassActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 修改手机页面 -->
+        <activity
+            android:name="com.lanquan.ui.ModifyPhoneActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 修改手机接收验证码页面 -->
+        <activity
+            android:name="com.lanquan.ui.ModifyPhoneAuthCodeActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 分享弹出页面 -->
+        <activity
+            android:name="com.lanquan.ui.ShareMenuActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyDialogStyle" >
+        </activity>
+
+        <!-- 评论弹出相片选择页面 -->
+        <activity
+            android:name="com.lanquan.ui.CommentImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MyDialogStyle" >
+        </activity>
+
+        <!-- 发表评论页面 -->
+        <activity
+            android:name="com.lanquan.ui.PublishCommentActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustUnspecified|stateHidden" >
+        </activity>
+
+        <!-- 二维码扫描页面 -->
+        <activity
+            android:name="com.lanquan.ui.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+        </activity>
+
+        <!-- 我的二维码 -->
+        <activity
+            android:name="com.lanquan.ui.ShareQrCodeActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <!-- 显示高清图片 -->
+        <activity
+            android:name="com.lanquan.ui.ImageShowerActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" >
+        </service>
+
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="eI7hX8Ee1ZfvKv3qmGXmvGmF" />
+    </application>
+
+</manifest>

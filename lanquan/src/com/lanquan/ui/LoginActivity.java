@@ -1,6 +1,8 @@
 package com.lanquan.ui;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.http.Header;
 import org.json.JSONException;
@@ -13,13 +15,16 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.f;
 import com.lanquan.R;
@@ -33,9 +38,19 @@ import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
 import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.SIMCardInfo;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
+import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener;
+import com.umeng.socialize.exception.SocializeException;
+import com.umeng.socialize.media.UMImage;
+import com.umeng.socialize.sso.SinaSsoHandler;
+import com.umeng.socialize.sso.UMSsoHandler;
 
 /**
  * 类名称：LoginActivity 
@@ -55,9 +70,12 @@ public class LoginActivity extends BaseActivity {
 	private UserPreference userPreference;
 	private TextView forgetPassword;// 忘记密码
 	private TextView registNow;// 立即注册
+	private ImageView login_wechat;//微信第三方登录
+	private ImageView login_qq;//qq第三方登录
+	private ImageView login_weibo;//微薄第三方登录
 	private Button loginButton;// 登录
 	View focusView = null;
-
+	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.login");
 	// List<JsonUser> jsonUsers;
 
 	@Override
@@ -66,6 +84,7 @@ public class LoginActivity extends BaseActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_login);
 		userPreference = BaseApplication.getInstance().getUserPreference();
+
 		findViewById();
 		initView();
 
@@ -82,6 +101,9 @@ public class LoginActivity extends BaseActivity {
 		forgetPassword = (TextView) findViewById(R.id.forget_password);
 		loginButton = (Button) findViewById(R.id.login);
 		registNow = (TextView) findViewById(R.id.register);
+		login_wechat = (ImageView) findViewById(R.id.loginwechat);
+		login_qq = (ImageView) findViewById(R.id.loginqq);
+		login_weibo = (ImageView) findViewById(R.id.loginweibo);
 	}
 
 	@Override
@@ -131,6 +153,63 @@ public class LoginActivity extends BaseActivity {
 				Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
 				startActivity(intent);
 				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+			}
+		});
+		login_wechat.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ToastTool.showShort(getApplicationContext(), "微信第三方登录");
+				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.WEIXIN,new UMAuthListener() {
+		            @Override
+		            public void onError(SocializeException e, SHARE_MEDIA platform) {
+		            }
+		            @Override
+		            public void onComplete(Bundle value, SHARE_MEDIA platform) {
+		                if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
+		                    Toast.makeText(LoginActivity.this, "授权成功.",                      Toast.LENGTH_SHORT).show();
+		                } else {
+		                    Toast.makeText(LoginActivity.this, "授权失败",                       Toast.LENGTH_SHORT).show();
+		                }
+		            }
+		            @Override
+		            public void onCancel(SHARE_MEDIA platform) {}
+		            @Override
+		            public void onStart(SHARE_MEDIA platform) {}
+		});
+			}
+		});
+		login_qq.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ToastTool.showShort(getApplicationContext(), "qq第三方登录");
+			}
+		});
+		login_weibo.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ToastTool.showShort(getApplicationContext(), "微博第三方登录");
+				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.SINA, new UMAuthListener() {
+					@Override
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
+							Toast.makeText(LoginActivity.this, "授权成功."+value.getString("uid"), Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(LoginActivity.this, "授权失败", Toast.LENGTH_SHORT).show();
+						}
+					}
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+					}
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
+					}
+					@Override
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
+					}
+				});
 			}
 		});
 	}
@@ -242,6 +321,60 @@ public class LoginActivity extends BaseActivity {
 			}
 		};
 		AsyncHttpClientTool.post("api/user/login", params, responseHandler);
+	}
+
+	// 第三方登录
+	private void other_login(String source, String source_id, String avatar) {
+
+		RequestParams params = new RequestParams();
+		params.put("source", source);
+		params.put("source_id", source_id);
+		params.put("avatar", avatar);
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				showProgress(true);
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i(statusCode + "===" + response);
+				try {
+					JsonTool jsonTool = new JsonTool(response);
+					JSONObject jsonObject = jsonTool.getJsonObject();
+
+					String status = jsonTool.getStatus();
+					String message = jsonTool.getMessage();
+					if (status.equals("success")) {
+						jsonTool.saveAccess_token();
+						// 登录成功后获取用户信息
+						getUserInfo(jsonObject.getString("user_id"));
+						LogTool.i(message);
+					} else {
+						showProgress(false);
+						LogTool.e(message);
+						mPasswordView.setError(message);
+						focusView = mPasswordView;
+						focusView.requestFocus();
+					}
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("服务器错误" + errorResponse);
+				showProgress(false);
+			}
+		};
+		AsyncHttpClientTool.post("/api/user/thirdparty", params, responseHandler);
 	}
 
 	// 获取某个用户信息
