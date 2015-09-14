@@ -144,6 +144,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		return rootView;
 	}
 
+	
 	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
