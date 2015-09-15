@@ -110,7 +110,16 @@ public class Constants {
 		public final static String API_KEY = "bcB8dCkZh0GVtMTdpyTTabj3";
 		public final static String SECRIT_KEY = "y75ge4lbEEGth1nwbTveiGr7yHARKnm2";
 	}
+	
+	public static class WeChatConfig{
+		public final static String API_KEY = "wx33f81b034c7f3e04";
+		public final static String SECRIT_KEY = "b003237ea4d4d1df9089c97feef5ff76";
+	}
 
+	public static class QQConfig{
+		public final static String API_KEY = "1104862406";
+		public final static String SECRIT_KEY = "VHSnIwPNZJcnMqj7";
+	}
 	public static class Extra {
 		public static final String IMAGES = "com.nostra13.example.universalimageloader.IMAGES";
 		public static final String IMAGE_POSITION = "com.nostra13.example.universalimageloader.IMAGE_POSITION";

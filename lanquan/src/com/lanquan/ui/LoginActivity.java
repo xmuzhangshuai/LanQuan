@@ -30,6 +30,8 @@ import com.baidu.location.f;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
+import com.lanquan.config.Constants.QQConfig;
+import com.lanquan.config.Constants.WeChatConfig;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
@@ -90,11 +92,11 @@ public class LoginActivity extends BaseActivity {
 		findViewById();
 
 		// 添加微信平台
-		UMWXHandler wxHandler = new UMWXHandler(LoginActivity.this, "wx33f81b034c7f3e04", "b003237ea4d4d1df9089c97feef5ff76");
+		UMWXHandler wxHandler = new UMWXHandler(LoginActivity.this, WeChatConfig.API_KEY, WeChatConfig.SECRIT_KEY);
 		wxHandler.addToSocialSDK();
 		//qq平台
 		//参数1为当前Activity， 参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
-		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(LoginActivity.this, "1104862406", "VHSnIwPNZJcnMqj7");
+		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(LoginActivity.this, QQConfig.API_KEY, QQConfig.SECRIT_KEY);
 		qqSsoHandler.addToSocialSDK();
 
 		initView();
