@@ -50,7 +50,9 @@ import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener
 import com.umeng.socialize.exception.SocializeException;
 import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.sso.SinaSsoHandler;
+import com.umeng.socialize.sso.UMQQSsoHandler;
 import com.umeng.socialize.sso.UMSsoHandler;
+import com.umeng.socialize.weixin.controller.UMWXHandler;
 
 /**
  * 类名称：LoginActivity 
@@ -86,8 +88,16 @@ public class LoginActivity extends BaseActivity {
 		userPreference = BaseApplication.getInstance().getUserPreference();
 
 		findViewById();
-		initView();
 
+		// 添加微信平台
+		UMWXHandler wxHandler = new UMWXHandler(LoginActivity.this, "wx33f81b034c7f3e04", "b003237ea4d4d1df9089c97feef5ff76");
+		wxHandler.addToSocialSDK();
+		//qq平台
+		//参数1为当前Activity， 参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
+		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(LoginActivity.this, "1104862406", "VHSnIwPNZJcnMqj7");
+		qqSsoHandler.addToSocialSDK();
+
+		initView();
 	}
 
 	@Override
@@ -110,6 +120,7 @@ public class LoginActivity extends BaseActivity {
 	protected void initView() {
 		// TODO Auto-generated method stub
 		String loginedPhone = userPreference.getU_tel();
+
 		if (!TextUtils.isEmpty(loginedPhone)) {
 			mPhoneView.setText(loginedPhone);
 		} else {
@@ -159,31 +170,98 @@ public class LoginActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				ToastTool.showShort(getApplicationContext(), "微信第三方登录");
-				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.WEIXIN,new UMAuthListener() {
-		            @Override
-		            public void onError(SocializeException e, SHARE_MEDIA platform) {
-		            }
-		            @Override
-		            public void onComplete(Bundle value, SHARE_MEDIA platform) {
-		                if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
-		                    Toast.makeText(LoginActivity.this, "授权成功.",                      Toast.LENGTH_SHORT).show();
-		                } else {
-		                    Toast.makeText(LoginActivity.this, "授权失败",                       Toast.LENGTH_SHORT).show();
-		                }
-		            }
-		            @Override
-		            public void onCancel(SHARE_MEDIA platform) {}
-		            @Override
-		            public void onStart(SHARE_MEDIA platform) {}
-		});
+				ToastTool.showShort(LoginActivity.this, "微信第三方登录");
+				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.WEIXIN, new UMAuthListener() {
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+						//获取相关授权信息
+						mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.WEIXIN, new UMDataListener() {
+							@Override
+							public void onStart() {
+								Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+							}
+
+							@Override
+							public void onComplete(int status, Map<String, Object> info) {
+								if (status == 200 && info != null) {
+									StringBuilder sb = new StringBuilder();
+									Set<String> keys = info.keySet();
+									for (String key : keys) {
+										sb.append(key + "=" + info.get(key).toString() + "\r\n");
+									}
+									Log.d("TestData", sb.toString());
+								} else {
+									Log.d("TestData", "发生错误：" + status);
+								}
+							}
+						});
+					}
+
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
+					}
+				});
 			}
 		});
 		login_qq.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				ToastTool.showShort(getApplicationContext(), "qq第三方登录");
+				ToastTool.showShort(LoginActivity.this, "qq第三方登录");
+				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.QQ, new UMAuthListener() {
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+						//获取相关授权信息
+						mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.QQ, new UMDataListener() {
+							@Override
+							public void onStart() {
+								Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+							}
+
+							@Override
+							public void onComplete(int status, Map<String, Object> info) {
+								if (status == 200 && info != null) {
+									StringBuilder sb = new StringBuilder();
+									Set<String> keys = info.keySet();
+									for (String key : keys) {
+										sb.append(key + "=" + info.get(key).toString() + "\r\n");
+									}
+									Log.d("TestData", sb.toString());
+								} else {
+									Log.d("TestData", "发生错误：" + status);
+								}
+							}
+						});
+					}
+
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+						Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
+					}
+				});
 			}
 		});
 		login_weibo.setOnClickListener(new OnClickListener() {
@@ -195,17 +273,20 @@ public class LoginActivity extends BaseActivity {
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
 						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
-							Toast.makeText(LoginActivity.this, "授权成功."+value.getString("uid"), Toast.LENGTH_SHORT).show();
+							Toast.makeText(LoginActivity.this, "授权成功." + value.getString("uid"), Toast.LENGTH_SHORT).show();
 						} else {
 							Toast.makeText(LoginActivity.this, "授权失败", Toast.LENGTH_SHORT).show();
 						}
 					}
+
 					@Override
 					public void onCancel(SHARE_MEDIA platform) {
 					}
+
 					@Override
 					public void onStart(SHARE_MEDIA platform) {
 					}
+
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
 					}
