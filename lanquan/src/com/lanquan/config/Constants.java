@@ -116,6 +116,11 @@ public class Constants {
 		public final static String SECRIT_KEY = "b003237ea4d4d1df9089c97feef5ff76";
 	}
 
+	public static class WeiboConfig{
+		public final static String API_KEY = "4169059323";
+		public final static String SECRIT_KEY = "9825238066521372a2f776fa08b651e2";
+	} 
+	
 	public static class QQConfig{
 		public final static String API_KEY = "1104862406";
 		public final static String SECRIT_KEY = "VHSnIwPNZJcnMqj7";

@@ -229,7 +229,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	public void uploadImage(final String imageUrl) {
 		String tempPath = Environment.getExternalStorageDirectory() + "/lanquan/image";
 		String photoName = "temp" + ".jpg";
-		File file = ImageTools.compressForFile(tempPath, photoName, imageUrl, 400);
+		File file = ImageTools.compressBySizeAndQuality(tempPath, photoName, imageUrl, 400);
 		dialog = showProgressDialog("正在发布...");
 		dialog.setCancelable(false);
 

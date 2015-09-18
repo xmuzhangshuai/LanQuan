@@ -69,7 +69,7 @@ public final class EncodingHandler {
 
 		try {
 			Bitmap src;
-			src = createQRCode(qrcode, 650);
+			src = createQRCode(qrcode, 500);
 			
 			int _top = top.getHeight();
 			int _top_content = top.getHeight() + content.getHeight();
@@ -97,7 +97,7 @@ public final class EncodingHandler {
 
 			// 二維碼
 			int w_src = src.getWidth();
-			canvas.drawBitmap(src, width / 2 - w_src / 2, _top_content_middle_bluecontent - 50, null);
+			canvas.drawBitmap(src, width / 2 - w_src / 2, _top_content_middle_bluecontent - 80, null);
 
 			// 頻道名稱
 			TextPaint textPaint = new TextPaint();
@@ -115,7 +115,7 @@ public final class EncodingHandler {
 			// "如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?";
 			StaticLayout layout = new StaticLayout(channelInfo, textPaint, width - 150, Alignment.ALIGN_NORMAL, 1.0f,
 					0.0f, true);
-			canvas.translate(100, top.getHeight() + content.getHeight() + middle.getHeight() + 50);
+			canvas.translate(100, top.getHeight() + content.getHeight() + middle.getHeight() + 20);
 			layout.draw(canvas);
 
 			canvas.save(Canvas.ALL_SAVE_FLAG);
