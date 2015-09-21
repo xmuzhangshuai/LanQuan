@@ -298,11 +298,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			authCodeView.setError("验证码长度为6位");
 			focusView = authCodeView;
 			cancel = true;
-		} else if (!vertifyAuthCode(mAuthcode, responseAuthcode)) {
-			authCodeView.setError("验证码不正确");
-			focusView = authCodeView;
-			cancel = true;
-		}
+		} 
 
 		if (cancel) {
 			// 如果错误，则提示错误
@@ -340,14 +336,14 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
+				LogTool.i("短信验证码=="+status+response);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
 					jsonTool.saveAccess_token();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());
 				}
-
-				responseAuthcode = "123456";
+//				responseAuthcode = "123456";
 			}
 
 			@Override
@@ -364,7 +360,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					LogTool.e(jsonTool.getMessage());
 				}
 
-				responseAuthcode = "123456";
+//				responseAuthcode = "123456";
 			}
 
 			@Override
@@ -453,21 +449,21 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		}
 	};
 
-	/**
-	 * 验证验证码
-	 * @return
-	 */
-	private boolean vertifyAuthCode(String myAuthCode, String response) {
-		if (!TextUtils.isEmpty(response)) {
-			if (response.equals(myAuthCode)) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
+//	/**
+//	 * 验证验证码
+//	 * @return
+//	 */
+//	private boolean vertifyAuthCode(String myAuthCode, String response) {
+//		if (!TextUtils.isEmpty(response)) {
+//			if (response.equals(myAuthCode)) {
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		} else {
+//			return false;
+//		}
+//	}
 
 	/**
 	 * 匹配短信中间的6个数字（验证码等）

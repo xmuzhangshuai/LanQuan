@@ -8,6 +8,7 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.R.bool;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -407,7 +408,15 @@ public class LoginActivity extends BaseActivity {
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
+				boolean cancel = false;
 				LogTool.e("服务器错误" + errorResponse);
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				if(jsonTool.getStatus().equals("fail")){
+					mPhoneView.setError(jsonTool.getMessage());
+					focusView = mPhoneView;
+					cancel = true;
+				}
+				if(cancel)focusView.requestFocus();
 				showProgress(false);
 			}
 		};
