@@ -34,6 +34,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 	private View choosePhoto;
 	private String photoUri;// 图片地址
 	private int channel_id;
+	private String commentcontent;
 	private List<String> recentImages;
 	private View imageContainer;
 	private ImageView[] recentImageViews = new ImageView[10];
@@ -46,6 +47,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 		recentImages = new ArrayList<String>();
 		getRecentPhotos();
 		channel_id = getIntent().getIntExtra("channel_id", -1);
+		commentcontent = getIntent().getStringExtra("commentcontent");
 		findViewById();
 		initView();
 	}
@@ -90,6 +92,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 								Intent intent = new Intent(CommentImageActivity.this, PublishCommentActivity.class);
 								intent.putExtra("path", path);
 								intent.putExtra("channel_id", channel_id);
+								intent.putExtra("commentcontent", commentcontent);
 								startActivity(intent);
 								finish();
 							}

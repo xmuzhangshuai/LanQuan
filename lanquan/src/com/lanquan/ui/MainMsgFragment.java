@@ -151,6 +151,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 
 				try {
+					LogTool.i("个人中心消息模块"+response);
 					JSONObject jsonObject = new JSONObject(response);
 					String status = jsonObject.getString("status");
 					unread_count = jsonObject.getInt("unread_count");
@@ -357,9 +358,8 @@ public class MainMsgFragment extends BaseV4Fragment {
 
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
-					// goToDetail(jsonMyMessage.getType(),
-					// jsonMyMessage.getPa_id(), jsonMyMessage.getUserid());
+					 goToDetail(jsonMyMessage.getObject_type(),
+					 jsonMyMessage.getObject_id(), jsonMyMessage.getTo_user_id());
 				}
 			});
 

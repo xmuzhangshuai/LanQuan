@@ -153,6 +153,17 @@ public class UserPreference {
 		}
 	}
 
+	//验证码
+	// access_token
+		public String getAuthCode() {
+			return sp.getString(UserTable.U_VERIFY_CODE, "123456");
+		}
+
+		public void setAuthCode(String authcode) {
+			editor.putString(UserTable.U_VERIFY_CODE, authcode);
+			editor.commit();
+		}
+	
 	// 性别
 	// public String getU_gender() {
 	// return sp.getString(UserTable.U_GENDER, "");

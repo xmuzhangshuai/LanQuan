@@ -22,29 +22,29 @@
             android:src="@drawable/icon_close" />
 
         <ImageView
-            android:id="@+id/photo_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/txt_btn"
+            android:layout_width="90dp"
+            android:layout_height="115dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="80dp"
-            android:layout_marginTop="200dp"
-            android:src="@drawable/sel_channel_creat_photo" />
-
-        <ImageView
-            android:id="@+id/txt_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="80dp"
             android:layout_marginTop="200dp"
             android:src="@drawable/sel_channel_creat_txt" />
 
         <ImageView
+            android:id="@+id/photo_btn"
+            android:layout_width="90dp"
+            android:layout_height="115dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="80dp"
+            android:layout_marginTop="200dp"
+            android:src="@drawable/sel_channel_creat_photo" />
+
+        <ImageView
             android:id="@+id/punch_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignLeft="@+id/photo_btn"
-            android:layout_below="@+id/photo_btn"
+            android:layout_width="90dp"
+            android:layout_height="115dp"
+            android:layout_alignLeft="@+id/txt_btn"
+            android:layout_below="@+id/txt_btn"
             android:layout_marginTop="50dp"
             android:src="@drawable/sel_channel_creat_punch" />
     </RelativeLayout>

@@ -19,9 +19,11 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -30,6 +32,7 @@ import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.config.DefaultKeys;
+import com.lanquan.config.Constants.WeChatConfig;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
@@ -43,6 +46,19 @@ import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.bean.SocializeEntity;
+import com.umeng.socialize.bean.StatusCode;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.listener.SocializeListeners.SnsPostListener;
+import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
+import com.umeng.socialize.exception.SocializeException;
+import com.umeng.socialize.sso.SinaSsoHandler;
+import com.umeng.socialize.utils.OauthHelper;
+import com.umeng.socialize.weixin.controller.UMWXHandler;
+import com.umeng.socialize.weixin.media.CircleShareContent;
+import com.umeng.socialize.weixin.media.WeiXinShareContent;
 
 /** 
  * 类描述 ：发布评论
@@ -69,10 +85,17 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	private String latitude;
 	private String longtitude;
 	private int channel_id;
+	private String commentcontent;
+
+	private CheckBox wechat;
+	private CheckBox wechatcircle;
+	private CheckBox weibo;
 
 	/**************用户变量**************/
 	public static final int NUM = 200;
 	Dialog dialog;
+	// 首先在您的Activity中添加如下成员变量
+	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share");
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -86,9 +109,18 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		mLocationClient.registerLocationListener(myListener);
 
 		channel_id = getIntent().getIntExtra("channel_id", -1);
+		commentcontent = getIntent().getStringExtra("commentcontent");
 
 		findViewById();
 		initView();
+
+		// 添加微信平台
+		UMWXHandler wxHandler = new UMWXHandler(PublishCommentActivity.this, WeChatConfig.API_KEY, WeChatConfig.SECRIT_KEY);
+		wxHandler.addToSocialSDK();
+		// 添加微信朋友圈
+		UMWXHandler wxCircleHandler = new UMWXHandler(PublishCommentActivity.this, WeChatConfig.API_KEY, WeChatConfig.SECRIT_KEY);
+		wxCircleHandler.setToCircle(true);
+		wxCircleHandler.addToSocialSDK();
 	}
 
 	@Override
@@ -99,11 +131,16 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		publishBtn = findViewById(R.id.right_btn_bg);
 		backBtn = findViewById(R.id.left_btn_bg);
 		textCountTextView = (TextView) findViewById(R.id.count);
+
+		wechat = (CheckBox) findViewById(R.id.weinxin);
+		wechatcircle = (CheckBox) findViewById(R.id.pengyouquan);
+		weibo = (CheckBox) findViewById(R.id.weibo);
 	}
 
 	@Override
 	protected void initView() {
 		// TODO Auto-generated method stub
+
 		publishBtn.setOnClickListener(this);
 		backBtn.setOnClickListener(this);
 
@@ -134,6 +171,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				//				NUM = (int) (NUM - publishEditeEditText.getTextSize());
 			}
 
 			@Override
@@ -150,6 +188,9 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				}
 			}
 		});
+
+		//给评论内容赋值
+		publishEditeEditText.setText(commentcontent);
 	}
 
 	@Override
@@ -219,6 +260,8 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	private void publish() {
 		if (channel_id > 0) {
 			uploadImage(imagePath);
+			//发布后分享
+			sharecomment();
 		}
 	}
 
@@ -330,6 +373,123 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		};
 		AsyncHttpClientTool.post("api/article/create", params, responseHandler);
 
+	}
+
+	/**
+	 * 发布评论后分享
+	 * @param 
+	 */
+
+	public void sharecomment() {
+		if (wechat.isChecked()) {
+			//设置微信好友分享内容
+			WeiXinShareContent weixinContent = new WeiXinShareContent();
+			//设置分享文字
+			weixinContent.setShareContent("篮圈——频道分享");
+			//设置title
+			weixinContent.setTitle("频道分享");
+			//设置分享内容跳转URL
+			weixinContent.setTargetUrl("www.baidu.com");
+			//设置分享图片
+			//			weixinContent.setShareImage(new UMImage(PublishCommentActivity.this, shareImageFile));
+			mController.setShareMedia(weixinContent);
+			//直接分享
+			mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.WEIXIN, new SnsPostListener() {
+				@Override
+				public void onStart() {
+					Toast.makeText(PublishCommentActivity.this, "发送开始", Toast.LENGTH_SHORT).show();
+				}
+
+				@Override
+				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
+					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
+						Toast.makeText(PublishCommentActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(PublishCommentActivity.this, "发送失败", Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
+		}
+		if (wechatcircle.isChecked()) {
+			//设置微信朋友圈分享内容
+			CircleShareContent circleMedia = new CircleShareContent();
+			circleMedia.setShareContent("篮圈——频道分享");
+			//设置朋友圈title
+			//			circleMedia.setShareImage(new UMImage(PublishCommentActivity.this, shareImageFile));
+			//设置分享内容跳转URL
+			circleMedia.setTargetUrl("http://www.baidu.com");
+			mController.setShareMedia(circleMedia);
+
+			//直接分享
+			mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.WEIXIN_CIRCLE, new SnsPostListener() {
+				@Override
+				public void onStart() {
+					Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
+				}
+
+				@Override
+				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
+					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
+						Toast.makeText(PublishCommentActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(PublishCommentActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
+
+		}
+		if (weibo.isChecked()) {
+			//设置新浪SSO handler
+			mController.getConfig().setSsoHandler(new SinaSsoHandler());
+			//确保未授权
+			if (!OauthHelper.isAuthenticated(PublishCommentActivity.this, SHARE_MEDIA.SINA)) {
+				mController.doOauthVerify(PublishCommentActivity.this, SHARE_MEDIA.SINA, new UMAuthListener() {
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
+						Toast.makeText(PublishCommentActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
+						Toast.makeText(PublishCommentActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						Toast.makeText(PublishCommentActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+						//获取相关授权信息或者跳转到自定义的分享编辑页面
+						String uid = value.getString("uid");
+						LogTool.i("uid" + uid);
+					}
+
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+						Toast.makeText(PublishCommentActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+
+			//设置分享内容
+			//			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+			//设置分享图片
+			//			mController.setShareMedia(new UMImage(PublishCommentActivity.this, shareImageFile));
+			//直接分享
+			mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
+				@Override
+				public void onStart() {
+					Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
+				}
+
+				@Override
+				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
+					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
+						Toast.makeText(PublishCommentActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(PublishCommentActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
+		}
 	}
 
 	@Override

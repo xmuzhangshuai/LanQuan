@@ -8,7 +8,6 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.R.bool;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -27,7 +26,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.location.f;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
@@ -52,10 +50,7 @@ import com.umeng.socialize.controller.UMSocialService;
 import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
 import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener;
 import com.umeng.socialize.exception.SocializeException;
-import com.umeng.socialize.media.UMImage;
-import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.UMQQSsoHandler;
-import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 
 /**
@@ -92,6 +87,7 @@ public class LoginActivity extends BaseActivity {
 		userPreference = BaseApplication.getInstance().getUserPreference();
 
 		findViewById();
+		initView();
 
 		// 添加微信平台
 		UMWXHandler wxHandler = new UMWXHandler(LoginActivity.this, WeChatConfig.API_KEY, WeChatConfig.SECRIT_KEY);
@@ -101,7 +97,6 @@ public class LoginActivity extends BaseActivity {
 		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(LoginActivity.this, QQConfig.API_KEY, QQConfig.SECRIT_KEY);
 		qqSsoHandler.addToSocialSDK();
 
-		initView();
 	}
 
 	@Override
@@ -279,27 +274,48 @@ public class LoginActivity extends BaseActivity {
 			@Override
 			public void onClick(View v) {
 				ToastTool.showShort(getApplicationContext(), "微博第三方登录");
-				mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.SINA, new UMDataListener() {
+				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.SINA, new UMAuthListener() {
 					@Override
-					public void onStart() {
-						Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
 					}
 
 					@Override
-					public void onComplete(int status, Map<String, Object> info) {
-						if (status == 200 && info != null) {
-							StringBuilder sb = new StringBuilder();
-							Set<String> keys = info.keySet();
-							for (String key : keys) {
-								sb.append(key + "=" + info.get(key).toString() + "\r\n");
-							}
-							//如果第三方登录成功，获取avatar以及appid直接登录
-							String avatar = info.get("profile_image_url").toString();
-							other_login("weibo", WeiboConfig.API_KEY, avatar);
-							Log.d("TestData", sb.toString());
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
+							Toast.makeText(LoginActivity.this, "授权成功.", Toast.LENGTH_SHORT).show();
+							mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.SINA, new UMDataListener() {
+							    @Override
+							    public void onStart() {
+							        Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+							    }                                              
+							    @Override
+							        public void onComplete(int status, Map<String, Object> info) {
+							            if(status == 200 && info != null){
+							                StringBuilder sb = new StringBuilder();
+							                Set<String> keys = info.keySet();
+							                for(String key : keys){
+							                   sb.append(key+"="+info.get(key).toString()+"\r\n");
+							                }
+							              //如果第三方登录成功，获取avatar以及appid直接登录
+											String avatar = info.get("profile_image_url").toString();
+											other_login("weibo", WeiboConfig.API_KEY, avatar);
+							                Log.d("TestData",sb.toString());
+							            }else{
+							               Log.d("TestData","发生错误："+status);
+							           }
+							        }
+							});
 						} else {
-							Log.d("TestData", "发生错误：" + status);
+							Toast.makeText(LoginActivity.this, "授权失败", Toast.LENGTH_SHORT).show();
 						}
+					}
+
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+					}
+
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
 					}
 				});
 			}
@@ -411,12 +427,13 @@ public class LoginActivity extends BaseActivity {
 				boolean cancel = false;
 				LogTool.e("服务器错误" + errorResponse);
 				JsonTool jsonTool = new JsonTool(errorResponse);
-				if(jsonTool.getStatus().equals("fail")){
+				if (jsonTool.getStatus().equals("fail")) {
 					mPhoneView.setError(jsonTool.getMessage());
 					focusView = mPhoneView;
 					cancel = true;
 				}
-				if(cancel)focusView.requestFocus();
+				if (cancel)
+					focusView.requestFocus();
 				showProgress(false);
 			}
 		};
@@ -470,7 +487,7 @@ public class LoginActivity extends BaseActivity {
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
-				LogTool.e("服务器错误" + errorResponse);
+				LogTool.e("服务器错误aaa" + errorResponse);
 				showProgress(false);
 			}
 		};
@@ -559,6 +576,7 @@ public class LoginActivity extends BaseActivity {
 			userPreference.printUserInfo();
 			startActivity(new Intent(LoginActivity.this, MainActivity.class));
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+			LoginActivity.this.finish();
 
 		} catch (JSONException e) {
 			e.printStackTrace();

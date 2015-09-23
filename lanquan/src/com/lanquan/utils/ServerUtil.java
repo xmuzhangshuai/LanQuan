@@ -14,6 +14,7 @@ import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.table.UserTable;
 import com.lanquan.ui.LoginActivity;
+import com.lanquan.ui.LoginOrRegisterActivity;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 
@@ -51,67 +52,76 @@ public class ServerUtil {
 	 * 用户登录
 	 */
 	public <T> void login(final Context context, final Class<T> cls) {
-		String mPhone = userPreference.getU_tel();
-		final String mPassword = userPreference.getU_password();
-		RequestParams params = new RequestParams();
-		params.put(UserTable.U_TEL, mPhone);
-		params.put(UserTable.U_PASSWORD, mPassword);
-
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				LogTool.i(statusCode + "===" + response);
-				try {
-					JsonTool jsonTool = new JsonTool(response);
-					JSONObject jsonObject = jsonTool.getJsonObject();
-
-					String status = jsonTool.getStatus();
-					String message = jsonTool.getMessage();
-					if (status.equals("success")) {
-						jsonTool.saveAccess_token();
-						// 登录成功后获取用户信息
-						getUserInfo(jsonObject.getString("user_id"), context, cls);
-						LogTool.i(message);
-					} else if (status.equals("fail")) {
-						Intent intent = new Intent(context, LoginActivity.class);
-						context.startActivity(intent);
-						((Activity) context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-						((Activity) context).finish();
-						LogTool.e(message);
-					} else {
-						LogTool.e(message);
-					}
-
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("服务器错误" + errorResponse);
-				Intent intent = new Intent(context, LoginActivity.class);
-				context.startActivity(intent);
-				((Activity) context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-				((Activity) context).finish();
-			}
-		};
-
-		if (NetworkUtils.isNetworkAvailable(context)) {
-			AsyncHttpClientTool.post("api/user/login", params, responseHandler);
-		} else {
-			Intent intent = new Intent(context, cls);
+		if(userPreference.getU_id()==-1){
+			Intent intent = new Intent(context, LoginOrRegisterActivity.class);
 			context.startActivity(intent);
 			((Activity) context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			((Activity) context).finish();
 		}
+		else {
+			getUserInfo(userPreference.getU_id()+"", context, cls);
+		}
+//		String mPhone = userPreference.getU_tel();
+//		final String mPassword = userPreference.getU_password();
+//		RequestParams params = new RequestParams();
+//		params.put(UserTable.U_TEL, mPhone);
+//		params.put(UserTable.U_PASSWORD, mPassword);
+//
+//		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+//
+//			@Override
+//			public void onSuccess(int statusCode, Header[] headers, String response) {
+//				// TODO Auto-generated method stub
+//				LogTool.i(statusCode + "===" + response);
+//				try {
+//					JsonTool jsonTool = new JsonTool(response);
+//					JSONObject jsonObject = jsonTool.getJsonObject();
+//
+//					String status = jsonTool.getStatus();
+//					String message = jsonTool.getMessage();
+//					if (status.equals("success")) {
+//						jsonTool.saveAccess_token();
+//						// 登录成功后获取用户信息
+//						getUserInfo(jsonObject.getString("user_id"), context, cls);
+//						LogTool.i(message);
+//					} else if (status.equals("fail")) {
+//						Intent intent = new Intent(context, LoginActivity.class);
+//						context.startActivity(intent);
+//						((Activity) context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//						((Activity) context).finish();
+//						LogTool.e(message);
+//					} else {
+//						LogTool.e(message);
+//					}
+//
+//				} catch (JSONException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//
+//			@Override
+//			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+//				// TODO Auto-generated method stub
+//				LogTool.e("服务器错误" + errorResponse);
+//				Intent intent = new Intent(context, LoginActivity.class);
+//				context.startActivity(intent);
+//				((Activity) context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//				((Activity) context).finish();
+//			}
+//		};
+//
+//		if (NetworkUtils.isNetworkAvailable(context)) {
+//			AsyncHttpClientTool.post("api/user/login", params, responseHandler);
+//		} else {
+//			Intent intent = new Intent(context, cls);
+//			context.startActivity(intent);
+//			((Activity) context).overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+//			((Activity) context).finish();
+//		}
 	}
 
 	// 获取某个用户信息
-	private <T> void getUserInfo(String userid, final Context context, final Class<T> cls) {
+	public <T> void getUserInfo(String userid, final Context context, final Class<T> cls) {
 
 		RequestParams params = new RequestParams();
 		params.put(UserTable.U_ID, userid);

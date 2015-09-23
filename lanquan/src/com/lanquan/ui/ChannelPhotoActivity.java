@@ -319,7 +319,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			comment(commentEditText.getText().toString());
 			break;
 		case R.id.add_image:
-			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()));
+			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id())
+					.putExtra("commentcontent", commentEditText.getText().toString()));
 			break;
 		default:
 			break;

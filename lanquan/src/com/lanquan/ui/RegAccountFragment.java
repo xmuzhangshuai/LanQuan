@@ -199,7 +199,7 @@ public class RegAccountFragment extends BaseV4Fragment {
 		String phone = userPreference.getU_tel();
 		String nickName = userPreference.getU_nickname();
 		String avatar = userPreference.getU_avatar();
-		String vertifyCode = "123456";
+		String vertifyCode = userPreference.getAuthCode();
 		String pass = userPreference.getU_password();
 
 		params.put(UserTable.U_TEL, phone);

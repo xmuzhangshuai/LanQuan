@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewDebug.FlagToString;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -144,7 +145,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		return rootView;
 	}
 
-	
 	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
@@ -219,6 +219,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 		getAuthCode();// 获取验证码
 
+		//如果可以获取到验证码，才进行计时
 		recLen = Config.AUTN_CODE_TIME;
 		authCodeButton.setEnabled(false);
 
@@ -234,6 +235,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				timeHandler.sendMessage(message);
 			}
 		}, 1000, 1000);
+
 	}
 
 	/**
@@ -298,7 +300,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			authCodeView.setError("验证码长度为6位");
 			focusView = authCodeView;
 			cancel = true;
-		} 
+		}
 
 		if (cancel) {
 			// 如果错误，则提示错误
@@ -336,31 +338,33 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
-				LogTool.i("短信验证码=="+status+response);
+				LogTool.i("短信验证码==" + status + response);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
 					jsonTool.saveAccess_token();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());
 				}
-//				responseAuthcode = "123456";
 			}
 
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
 				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
-				
-				JsonTool jsonTool = new JsonTool(errorResponse);
-				String status = jsonTool.getStatus();
-				if (status.equals(JsonTool.STATUS_SUCCESS)) {
-					LogTool.i(jsonTool.getMessage());
-					jsonTool.saveAccess_token();
-				} else if (status.equals(JsonTool.STATUS_FAIL)) {
-					LogTool.e(jsonTool.getMessage());
-				}
 
-//				responseAuthcode = "123456";
+				boolean cancel = false;
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				if (jsonTool.getStatus().equals("fail")) {
+					mPhoneView.setError(jsonTool.getMessage());
+					focusView = mPhoneView;
+					cancel = true;
+				}
+				if (cancel) {
+					focusView.requestFocus();
+					timer.cancel();
+					authCodeButton.setText("获取验证码");
+					authCodeButton.setEnabled(true);
+				}
 			}
 
 			@Override
@@ -370,7 +374,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			}
 		};
 		AsyncHttpClientTool.post("api/sms/send", params, responseHandler);
-
 	}
 
 	/**
@@ -415,6 +418,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		// AsyncHttpClientTool.post("user/getValidateCode", params,
 		// responseHandler);
 		userPreference.setU_tel(mPhone);
+		userPreference.setAuthCode(mAuthcode);
 		next();
 	}
 
@@ -449,21 +453,21 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		}
 	};
 
-//	/**
-//	 * 验证验证码
-//	 * @return
-//	 */
-//	private boolean vertifyAuthCode(String myAuthCode, String response) {
-//		if (!TextUtils.isEmpty(response)) {
-//			if (response.equals(myAuthCode)) {
-//				return true;
-//			} else {
-//				return false;
-//			}
-//		} else {
-//			return false;
-//		}
-//	}
+	//	/**
+	//	 * 验证验证码
+	//	 * @return
+	//	 */
+	//	private boolean vertifyAuthCode(String myAuthCode, String response) {
+	//		if (!TextUtils.isEmpty(response)) {
+	//			if (response.equals(myAuthCode)) {
+	//				return true;
+	//			} else {
+	//				return false;
+	//			}
+	//		} else {
+	//			return false;
+	//		}
+	//	}
 
 	/**
 	 * 匹配短信中间的6个数字（验证码等）

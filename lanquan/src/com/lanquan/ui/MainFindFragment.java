@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseV4Fragment;
+import com.lanquan.utils.LogTool;
 
 /** 
  * 类描述 ：主页面--发现页面，包括最新和推荐两个子页面
@@ -141,9 +142,11 @@ public class MainFindFragment extends BaseV4Fragment implements OnClickListener 
 
 			switch (position) {
 			case 0:
+				LogTool.e("find");
 				fragment = new MainFindRecommendFragment();
 				break;
 			case 1:
+				LogTool.e("new");
 				fragment = new MainFindNewFragment();
 				break;
 			default:

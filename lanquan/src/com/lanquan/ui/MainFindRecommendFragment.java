@@ -306,7 +306,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 				}
 			});
 
-			imageLoader.displayImage(jsonChannel.getC_big_photo(), holder.backPhotoImageView, ImageLoaderTool.getImageOptions());
+			imageLoader.displayImage(jsonChannel.getRecommend_background(), holder.backPhotoImageView, ImageLoaderTool.getImageOptions());
 			holder.titleTextView.setText(jsonChannel.getC_title());
 
 			return view;
