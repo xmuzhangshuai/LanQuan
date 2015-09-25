@@ -144,6 +144,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 		params.put("access_token", userPreference.getAccess_token());
 		params.put("pageIndex", page);
 		params.put("pageSize", Config.PAGE_NUM);
+		params.put("sort", "create_time");
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
 			@Override
@@ -366,7 +367,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 			// 设置头像
 			if (!TextUtils.isEmpty(jsonMyMessage.getAvatar())) {
 
-				imageLoader.displayImage(jsonMyMessage.getAvatar(), holder.headImageView, ImageLoaderTool.getHeadImageOptions(10));
+				imageLoader.displayImage(jsonMyMessage.getAvatar(), holder.headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 
 				if (userPreference.getU_id() != jsonMyMessage.getTo_user_id()) {
 					// 点击头像进入详情页面

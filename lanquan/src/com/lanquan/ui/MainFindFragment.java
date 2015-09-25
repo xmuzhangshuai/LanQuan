@@ -142,11 +142,9 @@ public class MainFindFragment extends BaseV4Fragment implements OnClickListener 
 
 			switch (position) {
 			case 0:
-				LogTool.e("find");
 				fragment = new MainFindRecommendFragment();
 				break;
 			case 1:
-				LogTool.e("new");
 				fragment = new MainFindNewFragment();
 				break;
 			default:

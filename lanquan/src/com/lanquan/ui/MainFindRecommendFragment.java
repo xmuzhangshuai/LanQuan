@@ -169,6 +169,9 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 
 						// 如果是首次获取数据
 						if (temp != null) {
+							
+							
+							
 							if (page == 0) {
 								if (temp.size() < Config.PAGE_NUM) {
 									pageNow = -1;
@@ -213,32 +216,6 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		};
 		AsyncHttpClientTool.post(getActivity(), "api/channel/channels", params, responseHandler);
 	}
-
-	//		JsonChannel channel1 = new JsonChannel(1, 1, "帅哥", "drawable://" + R.drawable.headimage1, "drawable://" + R.drawable.headimage1, "库里值不值MVP",
-	//				"drawable://" + R.drawable.channel1, new Date(), 23);
-	//
-	//		JsonChannel channel2 = new JsonChannel(1, 1, "啦啦", "drawable://" + R.drawable.headimage2, "drawable://" + R.drawable.headimage2, "什么装备值得买",
-	//				"drawable://" + R.drawable.channel2, new Date(), 23);
-	//
-	//		JsonChannel channel3 = new JsonChannel(1, 1, "玛丽", "drawable://" + R.drawable.headimage3, "drawable://" + R.drawable.headimage3, "如何提高篮球技术",
-	//				"drawable://" + R.drawable.channel3, new Date(), 23);
-	//
-	//		JsonChannel channel4 = new JsonChannel(1, 1, "没灭", "drawable://" + R.drawable.headimage4, "drawable://" + R.drawable.headimage4, "詹姆斯到底有多强",
-	//				"drawable://" + R.drawable.channel4, new Date(), 23);
-	//
-	//		JsonChannel channel5 = new JsonChannel(1, 1, "轩辕", "drawable://" + R.drawable.headimage5, "drawable://" + R.drawable.headimage5, "出来打球", "drawable://"
-	//				+ R.drawable.channel5, new Date(), 23);
-	//
-	//		JsonChannel channel6 = new JsonChannel(1, 1, "小泽", "drawable://" + R.drawable.headimage6, "drawable://" + R.drawable.headimage6, "投篮技术", "drawable://"
-	//				+ R.drawable.channel6, new Date(), 23);
-	//		jsonChannelList.add(channel1);
-	//		jsonChannelList.add(channel2);
-	//		jsonChannelList.add(channel3);
-	//		jsonChannelList.add(channel4);
-	//		jsonChannelList.add(channel5);
-	//		jsonChannelList.add(channel6);
-	//		// mAdapter.notifyDataSetChanged();
-	//		postListView.onRefreshComplete();
 
 	/** 
 	 * 类描述 ：推荐列表频道适配器
@@ -307,7 +284,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 			});
 
 			imageLoader.displayImage(jsonChannel.getRecommend_background(), holder.backPhotoImageView, ImageLoaderTool.getImageOptions());
-			holder.titleTextView.setText(jsonChannel.getC_title());
+			holder.titleTextView.setText(jsonChannel.getTitle());
 
 			return view;
 		}

@@ -202,6 +202,8 @@ public class MainFindNewFragment extends BaseV4Fragment {
 								jsonChannelList.addAll(temp);
 							}
 							mAdapter.notifyDataSetChanged();
+						}else {
+					        LogTool.e("temp为空");
 						}
 
 					} catch (JSONException e) {
