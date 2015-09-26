@@ -49,6 +49,50 @@
             android:paddingLeft="20dp"
             android:paddingRight="20dp" >
 
+            <TextView
+                android:id="@+id/weibo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/sel_share_weibo"
+                android:gravity="center_horizontal"
+                android:text="微博"
+                android:textColor="@color/system_main_orange" />
+
+            <TextView
+                android:id="@+id/wechat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/sel_share_wechat"
+                android:gravity="center_horizontal"
+                android:text="微信"
+                android:textColor="@color/system_main_orange" />
+
+            <TextView
+                android:id="@+id/friend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/sel_share_friend"
+                android:gravity="center_horizontal"
+                android:text="朋友圈"
+                android:textColor="@color/system_main_orange" />
+
+            <TextView
+                android:id="@+id/photo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawablePadding="5dp"
+                android:drawableTop="@drawable/sel_share_photo"
+                android:gravity="center_horizontal"
+                android:text="相册"
+                android:textColor="@color/system_main_orange" />
+            <!--
             <ImageView
                 android:id="@+id/weibo"
                 android:layout_width="0dp"
@@ -76,6 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/sel_share_photo" />
+            -->
         </LinearLayout>
     </RelativeLayout>
 

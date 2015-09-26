@@ -1,5 +1,7 @@
 package com.lanquan.ui;
 
+import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Matcher;
@@ -19,6 +21,7 @@ import android.os.Message;
 import android.support.v4.app.FragmentTransaction;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,13 +29,18 @@ import android.view.ViewDebug.FlagToString;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
 import com.lanquan.config.Constants;
 import com.lanquan.config.Constants.Config;
+import com.lanquan.config.Constants.QQConfig;
+import com.lanquan.config.Constants.WeChatConfig;
+import com.lanquan.config.Constants.WeiboConfig;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
@@ -45,6 +53,14 @@ import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
+import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener;
+import com.umeng.socialize.exception.SocializeException;
+import com.umeng.socialize.sso.UMQQSsoHandler;
+import com.umeng.socialize.weixin.controller.UMWXHandler;
 
 /** 
  * 类描述 ：注册——电话和验证码页面
@@ -65,6 +81,9 @@ public class RegPhoneFragment extends BaseV4Fragment {
 	private EditText mPhoneView;// 手机号
 	private UserPreference userPreference;
 	private TextView leftNavigation;// 步骤
+	private ImageView loginwechat;
+	private ImageView loginqq;
+	private ImageView loginweibo;
 
 	private String mPhone;
 	private String mAuthcode;
@@ -80,6 +99,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 	View focusView = null;
 
 	private String patternCoder = "(?<!\\d)\\d{6}(?!\\d)";
+	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.login");
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -141,7 +161,13 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 		findViewById();// 初始化views
 		initView();
-
+		// 添加微信平台
+		UMWXHandler wxHandler = new UMWXHandler(getActivity(), WeChatConfig.API_KEY, WeChatConfig.SECRIT_KEY);
+		wxHandler.addToSocialSDK();
+		//qq平台
+		//参数1为当前Activity， 参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
+		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), QQConfig.API_KEY, QQConfig.SECRIT_KEY);
+		qqSsoHandler.addToSocialSDK();
 		return rootView;
 	}
 
@@ -154,6 +180,10 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		authCodeButton = (Button) rootView.findViewById(R.id.get_authcode);
 		authCodeView = (EditText) rootView.findViewById(R.id.autncode);
 		leftNavigation = (TextView) getActivity().findViewById(R.id.nav_text);
+
+		loginwechat = (ImageView) rootView.findViewById(R.id.loginwechat);
+		loginqq = (ImageView) rootView.findViewById(R.id.loginqq);
+		loginweibo = (ImageView) rootView.findViewById(R.id.loginweibo);
 	}
 
 	@Override
@@ -189,6 +219,161 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				attemptAuthCode();
+			}
+		});
+		loginwechat.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ToastTool.showShort(getActivity(), "微信第三方登录");
+				mController.doOauthVerify(getActivity(), SHARE_MEDIA.WEIXIN, new UMAuthListener() {
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权开始", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权错误", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权完成", Toast.LENGTH_SHORT).show();
+						//获取相关授权信息
+						mController.getPlatformInfo(getActivity(), SHARE_MEDIA.WEIXIN, new UMDataListener() {
+							@Override
+							public void onStart() {
+								Toast.makeText(getActivity(), "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+							}
+
+							@Override
+							public void onComplete(int status, Map<String, Object> info) {
+								if (status == 200 && info != null) {
+									StringBuilder sb = new StringBuilder();
+									Set<String> keys = info.keySet();
+									for (String key : keys) {
+										sb.append(key + "=" + info.get(key).toString() + "\r\n");
+									}
+									String avatar = info.get("headimgurl").toString();
+									//other_login("wx", WeChatConfig.API_KEY, avatar);
+									Log.d("TestData", sb.toString());
+								} else {
+									Log.d("TestData", "发生错误：" + status);
+								}
+							}
+						});
+					}
+
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权取消", Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+		});
+		loginqq.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ToastTool.showShort(getActivity(), "qq第三方登录");
+				mController.doOauthVerify(getActivity(), SHARE_MEDIA.QQ, new UMAuthListener() {
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权开始", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权错误", Toast.LENGTH_SHORT).show();
+					}
+
+					@Override
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权完成", Toast.LENGTH_SHORT).show();
+						//获取相关授权信息
+						mController.getPlatformInfo(getActivity(), SHARE_MEDIA.QQ, new UMDataListener() {
+							@Override
+							public void onStart() {
+								Toast.makeText(getActivity(), "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+							}
+
+							@Override
+							public void onComplete(int status, Map<String, Object> info) {
+								if (status == 200 && info != null) {
+									StringBuilder sb = new StringBuilder();
+									Set<String> keys = info.keySet();
+									for (String key : keys) {
+										sb.append(key + "=" + info.get(key).toString() + "\r\n");
+									}
+									//如果第三方登录成功，获取avatar以及appid直接登录
+									String avatar = info.get("profile_image_url").toString();
+//									other_login("qq", QQConfig.API_KEY, avatar);
+
+									Log.d("TestData", sb.toString());
+								} else {
+									Log.d("TestData", "发生错误：" + status);
+								}
+							}
+						});
+					}
+
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+						Toast.makeText(getActivity(), "授权取消", Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
+		});
+		loginweibo.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				ToastTool.showShort(getActivity(), "微博第三方登录");
+				mController.doOauthVerify(getActivity(), SHARE_MEDIA.SINA, new UMAuthListener() {
+					@Override
+					public void onError(SocializeException e, SHARE_MEDIA platform) {
+					}
+
+					@Override
+					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
+							Toast.makeText(getActivity(), "授权成功.", Toast.LENGTH_SHORT).show();
+							mController.getPlatformInfo(getActivity(), SHARE_MEDIA.SINA, new UMDataListener() {
+							    @Override
+							    public void onStart() {
+							        Toast.makeText(getActivity(), "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+							    }                                              
+							    @Override
+							        public void onComplete(int status, Map<String, Object> info) {
+							            if(status == 200 && info != null){
+							                StringBuilder sb = new StringBuilder();
+							                Set<String> keys = info.keySet();
+							                for(String key : keys){
+							                   sb.append(key+"="+info.get(key).toString()+"\r\n");
+							                }
+							              //如果第三方登录成功，获取avatar以及appid直接登录
+											String avatar = info.get("profile_image_url").toString();
+//											other_login("weibo", WeiboConfig.API_KEY, avatar);
+							                Log.d("TestData",sb.toString());
+							            }else{
+							               Log.d("TestData","发生错误："+status);
+							           }
+							        }
+							});
+						} else {
+							Toast.makeText(getActivity(), "授权失败", Toast.LENGTH_SHORT).show();
+						}
+					}
+
+					@Override
+					public void onCancel(SHARE_MEDIA platform) {
+					}
+
+					@Override
+					public void onStart(SHARE_MEDIA platform) {
+					}
+				});
 			}
 		});
 

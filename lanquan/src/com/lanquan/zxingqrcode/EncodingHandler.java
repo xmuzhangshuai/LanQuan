@@ -18,6 +18,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
+import com.lanquan.utils.LogTool;
 
 /**
  * @author Ryan Tang
@@ -49,8 +50,62 @@ public final class EncodingHandler {
 	}
 
 	// 在二维码基础上继续重绘频道二维码
-	public static Bitmap createChannelCode(Bitmap top, Bitmap icon, Bitmap content, Bitmap blue_content, Bitmap middle,
-			Bitmap bottom, String channelName, String channelInfo, String qrcode) {
+	public static Bitmap createChannelCode(Bitmap qrcodebg, Bitmap icon, String channelName, String channelInfo, String qrcode) {
+
+		if (channelInfo.length() >= 50) {
+			channelInfo = channelInfo.substring(0, 50);
+			channelInfo += "...";
+		}
+
+		int width = qrcodebg.getWidth();
+		int height = qrcodebg.getHeight();
+		Bitmap src = null;
+		try {
+			src = createQRCode(qrcode, width - 150);
+		} catch (WriterException e) {
+			e.printStackTrace();
+		}
+
+		// 創建一個新的和SRC長度寬度一樣的位圖
+		Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+		Canvas canvas = new Canvas(bitmap);
+
+		// 框架
+		canvas.drawBitmap(qrcodebg, 0, 0, null);
+		// 頻道icon
+		canvas.drawBitmap(icon, (height - width) / 2 - 20, (height - width) / 2 - 20, null);
+
+		// 二維碼
+		int w_src = src.getWidth();
+		canvas.drawBitmap(src, width / 2 - w_src / 2, height - width + 150, null);
+
+		// 頻道名稱
+		TextPaint textPaint = new TextPaint();
+		textPaint.setTextSize(BaseApplication.getInstance().getResources().getDimension(R.dimen.share_title_size));
+
+		textPaint.setColor(Color.DKGRAY);
+		int w_icon = icon.getWidth();
+		int h_icon = icon.getHeight();
+		canvas.drawText(channelName, height - width, (height - width) / 2 + (h_icon - 20) / 2, textPaint);
+		// 頻道內容
+		textPaint.setColor(Color.DKGRAY);
+		textPaint.setTextSize(BaseApplication.getInstance().getResources().getDimension(R.dimen.share_content_size));
+		// String text =
+		// "如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?";
+		StaticLayout layout = new StaticLayout(channelInfo, textPaint, width - 120, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
+		canvas.translate(80, height - width + 30);
+		layout.draw(canvas);
+
+		canvas.save(Canvas.ALL_SAVE_FLAG);
+		canvas.restore();
+
+		return bitmap;
+
+	}
+
+	// 在二维码基础上继续重绘频道二维码
+	public static Bitmap createChannelCode(Bitmap top, Bitmap icon, Bitmap content, Bitmap blue_content, Bitmap middle, Bitmap bottom, String channelName, String channelInfo,
+			String qrcode) {
 
 		Matrix matrix = new Matrix();
 		matrix.postScale(1.0f, 10.0f);
@@ -64,26 +119,22 @@ public final class EncodingHandler {
 			channelInfo += "...";
 		}
 
-		blue_content = Bitmap.createBitmap(blue_content, 0, 0, blue_content.getWidth(), blue_content.getHeight(),
-				matrix, true);
+		blue_content = Bitmap.createBitmap(blue_content, 0, 0, blue_content.getWidth(), blue_content.getHeight(), matrix, true);
 
 		try {
 			Bitmap src;
 			src = createQRCode(qrcode, 500);
-			
+
 			int _top = top.getHeight();
 			int _top_content = top.getHeight() + content.getHeight();
 			int _top_content_middle = top.getHeight() + content.getHeight() + middle.getHeight();
-			int _top_content_middle_bluecontent = top.getHeight() + content.getHeight() + middle.getHeight()
-					+ blue_content.getHeight();
-			
-			int width = top.getWidth(), height = _top_content_middle_bluecontent+ bottom.getHeight();
+			int _top_content_middle_bluecontent = top.getHeight() + content.getHeight() + middle.getHeight() + blue_content.getHeight();
+
+			int width = top.getWidth(), height = _top_content_middle_bluecontent + bottom.getHeight();
 
 			// 創建一個新的和SRC長度寬度一樣的位圖
 			Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 			Canvas canvas = new Canvas(bitmap);
-
-			
 
 			// 框架
 			canvas.drawBitmap(top, 0, 0, null);
@@ -109,12 +160,10 @@ public final class EncodingHandler {
 			canvas.drawText(channelName, 70 + w_icon, 70 + h_icon / 2, textPaint);
 			// 頻道內容
 			textPaint.setColor(Color.DKGRAY);
-			textPaint
-					.setTextSize(BaseApplication.getInstance().getResources().getDimension(R.dimen.share_content_size));
+			textPaint.setTextSize(BaseApplication.getInstance().getResources().getDimension(R.dimen.share_content_size));
 			// String text =
 			// "如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?如何从一个菜鸟蜕变成一个灌篮高手呢?";
-			StaticLayout layout = new StaticLayout(channelInfo, textPaint, width - 150, Alignment.ALIGN_NORMAL, 1.0f,
-					0.0f, true);
+			StaticLayout layout = new StaticLayout(channelInfo, textPaint, width - 150, Alignment.ALIGN_NORMAL, 1.0f, 0.0f, true);
 			canvas.translate(100, top.getHeight() + content.getHeight() + middle.getHeight() + 20);
 			layout.draw(canvas);
 

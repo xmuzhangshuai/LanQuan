@@ -51,10 +51,10 @@ import android.widget.Toast;
 public class ShareQrCodeActivity extends BaseActivity implements android.view.View.OnClickListener {
 
 	private ImageView qrImageView;
-	private ImageView weiboView;
-	private ImageView wechatView;
-	private ImageView friendView;
-	private ImageView photoView;
+	private TextView weiboView;
+	private TextView wechatView;
+	private TextView friendView;
+	private TextView photoView;
 	private UserPreference userPreference;
 	Bitmap qrCodeBitmap = null;
 	private View left_btn_bg;// 导航条左边按钮
@@ -93,10 +93,10 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	protected void findViewById() {
 		// TODO Auto-generated method stub
 		qrImageView = (ImageView) findViewById(R.id.qrcode);
-		weiboView = (ImageView) findViewById(R.id.weibo);
-		wechatView = (ImageView) findViewById(R.id.wechat);
-		friendView = (ImageView) findViewById(R.id.friend);
-		photoView = (ImageView) findViewById(R.id.photo);
+		weiboView = (TextView) findViewById(R.id.weibo);
+		wechatView = (TextView) findViewById(R.id.wechat);
+		friendView = (TextView) findViewById(R.id.friend);
+		photoView = (TextView) findViewById(R.id.photo);
 		left_btn_bg = findViewById(R.id.left_btn_bg);
 		topNavText = (TextView) findViewById(R.id.nav_text);
 	}
@@ -108,18 +108,20 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		// 获取频道名称以及频道简介
 		channelTitle = getIntent().getStringExtra("channelName");
 		channelDetail = getIntent().getStringExtra("channelInfo");
-		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
+//		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
 		Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.lanquan_checked);
-		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
-		Bitmap blue_content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content_blue);
-		Bitmap middle = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_middle);
+//		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
+//		Bitmap blue_content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content_blue);
+//		Bitmap middle = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_middle);
 
-		Bitmap bottom = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_card_bleow);
+//		Bitmap bottom = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_card_bleow);
+
+		Bitmap qrcodebg = BitmapFactory.decodeResource(getResources(), R.drawable.sharebarcode);
 		// qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
-		qrCodeBitmap = EncodingHandler.createChannelCode(top, icon, content, blue_content, middle, bottom, channelTitle, channelDetail, "帅哥就是帅");
+		//		qrCodeBitmap = EncodingHandler.createChannelCode(top, icon, content, blue_content, middle, bottom, channelTitle, channelDetail, "帅哥就是帅");
+		qrCodeBitmap = EncodingHandler.createChannelCode(qrcodebg, icon, channelTitle, channelDetail, "帅哥就是帅");
 		LogTool.i("宽度" + qrCodeBitmap.getWidth() + "  高度：" + qrCodeBitmap.getHeight());
 		qrImageView.setImageBitmap(qrCodeBitmap);
-
 		//图片压缩
 		LogTool.e("压缩前的图片大小" + ImageTools.getBitmapsize(qrCodeBitmap));
 		shareImageFile = ImageTools.compressBySizeAndQuality(Environment.getExternalStorageDirectory().getAbsolutePath(), "sharecode.jpeg", qrCodeBitmap, 100);
