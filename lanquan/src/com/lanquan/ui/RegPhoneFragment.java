@@ -1,5 +1,6 @@
 package com.lanquan.ui;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
@@ -25,7 +26,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewDebug.FlagToString;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +36,6 @@ import android.widget.Toast;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
-import com.lanquan.config.Constants;
 import com.lanquan.config.Constants.Config;
 import com.lanquan.config.Constants.QQConfig;
 import com.lanquan.config.Constants.WeChatConfig;
@@ -45,9 +44,9 @@ import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.CommonTools;
+import com.lanquan.utils.DateTimeTools;
 import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
-import com.lanquan.utils.MD5For32;
 import com.lanquan.utils.SIMCardInfo;
 import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
@@ -256,7 +255,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 										sb.append(key + "=" + info.get(key).toString() + "\r\n");
 									}
 									String avatar = info.get("headimgurl").toString();
-									//other_login("wx", WeChatConfig.API_KEY, avatar);
+									other_login("wx", WeChatConfig.API_KEY, avatar);
 									Log.d("TestData", sb.toString());
 								} else {
 									Log.d("TestData", "发生错误：" + status);
@@ -308,7 +307,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									}
 									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("profile_image_url").toString();
-//									other_login("qq", QQConfig.API_KEY, avatar);
+									other_login("qq", QQConfig.API_KEY, avatar);
 
 									Log.d("TestData", sb.toString());
 								} else {
@@ -340,26 +339,27 @@ public class RegPhoneFragment extends BaseV4Fragment {
 						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
 							Toast.makeText(getActivity(), "授权成功.", Toast.LENGTH_SHORT).show();
 							mController.getPlatformInfo(getActivity(), SHARE_MEDIA.SINA, new UMDataListener() {
-							    @Override
-							    public void onStart() {
-							        Toast.makeText(getActivity(), "获取平台数据开始...", Toast.LENGTH_SHORT).show();
-							    }                                              
-							    @Override
-							        public void onComplete(int status, Map<String, Object> info) {
-							            if(status == 200 && info != null){
-							                StringBuilder sb = new StringBuilder();
-							                Set<String> keys = info.keySet();
-							                for(String key : keys){
-							                   sb.append(key+"="+info.get(key).toString()+"\r\n");
-							                }
-							              //如果第三方登录成功，获取avatar以及appid直接登录
-											String avatar = info.get("profile_image_url").toString();
-//											other_login("weibo", WeiboConfig.API_KEY, avatar);
-							                Log.d("TestData",sb.toString());
-							            }else{
-							               Log.d("TestData","发生错误："+status);
-							           }
-							        }
+								@Override
+								public void onStart() {
+									Toast.makeText(getActivity(), "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+								}
+
+								@Override
+								public void onComplete(int status, Map<String, Object> info) {
+									if (status == 200 && info != null) {
+										StringBuilder sb = new StringBuilder();
+										Set<String> keys = info.keySet();
+										for (String key : keys) {
+											sb.append(key + "=" + info.get(key).toString() + "\r\n");
+										}
+										//如果第三方登录成功，获取avatar以及appid直接登录
+										String avatar = info.get("profile_image_url").toString();
+										other_login("weibo", WeiboConfig.API_KEY, avatar);
+										Log.d("TestData", sb.toString());
+									} else {
+										Log.d("TestData", "发生错误：" + status);
+									}
+								}
 							});
 						} else {
 							Toast.makeText(getActivity(), "授权失败", Toast.LENGTH_SHORT).show();
@@ -670,6 +670,143 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			return matcher.group();
 		}
 		return null;
+	}
+
+	/**
+	 * // 第三方登录
+	 */
+	private void other_login(String source, String source_id, String avatar) {
+
+		RequestParams params = new RequestParams();
+		params.put("source", source);
+		params.put("source_id", source_id);
+		params.put("avatar", avatar);
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i(statusCode + "===" + response);
+				try {
+					JsonTool jsonTool = new JsonTool(response);
+					JSONObject jsonObject = jsonTool.getJsonObject();
+
+					String status = jsonTool.getStatus();
+					String message = jsonTool.getMessage();
+					if (status.equals("success")) {
+						jsonTool.saveAccess_token();
+						// 登录成功后获取用户信息
+						getUserInfo(jsonObject.getString("user_id"));
+						LogTool.i(message);
+					} else {
+						LogTool.e(message);
+					}
+
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("服务器错误aaa" + errorResponse);
+			}
+		};
+		AsyncHttpClientTool.post("/api/user/thirdparty", params, responseHandler);
+	}
+
+	// 获取某个用户信息
+	private void getUserInfo(String userid) {
+
+		RequestParams params = new RequestParams();
+		params.put(UserTable.U_ID, userid);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				super.onFinish();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i(statusCode + "===" + response);
+				JsonTool jsonTool = new JsonTool(response);
+				JSONObject jsonObject = jsonTool.getJsonObject();
+
+				String status = jsonTool.getStatus();
+				if (status.equals("success")) {
+					saveUser(jsonObject);
+				} else {
+					// LogTool.e(user_info);
+				}
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("服务器错误" + errorResponse);
+			}
+		};
+		AsyncHttpClientTool.post("api/user/user", params, responseHandler);
+
+	}
+
+	/**
+	 * 存储自己的信息
+	 */
+	private void saveUser(final JSONObject jsonUserObject) {
+		// TODO Auto-generated method stub
+		userPreference.setUserLogin(true);
+
+		try {
+			String userInfo = jsonUserObject.getString("user_info");
+			JSONObject userInfoJsonObject = new JSONObject(userInfo);
+
+			String nickname = userInfoJsonObject.getString(UserTable.U_NICKNAME);
+			String avatar = userInfoJsonObject.getString(UserTable.AVATAR);
+			String create_time = userInfoJsonObject.getString(UserTable.U_CREATE_TIME);
+			Date date = DateTimeTools.StringToDate(create_time);
+
+			String userid = userInfoJsonObject.getString(UserTable.U_ID);
+
+			// 取出频道相关信息
+			int article_count = jsonUserObject.getInt(UserTable.ARTICLE_COUNT);
+			int channel_count = jsonUserObject.getInt(UserTable.CHANNEL_COUNT);
+
+			userPreference.setU_nickname(nickname);
+			userPreference.setU_avatar(avatar);
+			userPreference.setU_CreatTime(date);
+			if (!userid.isEmpty()) {
+				userPreference.setU_id(Integer.parseInt(userid));
+			} else {
+				LogTool.e("存储用户信息的id有误" + userid);
+			}
+
+			userPreference.setArticle_count(article_count);
+			userPreference.setChannel_count(channel_count);
+			userPreference.printUserInfo();
+			startActivity(new Intent(getActivity(), MainActivity.class));
+			getActivity().finish();
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
