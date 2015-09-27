@@ -58,7 +58,9 @@ import com.umeng.socialize.controller.UMSocialService;
 import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
 import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener;
 import com.umeng.socialize.exception.SocializeException;
+import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.UMQQSsoHandler;
+import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 
 /** 
@@ -167,6 +169,8 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		//参数1为当前Activity， 参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
 		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), QQConfig.API_KEY, QQConfig.SECRIT_KEY);
 		qqSsoHandler.addToSocialSDK();
+		//
+
 		return rootView;
 	}
 
@@ -329,6 +333,8 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			@Override
 			public void onClick(View v) {
 				ToastTool.showShort(getActivity(), "微博第三方登录");
+//				设置新浪SSO handler
+				mController.getConfig().setSsoHandler(new SinaSsoHandler());
 				mController.doOauthVerify(getActivity(), SHARE_MEDIA.SINA, new UMAuthListener() {
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
@@ -352,9 +358,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 										for (String key : keys) {
 											sb.append(key + "=" + info.get(key).toString() + "\r\n");
 										}
-										//如果第三方登录成功，获取avatar以及appid直接登录
-										String avatar = info.get("profile_image_url").toString();
-										other_login("weibo", WeiboConfig.API_KEY, avatar);
 										Log.d("TestData", sb.toString());
 									} else {
 										Log.d("TestData", "发生错误：" + status);
@@ -378,6 +381,16 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		});
 
 	}
+
+//	@Override
+//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//		super.onActivityResult(requestCode, resultCode, data);
+//		/**使用SSO授权必须添加如下代码 */
+//		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
+//		if (ssoHandler != null) {
+//			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+//		}
+//	}
 
 	/**
 	 * 验证验证码

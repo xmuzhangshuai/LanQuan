@@ -108,13 +108,13 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		// 获取频道名称以及频道简介
 		channelTitle = getIntent().getStringExtra("channelName");
 		channelDetail = getIntent().getStringExtra("channelInfo");
-//		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
+		//		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
 		Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.lanquan_checked);
-//		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
-//		Bitmap blue_content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content_blue);
-//		Bitmap middle = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_middle);
+		//		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
+		//		Bitmap blue_content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content_blue);
+		//		Bitmap middle = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_middle);
 
-//		Bitmap bottom = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_card_bleow);
+		//		Bitmap bottom = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_card_bleow);
 
 		Bitmap qrcodebg = BitmapFactory.decodeResource(getResources(), R.drawable.sharebarcode);
 		// qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
@@ -190,7 +190,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			}
 
 			//设置分享内容
-			//			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
 			//设置分享图片
 			//			mController.setShareMedia(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//直接分享
