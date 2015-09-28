@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.lanquan.utils.NetworkUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 /** 
  * 类描述 ：自定义的继承了Activity的抽象类，实现了findViewById和initView两个抽象方法，子类必须实现覆盖
@@ -92,7 +93,8 @@ public abstract class BaseActivity extends Activity {
 		}
 
 		// 友盟统计
-		// MobclickAgent.onPause(this);
+		MobclickAgent.onPageEnd(this.getClass().getName());// 统计页面
+		MobclickAgent.onPause(this); // 统计时长
 	}
 
 	@Override
@@ -105,9 +107,8 @@ public abstract class BaseActivity extends Activity {
 		BaseActivity.this.registerReceiver(netBroadCastReceiver, intentFilter);
 
 		// 友盟统计
-		// MobclickAgent.onResume(this);
-		// onresume时，取消notification显示
-		// EMChatManager.getInstance().activityResumed();
+		MobclickAgent.onPageStart(this.getClass().getCanonicalName());// 统计页面
+		MobclickAgent.onResume(this); // 统计时长
 	}
 
 	@Override

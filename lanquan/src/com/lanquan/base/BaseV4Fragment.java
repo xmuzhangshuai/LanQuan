@@ -1,11 +1,9 @@
 package com.lanquan.base;
 
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -54,6 +52,20 @@ public abstract class BaseV4Fragment extends Fragment {
 	}
 
 	@Override
+	public void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		MobclickAgent.onPageStart(this.getClass().getCanonicalName()); // 统计页面
+	}
+
+	@Override
+	public void onPause() {
+		// TODO Auto-generated method stub
+		super.onPause();
+		MobclickAgent.onPageEnd(this.getClass().getName());
+	}
+
+	@Override
 	public void onDetach() {
 		// TODO Auto-generated method stub
 		super.onDetach();
@@ -74,7 +86,5 @@ public abstract class BaseV4Fragment extends Fragment {
 	 * 初始化控件
 	 */
 	protected abstract void initView();
-
-
 
 }

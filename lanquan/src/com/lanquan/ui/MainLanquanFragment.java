@@ -91,13 +91,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		// TODO Auto-generated method stub
 		super.onResume();
 		postListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
-		if (jsonChannelList.size() > 0) {
-			postListView.setVisibility(View.VISIBLE);
-			emptyView.setVisibility(View.GONE);
-		} else {
-			postListView.setVisibility(View.GONE);
-			emptyView.setVisibility(View.VISIBLE);
-		}
 	}
 
 	@Override
@@ -116,10 +109,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		}
 	}
 
-	/**
-	 * 刷新
-	 */
-	private void refresh() {
+	private void refreshLayout() {
 		if (jsonChannelList.size() > 0) {
 			postListView.setVisibility(View.VISIBLE);
 			emptyView.setVisibility(View.GONE);
@@ -127,6 +117,12 @@ public class MainLanquanFragment extends BaseV4Fragment {
 			postListView.setVisibility(View.GONE);
 			emptyView.setVisibility(View.VISIBLE);
 		}
+	}
+
+	/**
+	 * 刷新
+	 */
+	private void refresh() {
 		for (int i = 0; i < jsonChannelList.size(); i++) {
 			JsonChannel jsonChannel = jsonChannelList.get(i);
 			if (jsonChannel != null) {
@@ -225,6 +221,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 							jsonChannelList = new LinkedList<JsonChannel>();
 							jsonChannelList.addAll(temp);
 							mAdapter.notifyDataSetChanged();
+							refreshLayout();
 						}
 						// 如果是获取更多
 						else if (page > 0) {

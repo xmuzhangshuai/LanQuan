@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.lanquan.utils.NetworkUtils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
 
 /**   
 *    
@@ -93,8 +94,8 @@ public abstract class BaseFragmentActivity extends FragmentActivity {
 			BaseFragmentActivity.this.unregisterReceiver(netBroadCastReceiver);
 		}
 
-		//友盟统计
-//		MobclickAgent.onPause(this);
+		// 友盟统计
+		MobclickAgent.onPause(this);
 	}
 
 	@Override
@@ -106,11 +107,8 @@ public abstract class BaseFragmentActivity extends FragmentActivity {
 		intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 		BaseFragmentActivity.this.registerReceiver(netBroadCastReceiver, intentFilter);
 
-		//onresume时，取消notification显示
-//		EMChatManager.getInstance().activityResumed();
-
-		//友盟统计
-//		MobclickAgent.onResume(this);
+		// 友盟统计
+		MobclickAgent.onResume(this);
 	}
 
 	@Override

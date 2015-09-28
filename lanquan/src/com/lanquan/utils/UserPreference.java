@@ -46,12 +46,10 @@ public class UserPreference {
 
 	// 记录用户是否登录
 	public boolean getUserLogin() {
-		LogTool.e("get登陆" + sp.getBoolean("login", false));
 		return sp.getBoolean("login", false);
 	}
 
 	public void setUserLogin(boolean login) {
-		LogTool.e("set登陆" + login);
 		editor.putBoolean("login", login);
 		editor.commit();
 	}

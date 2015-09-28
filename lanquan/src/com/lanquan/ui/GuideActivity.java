@@ -16,6 +16,7 @@ import com.lanquan.utils.LogTool;
 import com.lanquan.utils.ServerUtil;
 import com.lanquan.utils.SharePreferenceUtil;
 import com.lanquan.utils.UserPreference;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * 类名称：GuideActivity
@@ -67,8 +68,8 @@ public class GuideActivity extends BaseActivity {
 		// }
 
 		/************ 初始化友盟服务 **************/
-		// MobclickAgent.updateOnlineConfig(this);
-		// new FeedbackAgent(this).sync();
+		// 禁止友盟禁止默认的页面统计方式
+		MobclickAgent.openActivityDurationTrack(false);
 
 		if (count == 0) {// 如果是第一次登陆，则启动向导页面
 			// 第一次运行拷贝数据库文件
