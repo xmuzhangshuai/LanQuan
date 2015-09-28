@@ -76,19 +76,14 @@ public class GuideActivity extends BaseActivity {
 			sharePreferenceUtil.setUseCount(++count);// 次数加1
 			startActivity(new Intent(GuideActivity.this, GuidePagerActivity.class));
 		} else {// 如果不是第一次使用,则不启动向导页面，显示欢迎页面。
-			LogTool.e("aaaaaaaaaa");
 			if (userPreference.getUserLogin()) {// 如果是已经登陆过
-				LogTool.e("bbbbbbbbbbbbbbbbb");
 				setContentView(R.layout.activity_guide);
 				findViewById();
 				initView();
 				ServerUtil.getInstance().login(GuideActivity.this, MainActivity.class);
 			} else {// 如果用户没有登录过或者已经注销
-				LogTool.e("我已经注销了啊");
 				startActivity(new Intent(GuideActivity.this, LoginOrRegisterActivity.class));
-				// startActivity(new Intent(GuideActivity.this,
-				// MainActivity.class));
-				// SchoolDbService.getInstance(getApplication()).getSchoolNameById(831);
+				finish();
 			}
 			sharePreferenceUtil.setUseCount(++count);// 次数加1
 		}

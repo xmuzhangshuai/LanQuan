@@ -319,8 +319,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			comment(commentEditText.getText().toString());
 			break;
 		case R.id.add_image:
-			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id())
-					.putExtra("commentcontent", commentEditText.getText().toString()));
+			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()).putExtra("commentcontent",
+					commentEditText.getText().toString()));
 			break;
 		default:
 			break;
@@ -424,7 +424,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			params.put("sort", "create_time");
 		}
 		if (userPreference.getUserLogin()) {
-//			params.put("user_id", userPreference.getU_id());
+			//			params.put("user_id", userPreference.getU_id());
 			params.put("access_token", userPreference.getAccess_token());
 		}
 
@@ -626,48 +626,56 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 
 				@Override
 				public void onClick(View v) {
-					RequestParams params = new RequestParams();
-					params.put("article_id", channel.getArticle_id());
-					params.put("access_token", userPreference.getAccess_token());
-					TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+					if (userPreference.getUserLogin()) {
+						RequestParams params = new RequestParams();
+						params.put("article_id", channel.getArticle_id());
+						params.put("access_token", userPreference.getAccess_token());
+						TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
-						@Override
-						public void onSuccess(int statusCode, Header[] headers, String response) {
-							// TODO Auto-generated method stub
-							LogTool.i(statusCode + "===" + response);
-							JsonTool jsonTool = new JsonTool(response);
+							@Override
+							public void onSuccess(int statusCode, Header[] headers, String response) {
+								// TODO Auto-generated method stub
+								LogTool.i(statusCode + "===" + response);
+								JsonTool jsonTool = new JsonTool(response);
 
-							String status = jsonTool.getStatus();
-							String message = jsonTool.getMessage();
-							if (status.equals("success")) {
+								String status = jsonTool.getStatus();
+								String message = jsonTool.getMessage();
+								if (status.equals("success")) {
 
-								if (holder.favorBtn.isChecked()) {
-									channel.setLight(channel.getLight() + 1);
-									channel.setIslight(1);
-									LogTool.e("sssssss" + channel.getLight());
-									holder.favorCountTextView.setText("" + channel.getLight());
+									if (holder.favorBtn.isChecked()) {
+										channel.setLight(channel.getLight() + 1);
+										channel.setIslight(1);
+										holder.favorCountTextView.setText("" + channel.getLight());
 
+									} else {
+										channel.setLight(channel.getLight() - 1);
+										// 标记为未亮
+										channel.setIslight(0);
+										holder.favorCountTextView.setText("" + channel.getLight());
+									}
+									holder.favorCountTextView.setVisibility(View.VISIBLE);
+									LogTool.i(message);
 								} else {
-									channel.setLight(channel.getLight() - 1);
-									// 标记为未亮
-									channel.setIslight(0);
-									holder.favorCountTextView.setText("" + channel.getLight());
+									LogTool.e(message);
 								}
-								holder.favorCountTextView.setVisibility(View.VISIBLE);
-								LogTool.i(message);
-							} else {
-								LogTool.e(message);
 							}
-						}
 
-						@Override
-						public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-							// TODO Auto-generated method stub
-							LogTool.e("点亮评论服务器错误，代码" + statusCode + errorResponse);
-						}
+							@Override
+							public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+								// TODO Auto-generated method stub
+								LogTool.e("点亮评论服务器错误，代码" + statusCode + errorResponse);
+							}
 
-					};
-					AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/article/light", params, responseHandler);
+						};
+						AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/article/light", params, responseHandler);
+					} else {
+
+						Intent intent = new Intent(ChannelPhotoActivity.this, LoginActivity.class);
+						startActivity(intent);
+						overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+						holder.favorBtn.setChecked(false);
+					}
+
 				}
 			});
 
@@ -786,42 +794,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		dialog.setPositiveButton("确定", comfirm);
 		dialog.setNegativeButton("取消", cancle);
 		dialog.show();
-	}
-
-	// 对评论点亮事件
-
-	public void light(final int article_id, final int position) {
-		RequestParams params = new RequestParams();
-		params.put("article_id", article_id);
-		params.put("access_token", userPreference.getAccess_token());
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				LogTool.i(statusCode + "===" + response);
-				JsonTool jsonTool = new JsonTool(response);
-
-				String status = jsonTool.getStatus();
-				String message = jsonTool.getMessage();
-				if (status.equals("success")) {
-
-					mAdapter.notifyDataSetChanged();
-					LogTool.i(message);
-				} else {
-					LogTool.e(message);
-				}
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("删除评论服务器错误，代码" + statusCode + errorResponse);
-			}
-
-		};
-		AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/article/delete", params, responseHandler);
-
 	}
 
 	/** 

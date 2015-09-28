@@ -28,7 +28,7 @@ public class LoginOrRegisterActivity extends BaseFragmentActivity {
 		setContentView(R.layout.activity_login_or_register);
 		mainFindFragment = new MainFindFragment();
 
-		getSupportFragmentManager().beginTransaction().replace(R.id.main_find_fragment_container, mainFindFragment).commit();
+//		getSupportFragmentManager().beginTransaction().replace(R.id.main_find_fragment_container, mainFindFragment).commit();
 
 		findViewById();
 		initView();
