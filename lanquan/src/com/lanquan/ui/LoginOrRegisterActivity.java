@@ -52,7 +52,6 @@ public class LoginOrRegisterActivity extends BaseFragmentActivity {
 				Intent intent = new Intent(LoginOrRegisterActivity.this, LoginActivity.class);
 				startActivity(intent);
 				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
-				LoginOrRegisterActivity.this.finish();
 			}
 		});
 

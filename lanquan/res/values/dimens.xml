@@ -48,7 +48,7 @@
     <dimen name="day_recommend_help_font">18sp</dimen>
     <dimen name="act_title_size">17sp</dimen>
     <dimen name="day_recommend_font_info">16sp</dimen>
-    <dimen name="day_recommend_user_font">15sp</dimen>
+    <dimen name="day_recommend_user_font">14sp</dimen>
     <dimen name="register_font_size">14sp</dimen>
     <dimen name="comment_font_size">13sp</dimen>
     <dimen name="share_title_size">25sp</dimen>

@@ -16,27 +16,12 @@
     <color name="font_gray_dark">#555555 </color> <!-- 字体深灰色 -->
     <color name="system_gray">#F0F0F0</color> <!-- 系统背景色 -->
     <color name="system_sky_blue">#0092FF</color> <!-- 系统天蓝色 -->
-    <color name="login_bg">#29232c</color> <!-- 登录注册背景色 -->
+    <color name="nav_bg">#29232c</color>
     <color name="login_bg_dark">#241F27</color> <!-- 登录注册背景色(深) -->
     <color name="login_divider">#332c37</color> <!-- 登录注册分隔条 -->
 
-
-    <!-- 登录或注册页面 -->
-    <color name="log_btn">#30634e</color>
-    <color name="log_btn_pressed">#255340</color>
-    <color name="get_headimage_bg">#f2f2f0</color>
-    <color name="get_headimage_bg_pressed">#33cccc</color>
-    <color name="navigation_bg">#22272c</color> <!-- 导航条颜色 -->
-    <color name="navigation_pressed">#161a1d</color> <!-- 导航条按后颜色 -->
-    <color name="system_green">#00ca6b</color> <!-- 系统绿色 -->
-    <color name="system_green_pressed">#00a758</color> <!-- 系统深绿色 -->
-
-    <color name="system_male">#33CCCC</color> <!-- 男生系统颜色 -->
-    <color name="system_male_light">#8033CCCC</color> <!-- 男生系统颜色 -->
+    
     <color name="system_female">#FF3366</color> <!-- 女生系统颜色 -->
-    <color name="system_male_dark">#2FBABA</color> <!-- 男生系统颜色深色 -->
-    <color name="system_male_dark_more">#008B8B</color> <!-- 男生系统颜色深色 -->
-    <color name="comment_name">#5f78ba</color> <!-- 评论是人名颜色 -->
 
     <color name="system_personal_back">#F6F8FC</color> <!-- 个人中心背景色 -->
     <color name="dark_gray">#666666</color> <!-- 系统灰色 -->
@@ -54,23 +39,10 @@
     <color name="unenable">#999999</color>
     <color name="unenable_font">#dbdbdb</color>
     <color name="thirty_transparent_black">#4d000000</color>
-
-    <!-- 主页面 -->
-    <color name="home_btn_bg">#333333</color>
-    <color name="home_btn_bg_pressed">#262626</color>
     <color name="possible_result_points">#c0ffff00</color>
     <color name="result_view">#b0000000</color>
     <color name="viewfinder_frame">#ff0099CC</color>
     <color name="viewfinder_laser">#ffff0000</color>
     <color name="viewfinder_mask">#80000000</color>
-
-    <!-- 聊天页面 -->
-    <color name="btn_blue_normal">#1e90ff</color>
-    <color name="btn_blue_pressed">#0066FF</color>
-    <color name="btn_gray_pressed_status">#b5b5b6</color>
-    <color name="btn_gray_pressed">#666667</color>
-    <color name="error_item_color">#F6EBE6</color>
-    <color name="revoke">#cc6633</color>
-    <color name="revoke_pressed">#bb5522</color>
 
 </resources>

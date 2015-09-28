@@ -2,12 +2,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/login_bg" >
+    android:background="@color/nav_bg" >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/login_bg"
+        android:background="@color/nav_bg"
         android:gravity="center_horizontal"
         android:isScrollContainer="true"
         android:orientation="vertical" >
@@ -22,7 +22,7 @@
                 android:id="@+id/rlCommenTitleBG"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:background="@color/login_bg" />
+                android:background="@color/nav_bg" />
 
             <LinearLayout
                 android:id="@+id/left_btn_bg"
@@ -51,7 +51,7 @@
                 android:ellipsize="end"
                 android:gravity="center"
                 android:singleLine="true"
-                android:textColor="@color/white"
+                android:textColor="@color/system_main_orange"
                 android:textSize="18sp" />
 
             <View
