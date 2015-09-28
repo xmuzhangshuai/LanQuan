@@ -59,6 +59,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	private LinkedList<JsonChannel> jsonChannelList;
 	private int pageNow = 0;// 控制页数
 	private ChannelAdapter mAdapter;
+	private View emptyView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,13 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		// TODO Auto-generated method stub
 		super.onResume();
 		postListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
+		if (jsonChannelList.size() > 0) {
+			postListView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
+		} else {
+			postListView.setVisibility(View.GONE);
+			emptyView.setVisibility(View.VISIBLE);
+		}
 	}
 
 	@Override
@@ -112,6 +120,13 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	 * 刷新
 	 */
 	private void refresh() {
+		if (jsonChannelList.size() > 0) {
+			postListView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
+		} else {
+			postListView.setVisibility(View.GONE);
+			emptyView.setVisibility(View.VISIBLE);
+		}
 		for (int i = 0; i < jsonChannelList.size(); i++) {
 			JsonChannel jsonChannel = jsonChannelList.get(i);
 			if (jsonChannel != null) {
@@ -129,6 +144,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		navText = (TextView) rootView.findViewById(R.id.nav_text);
 		rightBtn = rootView.findViewById(R.id.right_btn_bg);
 		postListView = (PullToRefreshListView) rootView.findViewById(R.id.lanquan_list);
+		emptyView = rootView.findViewById(R.id.empty);
 	}
 
 	@Override

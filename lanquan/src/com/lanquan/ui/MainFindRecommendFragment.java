@@ -39,6 +39,7 @@ import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+import com.umeng.socialize.net.v;
 
 /** 
  * 类描述 ：主页面——发现页面的推荐页面
@@ -60,6 +61,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 	private LinkedList<JsonChannel> jsonChannelList;
 	private int pageNow = 0;// 控制页数
 	private ChannelAdapter mAdapter;
+	private View emptyView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -97,6 +99,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 	protected void findViewById() {
 		// TODO Auto-generated method stub
 		postListView = (PullToRefreshListView) rootView.findViewById(R.id.channel_list);
+		emptyView = rootView.findViewById(R.id.empty);
 	}
 
 	@Override
@@ -132,6 +135,16 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		});
 	}
 
+	private void refresh() {
+		if (jsonChannelList.size() > 0) {
+			postListView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
+		} else {
+			postListView.setVisibility(View.GONE);
+			emptyView.setVisibility(View.VISIBLE);
+		}
+	}
+
 	/**
 	 * 网络获取数据
 	 */
@@ -155,7 +168,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
-				LogTool.i(response+"0000"+statusCode);
+				LogTool.i(response + "0000" + statusCode);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					JSONObject jsonObject = jsonTool.getJsonObject();
 					try {
@@ -169,15 +182,14 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 
 						// 如果是首次获取数据
 						if (temp != null) {
-							
-							
-							
+
 							if (page == 0) {
 								if (temp.size() < Config.PAGE_NUM) {
 									pageNow = -1;
 								}
 								jsonChannelList = new LinkedList<JsonChannel>();
 								jsonChannelList.addAll(temp);
+								refresh();
 							}
 							// 如果是获取更多
 							else if (page > 0) {
