@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_top_radius"
+        android:background="@drawable/shape_top_radius_orange"
         android:orientation="vertical"
         android:paddingBottom="10dp"
         android:paddingLeft="20dp"
@@ -35,7 +35,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
                 android:text="打卡成功"
-                android:textColor="@color/font_gray_dark"
+                android:textColor="@color/white"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -125,12 +125,12 @@
             android:id="@+id/confirm"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/sel_alert_dialog_left_btn"
+            android:background="@drawable/sel_orange_btn_bg"
             android:gravity="center_horizontal"
             android:paddingBottom="13dp"
             android:paddingTop="13dp"
-            android:text="OK"
-            android:textColor="@color/alert_dialog_blue"
+            android:text="确定"
+            android:textColor="@color/white"
             android:textSize="@dimen/day_recommend_font_info" />
     </LinearLayout>
 

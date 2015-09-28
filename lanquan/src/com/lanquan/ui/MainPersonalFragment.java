@@ -29,7 +29,9 @@ import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
-
+import android.accounts.Account;
+import android.accounts.OnAccountsUpdateListener;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -227,6 +229,85 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 	}
 
 	/**
+	 * 进入详情页面
+	 */
+	private void goToDetail(int channelId, final int type) {
+
+		RequestParams params = new RequestParams();
+		params.put("channel_id", channelId);
+		final ProgressDialog dialog = new ProgressDialog(getActivity());
+		dialog.setMessage("正在加载...");
+		dialog.setCancelable(false);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				dialog.show();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i("获取指定频道信息：response:   " + response);
+				try {
+					JSONObject jsonObject = new JSONObject(response);
+					String status = jsonObject.getString("status");
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						String data = jsonObject.getString("data");
+						JsonChannel jsonChannel = JsonChannel.getJsonChannelByJsonString(data);
+						if (jsonChannel != null) {
+							Intent intent = null;
+							switch (type) {
+							case 0:
+								intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+								break;
+							case 1:
+								intent = new Intent(getActivity(), ChannelTextActivity.class);
+								break;
+							case 2:
+								intent = new Intent(getActivity(), ChannelPunchCardActivity.class);
+								break;
+
+							default:
+								break;
+							}
+							if (intent != null) {
+								startActivity(intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel));
+								getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+							}
+
+						} else {
+							LogTool.e("JsonChannel为空");
+						}
+					} else {
+						LogTool.e("获取指定频道信息：fail");
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("获取指定频道失败" + errorResponse);
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				super.onFinish();
+			}
+		};
+		AsyncHttpClientTool.post(getActivity(), "api/channel/channels", params, responseHandler);
+	}
+
+	/**
 	 * 类描述 ：按时间 类名： MainPersonalFragment.java Copyright: Copyright (c)2015
 	 * Company: zhangshuai
 	 * 
@@ -313,6 +394,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, String response) {
 					// TODO Auto-generated method stub
+					LogTool.i("按时间" + response);
 					try {
 						JSONObject jsonObject = new JSONObject(response);
 						String status = jsonObject.getString("status");
@@ -404,6 +486,15 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 			} else {
 				holder = (ViewHolder) view.getTag(); // 把数据取出来
 			}
+			
+			view.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+//					goToDetail(jsonMyArticle.getChannel_id(), jsonMyArticle.get);
+				}
+			});
 
 			// 设置头像
 			if (!TextUtils.isEmpty(jsonMyArticle.getIcon()) && !jsonMyArticle.getIcon().equals("null")) {
@@ -556,6 +647,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, String response) {
 					// TODO Auto-generated method stub
+					LogTool.i("按频道" + response);
 					try {
 						JSONObject jsonObject = new JSONObject(response);
 						String status = jsonObject.getString("status");

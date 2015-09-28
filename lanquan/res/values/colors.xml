@@ -9,6 +9,7 @@
     <color name="system_main_blue_pressed">#2F3647</color> <!-- 系统深蓝色按键后 -->
     <color name="system_main_orange">#FF8A52</color> <!-- 系统橘色 -->
     <color name="system_main_orange_pressed">#EF7A42</color> <!-- 系统橘色按键后 -->
+    <color name="system_main_orange_pressed_dark">#DF6A36</color> <!-- 系统橘色按键后 -->
     <color name="system_main_orange_trans">#70FF8A52</color> <!-- 浅橘色 -->
     <color name="system_main_bg">#E9E9E9</color> <!-- 系统背景灰色 -->
     <color name="font_gray">#888888</color> <!-- 字体灰色 -->
@@ -20,7 +21,6 @@
     <color name="login_bg_dark">#241F27</color> <!-- 登录注册背景色(深) -->
     <color name="login_divider">#332c37</color> <!-- 登录注册分隔条 -->
 
-    
     <color name="system_female">#FF3366</color> <!-- 女生系统颜色 -->
 
     <color name="system_personal_back">#F6F8FC</color> <!-- 个人中心背景色 -->

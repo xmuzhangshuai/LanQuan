@@ -108,6 +108,7 @@
                 android:layout_height="@dimen/motify_data_space"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
+                android:layout_marginRight="15dp"
                 android:background="@drawable/sel_flipper_checkbox"
                 android:button="@null" />
 
@@ -124,7 +125,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@+id/icon_location"
-                android:maxLength="15"
+                android:maxLength="12"
                 android:singleLine="true"
                 android:textColor="@color/font_gray"
                 android:textSize="@dimen/register_font_size" />
@@ -133,7 +134,7 @@
                 android:id="@+id/favor_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:textSize="@dimen/register_font_size"
                 android:visibility="gone" />
