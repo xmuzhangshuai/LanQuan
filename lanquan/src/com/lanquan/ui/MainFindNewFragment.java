@@ -197,7 +197,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 							else if (page > 0) {
 								if (temp.size() < Config.PAGE_NUM) {
 									pageNow = -1;
-									ToastTool.showShort(getActivity(), "没有更多了！");
+//									ToastTool.showShort(getActivity(), "没有更多了！");
 								}
 								jsonChannelList.addAll(temp);
 							}

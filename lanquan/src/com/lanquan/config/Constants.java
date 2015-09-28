@@ -11,7 +11,7 @@ public class Constants {
 	// public static String testIP = "http://192.168.1.101/";
 
 	// 域名或者是IP
-	// public static String AppliactionServerIP = "http://121.40.101.36/";
+	public static String AppliactionServerIP = "http://120.24.183.74/";
 
 	public static String AppliactionServerDomain = "http://120.24.183.74/index.php/";
 
@@ -110,21 +110,22 @@ public class Constants {
 		public final static String API_KEY = "bcB8dCkZh0GVtMTdpyTTabj3";
 		public final static String SECRIT_KEY = "y75ge4lbEEGth1nwbTveiGr7yHARKnm2";
 	}
-	
-	public static class WeChatConfig{
+
+	public static class WeChatConfig {
 		public final static String API_KEY = "wx33f81b034c7f3e04";
 		public final static String SECRIT_KEY = "b003237ea4d4d1df9089c97feef5ff76";
 	}
 
-	public static class WeiboConfig{
+	public static class WeiboConfig {
 		public final static String API_KEY = "4169059323";
 		public final static String SECRIT_KEY = "9825238066521372a2f776fa08b651e2";
-	} 
-	
-	public static class QQConfig{
+	}
+
+	public static class QQConfig {
 		public final static String API_KEY = "1104862406";
 		public final static String SECRIT_KEY = "VHSnIwPNZJcnMqj7";
 	}
+
 	public static class Extra {
 		public static final String IMAGES = "com.nostra13.example.universalimageloader.IMAGES";
 		public static final String IMAGE_POSITION = "com.nostra13.example.universalimageloader.IMAGE_POSITION";

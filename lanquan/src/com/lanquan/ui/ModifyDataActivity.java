@@ -29,6 +29,7 @@ import android.widget.TextView;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseFragmentActivity;
+import com.lanquan.config.Constants;
 import com.lanquan.customwidget.MyMenuDialog;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.ImageLoaderTool;
@@ -225,7 +226,7 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 							try {
 								userPreference.setU_avatar(jsonObject.getString("url"));
 								imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
-								modifyHeadImage(jsonObject.getString("url"));
+								modifyHeadImage(Constants.AppliactionServerIP + jsonObject.getString("url"));
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

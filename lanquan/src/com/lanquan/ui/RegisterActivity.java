@@ -26,6 +26,8 @@ import android.view.Window;
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseFragmentActivity;
+import com.lanquan.config.Constants;
+import com.lanquan.config.Constants.Config;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
@@ -155,8 +157,7 @@ public class RegisterActivity extends BaseFragmentActivity {
 						String fileName;
 						// 删除上一次截图的临时文件
 						SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE);
-						ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(),
-								sharedPreferences.getString("crop_tempName", ""));
+						ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(), sharedPreferences.getString("crop_tempName", ""));
 
 						// 保存本次截图临时文件名字
 						fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
@@ -164,8 +165,7 @@ public class RegisterActivity extends BaseFragmentActivity {
 						editor.putString("crop_tempName", fileName);
 						editor.commit();
 
-						uploadImage(ImageTools.savePhotoToSDCard(photo, Environment.getExternalStorageDirectory().getAbsolutePath(), fileName, 100)
-								.getAbsolutePath());
+						uploadImage(ImageTools.savePhotoToSDCard(photo, Environment.getExternalStorageDirectory().getAbsolutePath(), fileName, 100).getAbsolutePath());
 					}
 				}
 				break;
@@ -203,9 +203,8 @@ public class RegisterActivity extends BaseFragmentActivity {
 						if (jsonObject != null) {
 							try {
 								userPreference.setU_avatar(jsonObject.getString("url"));
-								RegAccountFragment regAccountFragment = (RegAccountFragment) getSupportFragmentManager()
-										.findFragmentByTag("RegAccountFragment");
-								regAccountFragment.showHeadImage(jsonObject.getString("url"));
+								RegAccountFragment regAccountFragment = (RegAccountFragment) getSupportFragmentManager().findFragmentByTag("RegAccountFragment");
+								regAccountFragment.showHeadImage(Constants.AppliactionServerIP + jsonObject.getString("url"));
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

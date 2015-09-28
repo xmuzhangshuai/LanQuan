@@ -539,7 +539,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				LogTool.i("短信验证码==" + status + response);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
-					jsonTool.saveAccess_token();
+//					jsonTool.saveAccess_token();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());
 				}
