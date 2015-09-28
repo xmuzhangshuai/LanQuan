@@ -1,6 +1,5 @@
 package com.lanquan.ui;
 
-import java.util.Date;
 import java.util.LinkedList;
 
 import org.apache.http.Header;
@@ -8,6 +7,28 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.lanquan.R;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.base.BaseV4Fragment;
+import com.lanquan.config.Constants.Config;
+import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.jsonobject.JsonMyMessage;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.DateTimeTools;
+import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
+import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,28 +41,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.lanquan.R;
-import com.lanquan.base.BaseApplication;
-import com.lanquan.base.BaseV4Fragment;
-import com.lanquan.config.Constants.Config;
-import com.lanquan.jsonobject.JsonChannel;
-import com.lanquan.jsonobject.JsonMyMessage;
-import com.lanquan.table.UserTable;
-import com.lanquan.utils.AsyncHttpClientTool;
-import com.lanquan.utils.DateTimeTools;
-import com.lanquan.utils.ImageLoaderTool;
-import com.lanquan.utils.JsonTool;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
-import com.lanquan.utils.UserPreference;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /**
  * 类描述 ：主页面--动态页面 类名： MainMsgFragment.java Copyright: Copyright (c)2015 Company:
@@ -152,7 +151,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 
 				try {
-					LogTool.i("个人中心消息模块"+response);
+					LogTool.i("个人中心消息模块" + response);
 					JSONObject jsonObject = new JSONObject(response);
 					String status = jsonObject.getString("status");
 					unread_count = jsonObject.getInt("unread_count");
@@ -222,80 +221,80 @@ public class MainMsgFragment extends BaseV4Fragment {
 	/**
 	 * 进入详情页面
 	 */
-	private void goToDetail(final int type, int pa_id, int pa_user_id) {
-		// RequestParams params = new RequestParams();
-		// final ProgressDialog dialog = new ProgressDialog(getActivity());
-		// dialog.setMessage("正在加载...");
-		// dialog.setCancelable(false);
-		// if (type == 0) {
-		// params.put(PostTable.P_POSTID, pa_id);
-		// params.put(PostTable.P_USERID, pa_user_id);
-		// } else if (type == 1) {
-		// params.put(ActivityTable.A_ACTID, pa_id);
-		// params.put(ActivityTable.A_USERID, pa_user_id);
-		// } else {
-		// return;
-		// }
-		//
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler("utf-8") {
-		// @Override
-		// public void onStart() {
-		// // TODO Auto-generated method stub
-		// super.onStart();
-		// dialog.show();
-		// }
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		// if (statusCode == 200) {
-		// if (type == 0) {
-		// JsonPostItem jsonPostItem = FastJsonTool.getObject(response,
-		// JsonPostItem.class);
-		// if (jsonPostItem != null) {
-		// startActivity(new Intent(getActivity(),
-		// PostDetailActivity.class).putExtra(PostDetailActivity.POST_ITEM,
-		// jsonPostItem));
-		// getActivity().overridePendingTransition(R.anim.push_left_in,
-		// R.anim.push_left_out);
-		// } else {
-		// LogTool.e("返回帖子数据出错" + response);
-		// }
-		// } else if (type == 1) {
-		// JsonActItem jsonActItem = FastJsonTool.getObject(response,
-		// JsonActItem.class);
-		// if (jsonActItem != null) {
-		// startActivity(new Intent(getActivity(),
-		// ActDetailActivity.class).putExtra(ActDetailActivity.ACT_ITEM,
-		// jsonActItem));
-		// getActivity().overridePendingTransition(R.anim.push_left_in,
-		// R.anim.push_left_out);
-		// } else {
-		// LogTool.e("返回帖子数据出错" + response);
-		// }
-		// }
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("获取学校帖子列表失败" + errorResponse);
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// dialog.dismiss();
-		// super.onFinish();
-		// }
-		//
-		// };
-		// AsyncHttpClientTool.post(getActivity(), "post/getSchoolPosts",
-		// params, responseHandler);
+	private void goToDetail(int channelId, final int type) {
+
+		RequestParams params = new RequestParams();
+		params.put("channel_id", channelId);
+		final ProgressDialog dialog = new ProgressDialog(getActivity());
+		dialog.setMessage("正在加载...");
+		dialog.setCancelable(false);
+
+		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				dialog.show();
+			}
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers, String response) {
+				// TODO Auto-generated method stub
+				LogTool.i("获取指定频道信息：response:   " + response);
+				try {
+					JSONObject jsonObject = new JSONObject(response);
+					String status = jsonObject.getString("status");
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						String data = jsonObject.getString("data");
+						JsonChannel jsonChannel = JsonChannel.getJsonChannelByJsonString(data);
+						if (jsonChannel != null) {
+							Intent intent = null;
+							switch (type) {
+							case 0:
+								intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+								break;
+							case 1:
+								intent = new Intent(getActivity(), ChannelTextActivity.class);
+								break;
+							case 2:
+								intent = new Intent(getActivity(), ChannelPunchCardActivity.class);
+								break;
+
+							default:
+								break;
+							}
+							if (intent != null) {
+								startActivity(intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel));
+								getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+							}
+
+						} else {
+							LogTool.e("JsonChannel为空");
+						}
+					} else {
+						LogTool.e("获取指定频道信息：fail");
+					}
+				} catch (JSONException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+
+			@Override
+			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+				// TODO Auto-generated method stub
+				LogTool.e("获取指定频道失败" + errorResponse);
+			}
+
+			@Override
+			public void onFinish() {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				super.onFinish();
+			}
+		};
+		AsyncHttpClientTool.post(getActivity(), "api/channel/channels", params, responseHandler);
 	}
 
 	/**
@@ -359,8 +358,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 
 				@Override
 				public void onClick(View v) {
-					 goToDetail(jsonMyMessage.getObject_type(),
-					 jsonMyMessage.getObject_id(), jsonMyMessage.getTo_user_id());
+					goToDetail(jsonMyMessage.getObject_id(), jsonMyMessage.getObject_type());
 				}
 			});
 

@@ -268,6 +268,7 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
+					jsonTool.saveAccess_token();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());
 				}
@@ -276,7 +277,7 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
-				LogTool.e("头像上传失败！" + errorResponse);
+				LogTool.e("修改失败！" + errorResponse);
 			}
 		};
 		AsyncHttpClientTool.post("api/user/modifyAvatar", params, responseHandler);

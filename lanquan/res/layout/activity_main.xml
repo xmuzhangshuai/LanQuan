@@ -30,8 +30,8 @@
 
                 <ImageView
                     android:id="@+id/btn_home"
-                    android:layout_width="@dimen/day_recommend_help_padding"
-                    android:layout_height="@dimen/day_recommend_help_padding"
+                    android:layout_width="@dimen/motify_data_space"
+                    android:layout_height="@dimen/motify_data_space"
                     android:src="@drawable/tab_lanquan_bg" />
 
                 <TextView
@@ -72,8 +72,8 @@
 
                 <ImageView
                     android:id="@+id/btn_find"
-                    android:layout_width="@dimen/day_recommend_help_padding"
-                    android:layout_height="@dimen/day_recommend_help_padding"
+                    android:layout_width="@dimen/motify_data_space"
+                    android:layout_height="@dimen/motify_data_space"
                     android:src="@drawable/tab_find_bg" />
 
                 <TextView
@@ -114,8 +114,8 @@
 
                 <ImageView
                     android:id="@+id/btn_msg"
-                    android:layout_width="@dimen/day_recommend_help_padding"
-                    android:layout_height="@dimen/day_recommend_help_padding"
+                    android:layout_width="@dimen/motify_data_space"
+                    android:layout_height="@dimen/motify_data_space"
                     android:src="@drawable/tab_msg_bg" />
 
                 <TextView
@@ -156,8 +156,8 @@
 
                 <ImageView
                     android:id="@+id/btn_personal"
-                    android:layout_width="@dimen/day_recommend_help_padding"
-                    android:layout_height="@dimen/day_recommend_help_padding"
+                    android:layout_width="@dimen/motify_data_space"
+                    android:layout_height="@dimen/motify_data_space"
                     android:src="@drawable/tab_personal_bg" />
 
                 <TextView

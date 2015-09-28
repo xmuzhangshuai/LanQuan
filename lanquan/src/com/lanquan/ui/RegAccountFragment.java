@@ -341,7 +341,6 @@ public class RegAccountFragment extends BaseV4Fragment {
 	 * 显示头像
 	 */
 	public void showHeadImage(String imageUrl) {
-		LogTool.i("显示头像" + imageUrl);
 		ImageLoader.getInstance().displayImage(imageUrl, headImage, ImageLoaderTool.getCircleHeadImageOptions());
 		headImage.setVisibility(View.VISIBLE);
 		cameraImage.setVisibility(View.GONE);

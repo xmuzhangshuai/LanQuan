@@ -3,6 +3,11 @@ package com.lanquan.jsonobject;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.lanquan.utils.DateTimeTools;
+
 public class JsonChannel implements Serializable {
 	private int channel_id;
 	private String title;
@@ -20,8 +25,8 @@ public class JsonChannel implements Serializable {
 	private String avatar;
 	private int is_focus;
 
-	public JsonChannel(int channel_id, String title, String description, String recommend_background, int type, int user_id, int status, Date create_time,
-			Date update_time, int recommend, String icon, int from, String nickame, String avatar) {
+	public JsonChannel(int channel_id, String title, String description, String recommend_background, int type, int user_id, int status, Date create_time, Date update_time,
+			int recommend, String icon, int from, String nickame, String avatar) {
 		super();
 		this.channel_id = channel_id;
 		this.title = title;
@@ -39,8 +44,8 @@ public class JsonChannel implements Serializable {
 		this.avatar = avatar;
 	}
 
-	public JsonChannel(int channel_id, String title, String description, String recommend_background, int type, int user_id, int status, Date create_time,
-			Date update_time, int recommend, String icon, int from, String nickame, String avatar, int is_foucus) {
+	public JsonChannel(int channel_id, String title, String description, String recommend_background, int type, int user_id, int status, Date create_time, Date update_time,
+			int recommend, String icon, int from, String nickame, String avatar, int is_foucus) {
 		super();
 		this.channel_id = channel_id;
 		this.title = title;
@@ -59,6 +64,23 @@ public class JsonChannel implements Serializable {
 		this.is_focus = is_foucus;
 	}
 
+	public static JsonChannel getJsonChannelByJsonString(String jsonChannelString) {
+		try {
+			JSONObject object = new JSONObject(jsonChannelString);
+			JsonChannel jsonChannel = new JsonChannel(Integer.parseInt(object.getString("channel_id")), object.getString("title"), object.getString("description"),
+					object.getString("recommend_background"), Integer.parseInt(object.getString("type")), Integer.parseInt(object.getString("user_id")),
+					Integer.parseInt(object.getString("status")), DateTimeTools.StringToDate(object.getString("create_time")),
+					DateTimeTools.StringToDate(object.getString("update_time")), Integer.parseInt(object.getString("recommend")), object.getString("icon"),
+					Integer.parseInt(object.getString("from")), object.getString("nickname"), object.getString("avatar"));
+			jsonChannel.setIs_focus(0);
+
+			return jsonChannel;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public int getChannel_id() {
 		return channel_id;
