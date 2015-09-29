@@ -22,6 +22,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.ImageView;
 
+import com.lanquan.config.Constants;
 import com.nostra13.universalimageloader.cache.disc.DiskCache;
 import com.nostra13.universalimageloader.cache.memory.MemoryCache;
 import com.nostra13.universalimageloader.core.assist.FailReason;
@@ -343,7 +344,7 @@ public class ImageLoader {
 	public void displayImage(String uri, ImageView imageView, DisplayImageOptions options) {
 		String path = uri;
 		if (uri != null && uri.startsWith("/application")) {
-			path = uri = "http://120.25.62.195/" + uri;
+			path = uri = Constants.AppliactionServerIP + uri;
 		}
 		displayImage(path, new ImageViewAware(imageView), options, null, null);
 	}

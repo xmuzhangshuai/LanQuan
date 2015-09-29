@@ -11,7 +11,7 @@ public class Constants {
 	// public static String testIP = "http://192.168.1.101/";
 
 	// 域名或者是IP(旧)
-	public static String AppliactionServerIP = "http://120.24.183.74/";
+	public static String AppliactionServerIP = "http://120.24.183.74";
 
 	public static String AppliactionServerDomain = "http://120.24.183.74/index.php/";
 
