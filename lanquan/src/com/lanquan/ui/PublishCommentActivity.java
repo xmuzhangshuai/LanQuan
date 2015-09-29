@@ -36,6 +36,7 @@ import com.lanquan.config.Constants.WeChatConfig;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.FileSizeUtil;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
 import com.lanquan.utils.JsonTool;
@@ -273,6 +274,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		String tempPath = Environment.getExternalStorageDirectory() + "/lanquan/image";
 		String photoName = "temp" + ".jpg";
 		File file = ImageTools.compressBySizeAndQuality(tempPath, photoName, imageUrl, 400);
+		LogTool.e("图片大小：" + FileSizeUtil.getAutoFileOrFilesSize(file.getAbsolutePath()));
 		dialog = showProgressDialog("正在发布...");
 		dialog.setCancelable(false);
 
@@ -321,6 +323,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 					// TODO Auto-generated method stub
 					LogTool.e("图像上传失败！" + errorResponse);
+					dialog.dismiss();
 				}
 			};
 			AsyncHttpClientTool.post("api/file/upload", params, responseHandler);

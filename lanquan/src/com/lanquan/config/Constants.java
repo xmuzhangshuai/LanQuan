@@ -11,9 +11,14 @@ public class Constants {
 	// public static String testIP = "http://192.168.1.101/";
 
 	// 域名或者是IP
-	public static String AppliactionServerIP = "http://120.25.62.195/";
+	public static String AppliactionServerIP = "http://120.24.183.74/";
 
-	public static String AppliactionServerDomain = "http://120.25.62.195/index.php/";
+	public static String AppliactionServerDomain = "http://120.24.183.74/index.php/";
+
+	// 域名或者是IP
+//	public static String AppliactionServerIP = "http://120.25.62.195/";
+//
+//	public static String AppliactionServerDomain = "http://120.25.62.195/index.php/";
 
 	public static String SignKey = "dfeb3d35bc3543rdc234";
 
