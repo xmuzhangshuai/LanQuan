@@ -126,8 +126,8 @@ public class MainFindNewFragment extends BaseV4Fragment {
 			@Override
 			public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
 				pageNow = 0;
@@ -137,8 +137,8 @@ public class MainFindNewFragment extends BaseV4Fragment {
 			@Override
 			public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
 				// TODO Auto-generated method stub
-				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(), DateUtils.FORMAT_SHOW_TIME
-						| DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
+				String label = DateUtils.formatDateTime(getActivity().getApplicationContext(), System.currentTimeMillis(),
+						DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_ABBREV_ALL);
 				refreshView.getLoadingLayoutProxy().setLastUpdatedLabel(label);
 
 				if (pageNow >= 0)
@@ -162,7 +162,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 		params.put("from", 0);
 		params.put("recommend", 0);
 		if (userPreference.getUserLogin()) {
-//			params.put("user_id", userPreference.getU_id());
+			//			params.put("user_id", userPreference.getU_id());
 			params.put("access_token", userPreference.getAccess_token());
 		}
 
@@ -171,6 +171,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
+				LogTool.i("最新频道" + response);
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
@@ -197,13 +198,13 @@ public class MainFindNewFragment extends BaseV4Fragment {
 							else if (page > 0) {
 								if (temp.size() < Config.PAGE_NUM) {
 									pageNow = -1;
-//									ToastTool.showShort(getActivity(), "没有更多了！");
+									//									ToastTool.showShort(getActivity(), "没有更多了！");
 								}
 								jsonChannelList.addAll(temp);
 							}
 							mAdapter.notifyDataSetChanged();
-						}else {
-					        LogTool.e("temp为空");
+						} else {
+							LogTool.e("temp为空");
 						}
 
 					} catch (JSONException e) {

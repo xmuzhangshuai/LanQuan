@@ -433,6 +433,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
+				LogTool.i("频道品论" + response);
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {

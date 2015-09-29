@@ -21,7 +21,6 @@ import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.JsonChannelTools;
 import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;

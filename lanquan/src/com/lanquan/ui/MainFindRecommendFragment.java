@@ -1,24 +1,11 @@
 package com.lanquan.ui;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.text.format.DateUtils;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.View.OnClickListener;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
@@ -34,12 +21,22 @@ import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.JsonChannelTools;
 import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
-import com.umeng.socialize.net.v;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 
 /** 
  * 类描述 ：主页面——发现页面的推荐页面
