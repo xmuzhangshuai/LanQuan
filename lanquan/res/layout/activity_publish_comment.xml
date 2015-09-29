@@ -128,8 +128,7 @@
                         android:id="@+id/publish_image"
                         android:layout_width="@dimen/get_image_btn_padding"
                         android:layout_height="@dimen/get_image_btn_padding"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/headimage2" />
+                        android:scaleType="centerCrop" />
                 </LinearLayout>
 
                 <LinearLayout

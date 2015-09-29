@@ -42,8 +42,7 @@
                         android:id="@+id/headimage"
                         android:layout_width="@dimen/personal_photo_size"
                         android:layout_height="@dimen/personal_photo_size"
-                        android:layout_gravity="center"
-                        android:src="@drawable/headimage6" />
+                        android:layout_gravity="center" />
 
                     <ImageView
                         android:layout_width="wrap_content"
