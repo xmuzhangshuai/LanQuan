@@ -269,41 +269,23 @@ public class RegAccountFragment extends BaseV4Fragment {
 		list.add("相册");
 		myMenuDialog.setMenuList(list);
 		OnItemClickListener listener = new OnItemClickListener() {
-			// 类型码
-			int REQUEST_CODE;
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 				// TODO Auto-generated method stub
+				Intent intent;
 				switch (position) {
 				case 0:// 如果是拍照
 					myMenuDialog.dismiss();
-					Uri imageUri = null;
-					String fileName = null;
-					Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-					REQUEST_CODE = RegisterActivity.CROP;
-
-					// 删除上一次截图的临时文件
-					SharedPreferences sharedPreferences = getActivity().getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE);
-					ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(),
-							sharedPreferences.getString("tempName", ""));
-
-					// 保存本次截图临时文件名字
-					fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-					Editor editor = sharedPreferences.edit();
-					editor.putString("tempName", fileName);
-					editor.commit();
-					imageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), fileName));
-					// 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
-					openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-					getActivity().startActivityForResult(openCameraIntent, REQUEST_CODE);
+					intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+					intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(getNewImagePath())));
+					getActivity().startActivityForResult(intent, 2);
 					break;
 				case 1:// 从相册选取
 					myMenuDialog.dismiss();
-					Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-					REQUEST_CODE = RegisterActivity.CROP;
-					openAlbumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-					getActivity().startActivityForResult(openAlbumIntent, REQUEST_CODE);
+					intent = new Intent(Intent.ACTION_PICK, null);
+					intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+					getActivity().startActivityForResult(intent, 1);
 					break;
 
 				default:
@@ -312,29 +294,30 @@ public class RegAccountFragment extends BaseV4Fragment {
 			}
 		};
 		myMenuDialog.setListItemClickListener(listener);
-
 		myMenuDialog.show();
 	}
 
-	// 截取图片
-	public void cropImage(Uri uri, int outputX, int outputY, int requestCode) {
-		Intent intent = new Intent("com.android.camera.action.CROP");
-		intent.setDataAndType(uri, "image/*");
-		intent.putExtra("crop", "true");
-		intent.putExtra("aspectX", 1);
-		intent.putExtra("aspectY", 1);
-		intent.putExtra("outputX", outputX);
-		intent.putExtra("outputY", outputY);
-		intent.putExtra("outputFormat", "JPEG");
-		intent.putExtra("noFaceDetection", true);
-		intent.putExtra("return-data", true); // intent.putExtra("return-data",
-												// false);
-		getActivity().startActivityForResult(intent, requestCode);
-		// intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-		// intent.setDataAndType(photoUri, "image/*");
-		// intent.putExtra("scale", true);
-		// intent.putExtra("scaleUpIfNeeded", true);
+	//获得新的路径
+	private String getNewImagePath() {
+		// 删除上一次截图的临时文件
+		String path = null;
+		SharedPreferences sharedPreferences = getActivity().getSharedPreferences("temp", Context.MODE_PRIVATE);
+		ImageTools.deleteImageByPath(sharedPreferences.getString("tempPath", ""));
+
+		// 保存本次截图临时文件名字
+		File file = new File(Environment.getExternalStorageDirectory() + "/lanquan");
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+
+		path = file.getAbsolutePath() + "/" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+		Editor editor = sharedPreferences.edit();
+		editor.putString("tempPath", path);
+		editor.commit();
+		return path;
 	}
+
+	
 
 	/**
 	 * @param imageUrl

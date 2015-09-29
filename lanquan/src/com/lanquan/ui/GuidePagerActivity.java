@@ -1,9 +1,11 @@
 package com.lanquan.ui;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
@@ -142,8 +144,8 @@ public class GuidePagerActivity extends BaseFragmentActivity {
 				mPage3.setImageDrawable(getResources().getDrawable(R.drawable.page));
 				break;
 			case 3:
-//				mPage3.setImageDrawable(getResources().getDrawable(R.drawable.page_now));
-//				mPage2.setImageDrawable(getResources().getDrawable(R.drawable.page));
+				//				mPage3.setImageDrawable(getResources().getDrawable(R.drawable.page_now));
+				//				mPage2.setImageDrawable(getResources().getDrawable(R.drawable.page));
 				dots.setVisibility(View.GONE);
 				break;
 			}

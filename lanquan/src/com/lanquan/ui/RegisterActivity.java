@@ -16,6 +16,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -31,6 +32,7 @@ import com.lanquan.config.Constants.Config;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.FileSizeUtil;
 import com.lanquan.utils.ImageTools;
 import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
@@ -55,6 +57,8 @@ public class RegisterActivity extends BaseFragmentActivity {
 	public static final int CROP = 2;
 	public static final int CROP_PICTURE = 3;
 	private UserPreference userPreference;
+
+	private Uri lastPhotoUri;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -123,56 +127,74 @@ public class RegisterActivity extends BaseFragmentActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK) {
-			switch (requestCode) {
-
-			case CROP:
-				Uri uri = null;
-				if (data != null) {
-					uri = data.getData();
-					LogTool.i("Data");
-				} else {
-					LogTool.i("File");
-					String fileName = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE).getString("tempName", "");
-					uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), fileName));
-				}
-				RegAccountFragment regAccountFragment = (RegAccountFragment) getSupportFragmentManager().findFragmentByTag("RegAccountFragment");
-				regAccountFragment.cropImage(uri, 500, 500, CROP_PICTURE);
-				break;
-
-			case CROP_PICTURE:
-				Bitmap photo = null;
-				Uri photoUri = data.getData();
-				if (photoUri != null) {
-					// photo = BitmapFactory.decodeFile(photoUri.getPath());
-					uploadImage(photoUri.getPath());
-				}
-				if (photo == null) {
-					Bundle extra = data.getExtras();
-					if (extra != null) {
-						photo = (Bitmap) extra.get("data");
-						ByteArrayOutputStream stream = new ByteArrayOutputStream();
-						photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-						String fileName;
-						// 删除上一次截图的临时文件
-						SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE);
-						ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(), sharedPreferences.getString("crop_tempName", ""));
-
-						// 保存本次截图临时文件名字
-						fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-						Editor editor = sharedPreferences.edit();
-						editor.putString("crop_tempName", fileName);
-						editor.commit();
-
-						uploadImage(ImageTools.savePhotoToSDCard(photo, Environment.getExternalStorageDirectory().getAbsolutePath(), fileName, 100).getAbsolutePath());
-					}
-				}
-				break;
-			default:
-				break;
+		switch (requestCode) {
+		// 如果是直接从相册获取 
+		case 1:
+			if (data != null) {
+				startPhotoCrop(data.getData());
 			}
+			break;
+		// 如果是调用相机拍照时 
+		case 2:
+			if (new File(getImagePath()).exists()) {
+				startPhotoCrop(Uri.fromFile(new File(getImagePath())));
+			}
+			break;
+		// 取得裁剪后的图片并上传 
+		case 3:
+			uploadImage(lastPhotoUri.getPath());
+			break;
+		default:
+			break;
 		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	/** 
+	 * 裁剪图片方法实现 
+	 * @param uri 
+	 */
+	public void startPhotoCrop(Uri uri) {
+		lastPhotoUri = Uri.fromFile(new File(getLastImagePath()));
+
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		//下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪 
+		intent.putExtra("crop", "true");
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		intent.putExtra("outputX", 800);
+		intent.putExtra("outputY", 800);
+		intent.putExtra("noFaceDetection", true);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, lastPhotoUri);
+		intent.putExtra("return-data", false);
+		intent.putExtra("scale", true);
+		intent.putExtra("scaleUpIfNeeded", true);
+		startActivityForResult(intent, 3);
+	}
+
+	//获得最终截图路径
+	private String getLastImagePath() {
+		String path = null;
+		SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_PRIVATE);
+
+		// 保存本次截图临时文件名字
+		File file = new File(Environment.getExternalStorageDirectory() + "/lanquan");
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+
+		path = file.getAbsolutePath() + "/" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+		Editor editor = sharedPreferences.edit();
+		editor.putString("tempPath", path);
+		editor.commit();
+		return path;
+	}
+
+	//获得路径
+	private String getImagePath() {
+		SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_PRIVATE);
+		return sharedPreferences.getString("tempPath", "");
 	}
 
 	/**
@@ -180,9 +202,12 @@ public class RegisterActivity extends BaseFragmentActivity {
 	 * @param filePath
 	 */
 	public void uploadImage(final String imageUrl) {
-
 		File dir = new File(imageUrl);
-		if (dir.exists()) {
+		LogTool.e("图片地址" + imageUrl);
+		int fileSize = (int) FileSizeUtil.getFileOrFilesSize(imageUrl, 2);
+		LogTool.e("文件大小：" + fileSize + "KB");
+
+		if (dir.exists() && !imageUrl.equals("/") && fileSize < 500 && fileSize > 0) {
 			RequestParams params = new RequestParams();
 			try {
 				params.put("userfile", dir);
@@ -224,6 +249,15 @@ public class RegisterActivity extends BaseFragmentActivity {
 					LogTool.e("头像上传失败！" + errorResponse);
 					// 删除本地头像
 					ImageTools.deleteImageByPath(imageUrl);
+				}
+
+				@Override
+				public void onFinish() {
+					// TODO Auto-generated method stub
+					super.onFinish();
+					// 删除本地头像
+					ImageTools.deleteImageByPath(imageUrl);
+					lastPhotoUri = null;
 				}
 			};
 			AsyncHttpClientTool.post("api/file/upload", params, responseHandler);

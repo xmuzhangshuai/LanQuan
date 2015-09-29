@@ -333,7 +333,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			@Override
 			public void onClick(View v) {
 				ToastTool.showShort(getActivity(), "微博第三方登录");
-//				设置新浪SSO handler
+				//				设置新浪SSO handler
 				mController.getConfig().setSsoHandler(new SinaSsoHandler());
 				mController.doOauthVerify(getActivity(), SHARE_MEDIA.SINA, new UMAuthListener() {
 					@Override
@@ -382,15 +382,15 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 	}
 
-//	@Override
-//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//		super.onActivityResult(requestCode, resultCode, data);
-//		/**使用SSO授权必须添加如下代码 */
-//		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
-//		if (ssoHandler != null) {
-//			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
-//		}
-//	}
+	//	@Override
+	//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+	//		super.onActivityResult(requestCode, resultCode, data);
+	//		/**使用SSO授权必须添加如下代码 */
+	//		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
+	//		if (ssoHandler != null) {
+	//			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+	//		}
+	//	}
 
 	/**
 	 * 验证验证码
@@ -539,36 +539,38 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				LogTool.i("短信验证码==" + status + response);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
-//					jsonTool.saveAccess_token();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
-					LogTool.e(jsonTool.getMessage());
+					boolean cancel = false;
+					mPhoneView.setError(jsonTool.getMessage());
+					focusView = mPhoneView;
+					cancel = true;
+					if (cancel) {
+						focusView.requestFocus();
+						timer.cancel();
+						authCodeButton.setText("获取验证码");
+						authCodeButton.setEnabled(true);
+					}
 				}
 			}
 
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
-				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
+				LogTool.e("服务器错误,错误代码" + statusCode + "，  原因：" + errorResponse);
 
-//				boolean cancel = false;
-//				JsonTool jsonTool = new JsonTool(errorResponse);
-//				if (jsonTool.getStatus().equals("fail")) {
-//					mPhoneView.setError(jsonTool.getMessage());
-//					focusView = mPhoneView;
-//					cancel = true;
-//				}
-//				if (cancel) {
-//					focusView.requestFocus();
-//					timer.cancel();
-//					authCodeButton.setText("获取验证码");
-//					authCodeButton.setEnabled(true);
-//				}
-			}
-
-			@Override
-			public void onFinish() {
-				// TODO Auto-generated method stub
-				super.onFinish();
+				boolean cancel = false;
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				if (jsonTool.getStatus().equals("fail")) {
+					mPhoneView.setError(jsonTool.getMessage());
+					focusView = mPhoneView;
+					cancel = true;
+				}
+				if (cancel) {
+					focusView.requestFocus();
+					timer.cancel();
+					authCodeButton.setText("获取验证码");
+					authCodeButton.setEnabled(true);
+				}
 			}
 		};
 		AsyncHttpClientTool.post("api/sms/send", params, responseHandler);

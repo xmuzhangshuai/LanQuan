@@ -1,6 +1,5 @@
 package com.lanquan.ui;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -9,11 +8,26 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lanquan.R;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.base.BaseFragmentActivity;
+import com.lanquan.config.Constants;
+import com.lanquan.customwidget.MyMenuDialog;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.FileSizeUtil;
+import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.ImageTools;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
+import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -25,21 +39,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.lanquan.R;
-import com.lanquan.base.BaseApplication;
-import com.lanquan.base.BaseFragmentActivity;
-import com.lanquan.config.Constants;
-import com.lanquan.customwidget.MyMenuDialog;
-import com.lanquan.utils.AsyncHttpClientTool;
-import com.lanquan.utils.ImageLoaderTool;
-import com.lanquan.utils.ImageTools;
-import com.lanquan.utils.JsonTool;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
-import com.lanquan.utils.UserPreference;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 /**
  * 类描述 ：修改资料 类名： ModifyDataActivity.java Copyright: Copyright (c)2015 Company:
@@ -68,6 +67,7 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 	private TextView phoneTextView;
 
 	private UserPreference userPreference;
+	private Uri lastPhotoUri;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +79,31 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 		userPreference = BaseApplication.getInstance().getUserPreference();
 		findViewById();
 		initView();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		// 如果是直接从相册获取 
+		case 1:
+			if (data != null) {
+				startPhotoCrop(data.getData());
+			}
+			break;
+		// 如果是调用相机拍照时 
+		case 2:
+			if (new File(getImagePath()).exists()) {
+				startPhotoCrop(Uri.fromFile(new File(getImagePath())));
+			}
+			break;
+		// 取得裁剪后的图片并上传 
+		case 3:
+			uploadImage(lastPhotoUri.getPath());
+			break;
+		default:
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	@Override
@@ -107,61 +132,6 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 		passView.setOnClickListener(this);
 		phoneView.setOnClickListener(this);
 		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, MainPersonalFragment.getCircleHeadImageOptions());
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK) {
-			switch (requestCode) {
-
-			case RegisterActivity.CROP:
-				Uri uri = null;
-				if (data != null) {
-					uri = data.getData();
-					LogTool.i("Data");
-				} else {
-					LogTool.i("File");
-					String fileName = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE).getString("tempName", "");
-					uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), fileName));
-				}
-				cropImage(uri, 500, 500, RegisterActivity.CROP_PICTURE);
-				break;
-
-			case RegisterActivity.CROP_PICTURE:
-				Bitmap photo = null;
-				Uri photoUri = data.getData();
-				if (photoUri != null) {
-					// photo = BitmapFactory.decodeFile(photoUri.getPath());
-					uploadImage(photoUri.getPath());
-					LogTool.e("裁剪返回" + "photoUri");
-				}
-				if (photo == null) {
-					Bundle extra = data.getExtras();
-					if (extra != null) {
-						photo = (Bitmap) extra.get("data");
-						ByteArrayOutputStream stream = new ByteArrayOutputStream();
-						photo.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-						String fileName;
-						// 删除上一次截图的临时文件
-						SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE);
-						ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(), sharedPreferences.getString("crop_tempName", ""));
-
-						// 保存本次截图临时文件名字
-						fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-						Editor editor = sharedPreferences.edit();
-						editor.putString("crop_tempName", fileName);
-						editor.commit();
-
-						uploadImage(ImageTools.savePhotoToSDCard(photo, Environment.getExternalStorageDirectory().getAbsolutePath(), fileName, 100).getAbsolutePath());
-						LogTool.e("裁剪返回" + "Bitmap");
-					}
-				}
-				break;
-			default:
-				break;
-			}
-		}
 	}
 
 	@Override
@@ -198,13 +168,127 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 	}
 
 	/**
+	* 显示对话框，从拍照和相册选择图片来源
+	* 
+	* @param context
+	* @param isCrop
+	*/
+	private void showPicturePicker(Context context) {
+
+		final MyMenuDialog myMenuDialog = new MyMenuDialog(ModifyDataActivity.this);
+		myMenuDialog.setTitle("图片来源");
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("拍照");
+		list.add("相册");
+		myMenuDialog.setMenuList(list);
+		OnItemClickListener listener = new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				// TODO Auto-generated method stub
+				Intent intent;
+				switch (position) {
+				case 0:// 如果是拍照
+					myMenuDialog.dismiss();
+					intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+					intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(new File(getNewImagePath())));
+					startActivityForResult(intent, 2);
+					break;
+				case 1:// 从相册选取
+					myMenuDialog.dismiss();
+					intent = new Intent(Intent.ACTION_PICK, null);
+					intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+					startActivityForResult(intent, 1);
+					break;
+
+				default:
+					break;
+				}
+			}
+		};
+		myMenuDialog.setListItemClickListener(listener);
+		myMenuDialog.show();
+	}
+
+	/** 
+	 * 裁剪图片方法实现 
+	 * @param uri 
+	 */
+	public void startPhotoCrop(Uri uri) {
+		lastPhotoUri = Uri.fromFile(new File(getLastImagePath()));
+
+		Intent intent = new Intent("com.android.camera.action.CROP");
+		intent.setDataAndType(uri, "image/*");
+		//下面这个crop=true是设置在开启的Intent中设置显示的VIEW可裁剪 
+		intent.putExtra("crop", "true");
+		intent.putExtra("aspectX", 1);
+		intent.putExtra("aspectY", 1);
+		intent.putExtra("outputX", 800);
+		intent.putExtra("outputY", 800);
+		intent.putExtra("noFaceDetection", true);
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, lastPhotoUri);
+		intent.putExtra("return-data", false);
+		intent.putExtra("scale", true);
+		intent.putExtra("scaleUpIfNeeded", true);
+		startActivityForResult(intent, 3);
+	}
+
+	//获得新的路径
+	private String getNewImagePath() {
+		// 删除上一次截图的临时文件
+		String path = null;
+		SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_PRIVATE);
+		ImageTools.deleteImageByPath(sharedPreferences.getString("tempPath", ""));
+
+		// 保存本次截图临时文件名字
+		File file = new File(Environment.getExternalStorageDirectory() + "/lanquan");
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+
+		path = file.getAbsolutePath() + "/" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+		Editor editor = sharedPreferences.edit();
+		editor.putString("tempPath", path);
+		editor.commit();
+		return path;
+	}
+
+	//获得最终截图路径
+	private String getLastImagePath() {
+		String path = null;
+		SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_PRIVATE);
+
+		// 保存本次截图临时文件名字
+		File file = new File(Environment.getExternalStorageDirectory() + "/lanquan");
+		if (!file.exists()) {
+			file.mkdirs();
+		}
+
+		path = file.getAbsolutePath() + "/" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+		Editor editor = sharedPreferences.edit();
+		editor.putString("tempPath", path);
+		editor.commit();
+		return path;
+	}
+
+	//获得路径
+	private String getImagePath() {
+		SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_PRIVATE);
+		return sharedPreferences.getString("tempPath", "");
+	}
+
+	/**
 	 * 上传头像
 	 * 
 	 * @param filePath
 	 */
 	public void uploadImage(final String imageUrl) {
 		File dir = new File(imageUrl);
-		if (dir.exists()) {
+		LogTool.e("图片地址" + imageUrl);
+		int fileSize = (int) FileSizeUtil.getFileOrFilesSize(imageUrl, 2);
+		LogTool.e("文件大小：" + fileSize + "KB");
+
+		if (dir.exists() && !imageUrl.equals("/") && fileSize < 500 && fileSize > 0) {
 			RequestParams params = new RequestParams();
 			try {
 				params.put("userfile", dir);
@@ -235,16 +319,21 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 					} else if (status.equals(JsonTool.STATUS_FAIL)) {
 						LogTool.e("上传头像fail");
 					}
-					// 删除本地头像
-					ImageTools.deleteImageByPath(imageUrl);
 				}
 
 				@Override
 				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 					// TODO Auto-generated method stub
 					LogTool.e("头像上传失败！" + errorResponse);
+				}
+
+				@Override
+				public void onFinish() {
+					// TODO Auto-generated method stub
+					super.onFinish();
 					// 删除本地头像
 					ImageTools.deleteImageByPath(imageUrl);
+					lastPhotoUri = null;
 				}
 			};
 			AsyncHttpClientTool.post("api/file/upload", params, responseHandler);
@@ -282,86 +371,5 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 			}
 		};
 		AsyncHttpClientTool.post("api/user/modifyAvatar", params, responseHandler);
-	}
-
-	/**
-	 * 显示对话框，从拍照和相册选择图片来源
-	 * 
-	 * @param context
-	 * @param isCrop
-	 */
-	private void showPicturePicker(Context context) {
-
-		final MyMenuDialog myMenuDialog = new MyMenuDialog(ModifyDataActivity.this);
-		myMenuDialog.setTitle("图片来源");
-		ArrayList<String> list = new ArrayList<String>();
-		list.add("拍照");
-		list.add("相册");
-		myMenuDialog.setMenuList(list);
-		OnItemClickListener listener = new OnItemClickListener() {
-			// 类型码
-			int REQUEST_CODE;
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				// TODO Auto-generated method stub
-				switch (position) {
-				case 0:// 如果是拍照
-					myMenuDialog.dismiss();
-					Uri imageUri = null;
-					String fileName = null;
-					Intent openCameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-					REQUEST_CODE = RegisterActivity.CROP;
-
-					// 删除上一次截图的临时文件
-					SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE);
-					ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(), sharedPreferences.getString("tempName", ""));
-
-					// 保存本次截图临时文件名字
-					fileName = String.valueOf(System.currentTimeMillis()) + ".jpg";
-					Editor editor = sharedPreferences.edit();
-					editor.putString("tempName", fileName);
-					editor.commit();
-					imageUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), fileName));
-					// 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
-					openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-					startActivityForResult(openCameraIntent, REQUEST_CODE);
-					break;
-				case 1:// 从相册选取
-					myMenuDialog.dismiss();
-					Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-					REQUEST_CODE = RegisterActivity.CROP;
-					openAlbumIntent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
-					startActivityForResult(openAlbumIntent, REQUEST_CODE);
-					break;
-
-				default:
-					break;
-				}
-			}
-		};
-		myMenuDialog.setListItemClickListener(listener);
-
-		myMenuDialog.show();
-	}
-
-	// 截取图片
-	public void cropImage(Uri uri, int outputX, int outputY, int requestCode) {
-		Intent intent = new Intent("com.android.camera.action.CROP");
-		intent.setDataAndType(uri, "image/*");
-		intent.putExtra("crop", "true");
-		intent.putExtra("aspectX", 1);
-		intent.putExtra("aspectY", 1);
-		intent.putExtra("outputX", outputX);
-		intent.putExtra("outputY", outputY);
-		intent.putExtra("outputFormat", "JPEG");
-		intent.putExtra("noFaceDetection", true);
-		intent.putExtra("return-data", true); // intent.putExtra("return-data",
-												// false);
-		startActivityForResult(intent, requestCode);
-		// intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-		// intent.setDataAndType(photoUri, "image/*");
-		// intent.putExtra("scale", true);
-		// intent.putExtra("scaleUpIfNeeded", true);
 	}
 }

@@ -168,7 +168,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
-				LogTool.i(response + "0000" + statusCode);
+				LogTool.i("推荐频道" + response + statusCode);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					JSONObject jsonObject = jsonTool.getJsonObject();
 					try {
@@ -195,7 +195,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 							else if (page > 0) {
 								if (temp.size() < Config.PAGE_NUM) {
 									pageNow = -1;
-//									ToastTool.showShort(getActivity(), "没有更多了！");
+									//									ToastTool.showShort(getActivity(), "没有更多了！");
 								}
 								jsonChannelList.addAll(temp);
 							}
