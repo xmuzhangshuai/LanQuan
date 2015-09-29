@@ -38,7 +38,7 @@ public class JsonTool {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return "";
 	}
 
 	public String getMessage() {
@@ -50,7 +50,7 @@ public class JsonTool {
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return "";
 	}
 
 	public String saveAccess_token() {

@@ -550,19 +550,19 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 				LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
 
-				boolean cancel = false;
-				JsonTool jsonTool = new JsonTool(errorResponse);
-				if (jsonTool.getStatus().equals("fail")) {
-					mPhoneView.setError(jsonTool.getMessage());
-					focusView = mPhoneView;
-					cancel = true;
-				}
-				if (cancel) {
-					focusView.requestFocus();
-					timer.cancel();
-					authCodeButton.setText("获取验证码");
-					authCodeButton.setEnabled(true);
-				}
+//				boolean cancel = false;
+//				JsonTool jsonTool = new JsonTool(errorResponse);
+//				if (jsonTool.getStatus().equals("fail")) {
+//					mPhoneView.setError(jsonTool.getMessage());
+//					focusView = mPhoneView;
+//					cancel = true;
+//				}
+//				if (cancel) {
+//					focusView.requestFocus();
+//					timer.cancel();
+//					authCodeButton.setText("获取验证码");
+//					authCodeButton.setEnabled(true);
+//				}
 			}
 
 			@Override

@@ -106,7 +106,7 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 		nicknameView.setOnClickListener(this);
 		passView.setOnClickListener(this);
 		phoneView.setOnClickListener(this);
-		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
+		imageLoader.displayImage(userPreference.getU_avatar(), headImageView, MainPersonalFragment.getCircleHeadImageOptions());
 	}
 
 	@Override
@@ -224,9 +224,9 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 						JSONObject jsonObject = jsonTool.getJsonObject();
 						if (jsonObject != null) {
 							try {
-								userPreference.setU_avatar(jsonObject.getString("url"));
+								userPreference.setU_avatar(Constants.AppliactionServerIP + jsonObject.getString("url"));
 								imageLoader.displayImage(userPreference.getU_avatar(), headImageView, ImageLoaderTool.getCircleHeadImageOptions());
-								modifyHeadImage(Constants.AppliactionServerIP + jsonObject.getString("url"));
+								modifyHeadImage(jsonObject.getString("url"));
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();

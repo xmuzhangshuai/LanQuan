@@ -1,5 +1,9 @@
 package com.lanquan.base;
 
+import com.lanquan.utils.NetworkUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
@@ -12,10 +16,6 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.Toast;
-
-import com.lanquan.utils.NetworkUtils;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.umeng.analytics.MobclickAgent;
 
 /** 
  * 类描述 ：自定义的继承了Activity的抽象类，实现了findViewById和initView两个抽象方法，子类必须实现覆盖

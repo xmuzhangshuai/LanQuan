@@ -1,5 +1,9 @@
 package com.lanquan.base;
 
+import com.lanquan.utils.NetworkUtils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.umeng.analytics.MobclickAgent;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -12,10 +16,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
-
-import com.lanquan.utils.NetworkUtils;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.umeng.analytics.MobclickAgent;
 
 /**   
 *    
