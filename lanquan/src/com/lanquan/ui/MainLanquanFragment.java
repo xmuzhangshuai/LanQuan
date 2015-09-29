@@ -110,13 +110,13 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	}
 
 	private void refreshLayout() {
-		if (jsonChannelList.size() > 0) {
-			postListView.setVisibility(View.VISIBLE);
-			emptyView.setVisibility(View.GONE);
-		} else {
-			postListView.setVisibility(View.GONE);
-			emptyView.setVisibility(View.VISIBLE);
-		}
+//		if (jsonChannelList.size() > 0) {
+//			postListView.setVisibility(View.VISIBLE);
+//			emptyView.setVisibility(View.GONE);
+//		} else {
+//			postListView.setVisibility(View.GONE);
+//			emptyView.setVisibility(View.VISIBLE);
+//		}
 	}
 
 	/**
