@@ -179,7 +179,8 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		if (index == 0) {
 			getFragmentManager().beginTransaction().replace(R.id.channel_fragment_container, myChannelByTime, "myChannelByTime").addToBackStack(null).commit();
 		} else if (index == 1) {
-			getFragmentManager().beginTransaction().replace(R.id.channel_fragment_container, myChannelByChannel, "myChannelByChannel").addToBackStack(null).commit();
+			getFragmentManager().beginTransaction().replace(R.id.channel_fragment_container, myChannelByChannel, "myChannelByChannel").addToBackStack(null)
+					.commit();
 		}
 
 	}
@@ -495,7 +496,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					//					goToDetail(jsonMyArticle.getChannel_id(), jsonMyArticle.get);
+//					goToDetail(jsonMyArticle.getChannel_id(), jsonMyArticle.get);
 				}
 			});
 

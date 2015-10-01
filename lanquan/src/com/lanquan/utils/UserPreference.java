@@ -4,6 +4,7 @@ import java.util.Date;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 import com.lanquan.R;
 import com.lanquan.table.UserTable;
@@ -110,8 +111,10 @@ public class UserPreference {
 	}
 
 	public void setAccess_token(String access_token) {
-		editor.putString(UserTable.U_ACCESS_TOKEN, access_token);
-		editor.commit();
+		if (!TextUtils.isEmpty(access_token)) {
+			editor.putString(UserTable.U_ACCESS_TOKEN, access_token);
+			editor.commit();
+		}
 	}
 
 	// 内容数量
