@@ -59,8 +59,7 @@
         <!-- 注册或登录页面 -->
         <activity
             android:name="com.lanquan.ui.LoginOrRegisterActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:screenOrientation="portrait" >
         </activity>
 
         <!-- 首次安装运行页面 -->
