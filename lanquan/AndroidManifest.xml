@@ -65,7 +65,7 @@
         <!-- 首次安装运行页面 -->
         <activity
             android:name="com.lanquan.ui.GuidePagerActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait" >
         </activity>
 
         <!-- 主页面 -->
@@ -247,6 +247,15 @@
             android:name="UMENG_APPKEY"
             android:value="55f6a8df67e58e82090014c0" />
 
+        <service
+            android:name="com.umeng.update.net.DownloadingService"
+            android:process=":DownloadingService" >
+        </service>
+
+        <activity
+            android:name="com.umeng.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
         <activity
             android:name="com.umeng.socialize.view.ShareActivity"
             android:configChanges="orientation|keyboard"
