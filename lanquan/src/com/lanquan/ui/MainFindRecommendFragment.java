@@ -293,7 +293,8 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 			});
 
 			imageLoader.displayImage(jsonChannel.getRecommend_background(), holder.backPhotoImageView, ImageLoaderTool.getImageOptions());
-			holder.titleTextView.setText(jsonChannel.getTitle());
+			holder.titleTextView.setVisibility(View.GONE);
+//			holder.titleTextView.setText(jsonChannel.getTitle());
 
 			return view;
 		}

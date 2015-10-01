@@ -147,11 +147,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 			inputBar.setVisibility(View.VISIBLE);
 		} else {
-			concernBtn.setVisibility(View.GONE);
 			infoBtn.setVisibility(View.GONE);
 			inputBar.setVisibility(View.GONE);
 		}
-
 	}
 
 	@Override
@@ -319,8 +317,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			comment(commentEditText.getText().toString());
 			break;
 		case R.id.add_image:
-			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()).putExtra("commentcontent",
-					commentEditText.getText().toString()));
+			startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()).putExtra(
+					"commentcontent", commentEditText.getText().toString()));
 			break;
 		default:
 			break;
@@ -425,7 +423,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			params.put("sort", "create_time");
 		}
 		if (userPreference.getUserLogin()) {
-			//			params.put("user_id", userPreference.getU_id());
+			// params.put("user_id", userPreference.getU_id());
 			params.put("access_token", userPreference.getAccess_token());
 		}
 
@@ -491,50 +489,56 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	 *关注 
 	 */
 	private void concern() {
-		RequestParams params = new RequestParams();
-		params.put("channel_id", jsonChannel.getChannel_id());
-		params.put("access_token", userPreference.getAccess_token());
-		final Dialog dialog = showProgressDialog("请稍后...");
-		dialog.setCancelable(false);
+		if (userPreference.getUserLogin()) {
+			RequestParams params = new RequestParams();
+			params.put("channel_id", jsonChannel.getChannel_id());
+			params.put("access_token", userPreference.getAccess_token());
+			final Dialog dialog = showProgressDialog("请稍后...");
+			dialog.setCancelable(false);
 
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
-			@Override
-			public void onStart() {
-				// TODO Auto-generated method stub
-				super.onStart();
-				dialog.show();
-			}
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				JsonTool jsonTool = new JsonTool(response);
-				String status = jsonTool.getStatus();
-				if (status.equals(JsonTool.STATUS_SUCCESS)) {
-					ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
-					jsonChannel.setIs_focus(1);
-					infoBtn.setVisibility(View.VISIBLE);
-					concernBtn.setVisibility(View.GONE);
-				} else {
-					LogTool.e(jsonTool.getMessage());
+				@Override
+				public void onStart() {
+					// TODO Auto-generated method stub
+					super.onStart();
+					dialog.show();
 				}
-			}
 
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("关注频道" + errorResponse);
-			}
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, String response) {
+					// TODO Auto-generated method stub
+					JsonTool jsonTool = new JsonTool(response);
+					String status = jsonTool.getStatus();
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
+						jsonChannel.setIs_focus(1);
+						infoBtn.setVisibility(View.VISIBLE);
+						concernBtn.setVisibility(View.GONE);
+					} else {
+						LogTool.e(jsonTool.getMessage());
+					}
+				}
 
-			@Override
-			public void onFinish() {
-				// TODO Auto-generated method stub
-				super.onFinish();
-				dialog.dismiss();
-			}
-		};
-		AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/channel/focus", params, responseHandler);
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+					// TODO Auto-generated method stub
+					LogTool.e("关注频道" + errorResponse);
+				}
+
+				@Override
+				public void onFinish() {
+					// TODO Auto-generated method stub
+					super.onFinish();
+					dialog.dismiss();
+				}
+			};
+			AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/channel/focus", params, responseHandler);
+		} else {
+			Intent intent = new Intent(ChannelPhotoActivity.this, LoginActivity.class);
+			startActivity(intent);
+			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+		}
 	}
 
 	/** 

@@ -152,7 +152,6 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 			}
 			punchBtn.setVisibility(View.VISIBLE);
 		} else {
-			concernBtn.setVisibility(View.GONE);
 			infoBtn.setVisibility(View.GONE);
 			punchBtn.setVisibility(View.GONE);
 		}
@@ -334,7 +333,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 		params.put("pageIndex", page);
 		params.put("pageSize", Config.PAGE_NUM);
 		params.put("sort", "create_time");
-		//		params.put("user_id", userPreference.getU_id());
+		// params.put("user_id", userPreference.getU_id());
 		params.put("access_token", userPreference.getAccess_token());
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
@@ -398,50 +397,57 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 	 *关注 
 	 */
 	private void concern() {
-		RequestParams params = new RequestParams();
-		params.put("channel_id", jsonChannel.getChannel_id());
-		params.put("access_token", userPreference.getAccess_token());
-		final Dialog dialog = showProgressDialog("请稍后...");
-		dialog.setCancelable(false);
+		if (userPreference.getUserLogin()) {
+			RequestParams params = new RequestParams();
+			params.put("channel_id", jsonChannel.getChannel_id());
+			params.put("access_token", userPreference.getAccess_token());
+			final Dialog dialog = showProgressDialog("请稍后...");
+			dialog.setCancelable(false);
 
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
-			@Override
-			public void onStart() {
-				// TODO Auto-generated method stub
-				super.onStart();
-				dialog.show();
-			}
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				JsonTool jsonTool = new JsonTool(response);
-				String status = jsonTool.getStatus();
-				if (status.equals(JsonTool.STATUS_SUCCESS)) {
-					ToastTool.showShort(ChannelPunchCardActivity.this, jsonTool.getMessage());
-					jsonChannel.setIs_focus(1);
-					infoBtn.setVisibility(View.VISIBLE);
-					concernBtn.setVisibility(View.GONE);
-				} else {
-					LogTool.e(jsonTool.getMessage());
+				@Override
+				public void onStart() {
+					// TODO Auto-generated method stub
+					super.onStart();
+					dialog.show();
 				}
-			}
 
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("关注频道" + errorResponse);
-			}
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, String response) {
+					// TODO Auto-generated method stub
+					JsonTool jsonTool = new JsonTool(response);
+					String status = jsonTool.getStatus();
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						ToastTool.showShort(ChannelPunchCardActivity.this, jsonTool.getMessage());
+						jsonChannel.setIs_focus(1);
+						infoBtn.setVisibility(View.VISIBLE);
+						concernBtn.setVisibility(View.GONE);
+					} else {
+						LogTool.e(jsonTool.getMessage());
+					}
+				}
 
-			@Override
-			public void onFinish() {
-				// TODO Auto-generated method stub
-				super.onFinish();
-				dialog.dismiss();
-			}
-		};
-		AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/channel/focus", params, responseHandler);
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+					// TODO Auto-generated method stub
+					LogTool.e("关注频道" + errorResponse);
+				}
+
+				@Override
+				public void onFinish() {
+					// TODO Auto-generated method stub
+					super.onFinish();
+					dialog.dismiss();
+				}
+			};
+			AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/channel/focus", params, responseHandler);
+		} else {
+			Intent intent = new Intent(ChannelPunchCardActivity.this, LoginActivity.class);
+			startActivity(intent);
+			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+		}
+
 	}
 
 	/** 

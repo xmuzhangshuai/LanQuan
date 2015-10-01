@@ -93,22 +93,13 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/new_msg" >
 
-            <ImageView
-                android:id="@+id/delete_btn"
-                android:layout_width="@dimen/motify_data_space"
-                android:layout_height="@dimen/motify_data_space"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="20dp"
-                android:layout_toLeftOf="@+id/favor_btn"
-                android:src="@drawable/icon_delete" />
-
             <CheckBox
                 android:id="@+id/favor_btn"
                 android:layout_width="@dimen/motify_data_space"
                 android:layout_height="@dimen/motify_data_space"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="5dp"
                 android:background="@drawable/sel_flipper_checkbox"
                 android:button="@null" />
 
@@ -116,9 +107,30 @@
                 android:id="@+id/favor_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/favor_btn"
+                android:textColor="@color/system_main_orange"
+                android:textSize="@dimen/register_font_size" />
+
+            <ImageView
+                android:id="@+id/delete_btn"
+                android:layout_width="@dimen/motify_data_space"
+                android:layout_height="@dimen/motify_data_space"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="20dp"
+                android:layout_toLeftOf="@+id/more"
+                android:src="@drawable/icon_delete" />
+
+            <ImageView
+                android:id="@+id/more"
+                android:layout_width="@dimen/time_capsule20"
+                android:layout_height="@dimen/time_capsule20"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:textSize="@dimen/register_font_size" />
+                android:layout_marginTop="10dp"
+                android:clickable="true"
+                android:focusable="false"
+                android:src="@drawable/sel_more_btn" />
         </RelativeLayout>
     </LinearLayout>
 
