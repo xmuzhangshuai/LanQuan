@@ -82,7 +82,7 @@ public class RegAccountFragment extends BaseV4Fragment {
 
 	private String mName;
 	private String mPassword;
-//	private String mConformPass;
+	//	private String mConformPass;
 	private UserPreference userPreference;
 	private int recLen;
 	private Timer timer;
@@ -314,7 +314,7 @@ public class RegAccountFragment extends BaseV4Fragment {
 		} else {
 			userPreference.setU_nickname(mName);
 			userPreference.setU_password(MD5For32.GetMD5Code(mPassword));
-			next();
+			register();
 		}
 	}
 
@@ -329,6 +329,27 @@ public class RegAccountFragment extends BaseV4Fragment {
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
 
 			@Override
+			public void onStart() {
+				// TODO Auto-generated method stub
+				super.onStart();
+				recLen = Config.AUTN_CODE_TIME;
+				authCodeButton.setEnabled(false);
+
+				timer = new Timer();
+				timer.schedule(new TimerTask() {
+
+					@Override
+					public void run() {
+						// TODO Auto-generated method stub
+						recLen--;
+						Message message = new Message();
+						message.what = 1;
+						timeHandler.sendMessage(message);
+					}
+				}, 1000, 1000);
+			}
+
+			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
 				JsonTool jsonTool = new JsonTool(response);
@@ -336,7 +357,6 @@ public class RegAccountFragment extends BaseV4Fragment {
 				LogTool.i("短信验证码==" + status + response);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
-					next();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					ToastTool.showLong(getActivity(), jsonTool.getMessage());
 				}
@@ -403,7 +423,7 @@ public class RegAccountFragment extends BaseV4Fragment {
 	/**
 	 * 下一步
 	 */
-	private void next() {
+	private void register() {
 
 		RequestParams params = new RequestParams();
 		String phone = userPreference.getU_tel();
