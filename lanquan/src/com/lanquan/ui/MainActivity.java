@@ -8,6 +8,7 @@ import android.view.Window;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseFragmentActivity;
+import com.umeng.update.UmengUpdateAgent;
 
 /** 
  * 类描述 ：登录后主页，包含四个Fragments,MainLanquanFragment、MainFindFragment、MainMsgFragment、MainPernalFragment。
@@ -36,6 +37,8 @@ public class MainActivity extends BaseFragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
+		UmengUpdateAgent.setUpdateOnlyWifi(false);
+		UmengUpdateAgent.update(this);
 
 		lanquanFragment = new MainLanquanFragment();
 		findFragment = new MainFindFragment();
@@ -63,8 +66,7 @@ public class MainActivity extends BaseFragmentActivity {
 	protected void initView() {
 		// TODO Auto-generated method stub
 		// 添加显示第一个fragment
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, lanquanFragment)
-				.show(lanquanFragment).commit();
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, lanquanFragment).show(lanquanFragment).commit();
 	}
 
 	/**
