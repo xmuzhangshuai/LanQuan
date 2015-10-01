@@ -88,8 +88,8 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		// 添加微信平台
 		UMWXHandler wxHandler = new UMWXHandler(getActivity(), WeChatConfig.API_KEY, WeChatConfig.SECRIT_KEY);
 		wxHandler.addToSocialSDK();
-		//qq平台
-		//参数1为当前Activity， 参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
+		// qq平台
+		// 参数1为当前Activity， 参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
 		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), QQConfig.API_KEY, QQConfig.SECRIT_KEY);
 		qqSsoHandler.addToSocialSDK();
 		//
@@ -156,7 +156,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
 						Toast.makeText(getActivity(), "授权完成", Toast.LENGTH_SHORT).show();
-						//获取相关授权信息
+						// 获取相关授权信息
 						mController.getPlatformInfo(getActivity(), SHARE_MEDIA.WEIXIN, new UMDataListener() {
 							@Override
 							public void onStart() {
@@ -207,7 +207,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
 						Toast.makeText(getActivity(), "授权完成", Toast.LENGTH_SHORT).show();
-						//获取相关授权信息
+						// 获取相关授权信息
 						mController.getPlatformInfo(getActivity(), SHARE_MEDIA.QQ, new UMDataListener() {
 							@Override
 							public void onStart() {
@@ -222,7 +222,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									for (String key : keys) {
 										sb.append(key + "=" + info.get(key).toString() + "\r\n");
 									}
-									//如果第三方登录成功，获取avatar以及appid直接登录
+									// 如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("profile_image_url").toString();
 									other_login("qq", QQConfig.API_KEY, avatar);
 
@@ -246,7 +246,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			@Override
 			public void onClick(View v) {
 				ToastTool.showShort(getActivity(), "微博第三方登录");
-				//				设置新浪SSO handler
+				// 设置新浪SSO handler
 				mController.getConfig().setSsoHandler(new SinaSsoHandler());
 				mController.doOauthVerify(getActivity(), SHARE_MEDIA.SINA, new UMAuthListener() {
 					@Override
