@@ -65,8 +65,7 @@
         <!-- 首次安装运行页面 -->
         <activity
             android:name="com.lanquan.ui.GuidePagerActivity"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:screenOrientation="portrait">
         </activity>
 
         <!-- 主页面 -->
