@@ -466,8 +466,8 @@ public class RegAccountFragment extends BaseV4Fragment {
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
 					jsonTool.saveAccess_token();
-					userPreference.setUserLogin(true);
-					getActivity().startActivity(new Intent(getActivity(), MainActivity.class));
+//					userPreference.setUserLogin(true);
+					getActivity().startActivity(new Intent(getActivity(), LoginActivity.class));
 					getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 					getActivity().finish();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {

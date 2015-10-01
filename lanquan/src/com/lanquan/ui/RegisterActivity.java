@@ -1,6 +1,5 @@
 package com.lanquan.ui;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -8,11 +7,26 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.lanquan.R;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.base.BaseFragmentActivity;
+import com.lanquan.config.Constants;
+import com.lanquan.customwidget.MyAlertDialog;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.FileSizeUtil;
+import com.lanquan.utils.ImageTools;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
+import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,23 +37,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-
-import com.lanquan.R;
-import com.lanquan.base.BaseApplication;
-import com.lanquan.base.BaseFragmentActivity;
-import com.lanquan.config.Constants;
-import com.lanquan.config.Constants.Config;
-import com.lanquan.customwidget.MyAlertDialog;
-import com.lanquan.table.UserTable;
-import com.lanquan.utils.AsyncHttpClientTool;
-import com.lanquan.utils.FileSizeUtil;
-import com.lanquan.utils.ImageTools;
-import com.lanquan.utils.JsonTool;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
-import com.lanquan.utils.UserPreference;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
 
 /** 
  * 类描述 ：注册
@@ -206,6 +203,8 @@ public class RegisterActivity extends BaseFragmentActivity {
 		LogTool.e("图片地址" + imageUrl);
 		int fileSize = (int) FileSizeUtil.getFileOrFilesSize(imageUrl, 2);
 		LogTool.e("文件大小：" + fileSize + "KB");
+		final Dialog dialog = showProgressDialog("正在上传头像，请稍后...");
+		dialog.setCancelable(false);
 
 		if (dir.exists() && !imageUrl.equals("/") && fileSize < 500 && fileSize > 0) {
 			RequestParams params = new RequestParams();
@@ -216,6 +215,13 @@ public class RegisterActivity extends BaseFragmentActivity {
 				e1.printStackTrace();
 			}
 			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+				@Override
+				public void onStart() {
+					// TODO Auto-generated method stub
+					super.onStart();
+					dialog.show();
+				}
+
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, String response) {
 					// TODO Auto-generated method stub
@@ -255,6 +261,7 @@ public class RegisterActivity extends BaseFragmentActivity {
 				public void onFinish() {
 					// TODO Auto-generated method stub
 					super.onFinish();
+					dialog.dismiss();
 					// 删除本地头像
 					ImageTools.deleteImageByPath(imageUrl);
 					lastPhotoUri = null;

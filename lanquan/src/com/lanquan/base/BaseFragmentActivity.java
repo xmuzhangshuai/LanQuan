@@ -15,6 +15,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.text.TextUtils;
 import android.widget.Toast;
 
 /**   
@@ -195,7 +196,11 @@ public abstract class BaseFragmentActivity extends FragmentActivity {
 	@SuppressLint("ShowToast")
 	public Dialog showProgressDialog(String msg) {
 		ProgressDialog dialog = new ProgressDialog(this);
-		dialog.setMessage("请稍候...");
+		if (!TextUtils.isEmpty(msg)) {
+			dialog.setMessage(msg);
+		}else{
+			dialog.setMessage("请稍候...");
+		}
 		// dialog.setCancelable(false);
 		dialog.show();
 		return dialog;

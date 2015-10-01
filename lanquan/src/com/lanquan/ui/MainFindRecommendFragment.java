@@ -152,7 +152,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		params.put("pageIndex", page);
 		params.put("pageSize", Config.PAGE_NUM);
 		params.put("sort", "recommend");
-//		params.put("from", 1);
+		params.put("from", 0);
 		params.put("recommend", 1);
 		if (userPreference.getUserLogin()) {
 			params.put("access_token", userPreference.getAccess_token());

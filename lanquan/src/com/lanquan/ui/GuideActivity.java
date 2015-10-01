@@ -34,12 +34,6 @@ public class GuideActivity extends BaseActivity {
 	SharedPreferences.Editor locationEditor;
 	private SharePreferenceUtil sharePreferenceUtil;
 	private UserPreference userPreference;
-	private String province;// 省份
-	private String city;// 城市
-	private String detailLocation;// 详细地址
-
-	private String latitude;
-	private String longtitude;
 	LocationTool locationTool;
 
 	@Override
@@ -51,21 +45,6 @@ public class GuideActivity extends BaseActivity {
 		sharePreferenceUtil = new SharePreferenceUtil(this, SharePreferenceUtil.USE_COUNT);
 		int count = sharePreferenceUtil.getUseCount();
 		userPreference = BaseApplication.getInstance().getUserPreference();
-
-		// 开启百度推送服务
-		// PushManager.startWork(getApplicationContext(),
-		// PushConstants.LOGIN_TYPE_API_KEY,
-		// Constants.BaiduPushConfig.API_KEY);
-		// 基于地理位置推送，可以打开支持地理位置的推送的开关
-		// PushManager.enableLbs(getApplicationContext());
-		// 设置标签
-		// List<String> tags = new ArrayList<String>();
-		// String gender = userPreference.getU_gender();
-
-		// if (!TextUtils.isEmpty(gender)) {
-		// tags.add(gender);
-		// PushManager.setTags(this, tags);
-		// }
 
 		/************ 初始化友盟服务 **************/
 		// 禁止友盟禁止默认的页面统计方式

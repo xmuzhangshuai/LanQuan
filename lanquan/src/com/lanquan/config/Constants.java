@@ -27,7 +27,7 @@ public class Constants {
 		public static final boolean DEVELOPER_MODE = true;
 
 		// 接受验证码时间为120s
-		public static int AUTN_CODE_TIME = 10;
+		public static int AUTN_CODE_TIME = 120;
 
 		// 照片缩小比例
 		public static final int SCALE = 5;
