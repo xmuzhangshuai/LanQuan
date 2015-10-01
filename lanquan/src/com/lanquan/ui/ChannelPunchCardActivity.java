@@ -951,6 +951,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					userPreference.setArticle_count(userPreference.getArticle_count() + 1);
 					ToastTool.showShort(ChannelPunchCardActivity.this, jsonTool.getMessage());
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());

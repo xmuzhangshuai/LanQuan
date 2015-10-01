@@ -3,43 +3,16 @@ package com.lanquan.ui;
 import java.util.Date;
 import java.util.Map;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.FragmentTransaction;
-import android.telephony.SmsMessage;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
-import com.lanquan.config.Constants.Config;
 import com.lanquan.config.Constants.QQConfig;
 import com.lanquan.config.Constants.WeChatConfig;
-import com.lanquan.config.Constants.WeiboConfig;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
@@ -60,8 +33,22 @@ import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener
 import com.umeng.socialize.exception.SocializeException;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.UMQQSsoHandler;
-import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /** 
  * 类描述 ：注册——电话和验证码页面
@@ -77,82 +64,18 @@ public class RegPhoneFragment extends BaseV4Fragment {
 	private View rootView;// 根View
 	private View leftImageButton;// 导航栏左侧按钮
 	private View rightImageButton;// 导航栏右侧按钮
-	private Button authCodeButton;
-	private EditText authCodeView;
+
 	private EditText mPhoneView;// 手机号
 	private UserPreference userPreference;
 	private TextView leftNavigation;// 步骤
 	private ImageView loginwechat;
 	private ImageView loginqq;
 	private ImageView loginweibo;
-
+	private Button authCodeButton;
 	private String mPhone;
-	private String mAuthcode;
-	private String responseAuthcode;// 手机获取到的验证码
 
-	private int recLen;
-
-	private Timer timer;
-	private BroadcastReceiver smsReceiver;
-	private IntentFilter filter2;
-	private Handler handler;
-	private String strContent;
 	View focusView = null;
-
-	private String patternCoder = "(?<!\\d)\\d{6}(?!\\d)";
 	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.login");
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
-		super.onCreate(savedInstanceState);
-
-		// 拦截短信内容
-		handler = new Handler() {
-			public void handleMessage(android.os.Message msg) {
-				authCodeView.setText(strContent);
-			};
-		};
-
-		filter2 = new IntentFilter();
-		filter2.addAction("android.provider.Telephony.SMS_RECEIVED");
-		filter2.setPriority(Integer.MAX_VALUE);
-		smsReceiver = new BroadcastReceiver() {
-			@Override
-			public void onReceive(Context context, Intent intent) {
-				Object[] objs = (Object[]) intent.getExtras().get("pdus");
-				for (Object obj : objs) {
-					byte[] pdu = (byte[]) obj;
-					SmsMessage sms = SmsMessage.createFromPdu(pdu);
-					// 短信的内容
-					String message = sms.getMessageBody();
-					// 短息的手机号。。+86开头？
-					String from = sms.getOriginatingAddress();
-					// Time time = new Time();
-					// time.set(sms.getTimestampMillis());
-					// String time2 = time.format3339(true);
-					// Log.d("logo", from + "   " + message + "  " + time2);
-					// strContent = from + "   " + message;
-					// handler.sendEmptyMessage(1);
-					if (!TextUtils.isEmpty(from)) {
-						String code = patternCode(message);
-						if (!TextUtils.isEmpty(code)) {
-							strContent = code;
-							handler.sendEmptyMessage(1);
-						}
-					}
-				}
-			}
-		};
-		getActivity().registerReceiver(smsReceiver, filter2);
-	}
-
-	@Override
-	public void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		getActivity().unregisterReceiver(smsReceiver);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -180,19 +103,17 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		leftImageButton = (View) getActivity().findViewById(R.id.left_btn_bg);
 		rightImageButton = (View) getActivity().findViewById(R.id.right_btn_bg);
 		mPhoneView = (EditText) rootView.findViewById(R.id.phone);
-		authCodeButton = (Button) rootView.findViewById(R.id.get_authcode);
-		authCodeView = (EditText) rootView.findViewById(R.id.autncode);
 		leftNavigation = (TextView) getActivity().findViewById(R.id.nav_text);
-
 		loginwechat = (ImageView) rootView.findViewById(R.id.loginwechat);
 		loginqq = (ImageView) rootView.findViewById(R.id.loginqq);
 		loginweibo = (ImageView) rootView.findViewById(R.id.loginweibo);
+		authCodeButton = (Button) rootView.findViewById(R.id.get_authcode);
 	}
 
 	@Override
 	protected void initView() {
 		// TODO Auto-generated method stub
-		rightImageButton.setVisibility(View.VISIBLE);
+		rightImageButton.setVisibility(View.GONE);
 		// 显示用户手机号
 		SIMCardInfo siminfo = new SIMCardInfo(getActivity());
 		mPhoneView.setText(siminfo.getNativePhoneNumber());
@@ -207,23 +128,15 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			}
 		});
 
-		rightImageButton.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				attepmtAccount();
-			}
-		});
-
 		authCodeButton.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				attemptAuthCode();
+				attepmtPhone();
 			}
 		});
+
 		loginwechat.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -382,60 +295,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 	}
 
-	//	@Override
-	//	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	//		super.onActivityResult(requestCode, resultCode, data);
-	//		/**使用SSO授权必须添加如下代码 */
-	//		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
-	//		if (ssoHandler != null) {
-	//			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
-	//		}
-	//	}
-
-	/**
-	 * 验证验证码
-	 */
-	private void attemptAuthCode() {
-		mPhoneView.setError(null);
-		mPhone = mPhoneView.getText().toString();
-		boolean cancel = false;
-		// 检查手机号
-		if (TextUtils.isEmpty(mPhone)) {
-			mPhoneView.setError(getString(R.string.error_field_required));
-			focusView = mPhoneView;
-			cancel = true;
-		} else if (!CommonTools.isMobileNO(mPhone)) {
-			mPhoneView.setError(getString(R.string.error_phone));
-			focusView = mPhoneView;
-			cancel = true;
-		}
-		if (cancel) {
-			// 如果错误，则提示错误
-			focusView.requestFocus();
-			return;
-		}
-
-		getAuthCode();// 获取验证码
-
-		//如果可以获取到验证码，才进行计时
-		recLen = Config.AUTN_CODE_TIME;
-		authCodeButton.setEnabled(false);
-
-		timer = new Timer();
-		timer.schedule(new TimerTask() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				recLen--;
-				Message message = new Message();
-				message.what = 1;
-				timeHandler.sendMessage(message);
-			}
-		}, 1000, 1000);
-
-	}
-
 	/**
 	 * 确认终止注册
 	 */
@@ -468,14 +327,12 @@ public class RegPhoneFragment extends BaseV4Fragment {
 	/**
 	 * 验证输入
 	 */
-	private void attepmtAccount() {
+	private void attepmtPhone() {
 		// 重置错误
 		mPhoneView.setError(null);
-		authCodeView.setError(null);
 
 		// 存储用户值
 		mPhone = mPhoneView.getText().toString();
-		mAuthcode = authCodeView.getText().toString();
 		boolean cancel = false;
 
 		// 检查手机号
@@ -489,23 +346,12 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			cancel = true;
 		}
 
-		// 检查验证码
-		else if (TextUtils.isEmpty(mAuthcode)) {
-			authCodeView.setError(getString(R.string.error_field_required));
-			focusView = authCodeView;
-			cancel = true;
-		} else if (mAuthcode.length() != 6) {
-			authCodeView.setError("验证码长度为6位");
-			focusView = authCodeView;
-			cancel = true;
-		}
-
 		if (cancel) {
 			// 如果错误，则提示错误
 			focusView.requestFocus();
 		} else {
-			// 检查手机号是否被注册
-			CheckPhone();
+			userPreference.setU_tel(mPhone);
+			getAuthCode();
 		}
 	}
 
@@ -539,6 +385,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				LogTool.i("短信验证码==" + status + response);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					LogTool.i(jsonTool.getMessage());
+					next();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					boolean cancel = false;
 					mPhoneView.setError(jsonTool.getMessage());
@@ -546,7 +393,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					cancel = true;
 					if (cancel) {
 						focusView.requestFocus();
-						timer.cancel();
 						authCodeButton.setText("获取验证码");
 						authCodeButton.setEnabled(true);
 					}
@@ -567,124 +413,12 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				}
 				if (cancel) {
 					focusView.requestFocus();
-					timer.cancel();
 					authCodeButton.setText("获取验证码");
 					authCodeButton.setEnabled(true);
 				}
 			}
 		};
 		AsyncHttpClientTool.post("api/sms/send", params, responseHandler);
-	}
-
-	/**
-	 *检查手机号是否已经被注册
-	 */
-	public void CheckPhone() {
-		// RequestParams params = new RequestParams();
-		// params.put(UserTable.U_TEL, mPhoneView.getText().toString());
-		// TextHttpResponseHandler responseHandler = new
-		// TextHttpResponseHandler() {
-		//
-		// @Override
-		// public void onSuccess(int statusCode, Header[] headers, String
-		// response) {
-		// // TODO Auto-generated method stub
-		//
-		// if (response.equals("1")) {
-		// // 没有错误，则存储值
-		// userPreference.setU_tel(mPhone);
-		// next();
-		// } else {
-		// mPhoneView.setError("该手机号码已被注册");
-		// focusView = mPhoneView;
-		// focusView.requestFocus();
-		// }
-		// }
-		//
-		// @Override
-		// public void onFailure(int statusCode, Header[] headers, String
-		// errorResponse, Throwable e) {
-		// // TODO Auto-generated method stub
-		// LogTool.e("验证码", "服务器错误,错误代码" + statusCode + "，  原因" +
-		// errorResponse);
-		// }
-		//
-		// @Override
-		// public void onFinish() {
-		// // TODO Auto-generated method stub
-		// super.onFinish();
-		// }
-		// };
-		// AsyncHttpClientTool.post("user/getValidateCode", params,
-		// responseHandler);
-		userPreference.setU_tel(mPhone);
-		userPreference.setAuthCode(mAuthcode);
-		next();
-	}
-
-	/**
-	 * 控制计时
-	 */
-	final Handler timeHandler = new Handler() {
-		@Override
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case 1:
-				authCodeButton.setText("剩余" + recLen + "s");
-				if (recLen < 0) {
-					timer.cancel();
-					authCodeButton.setText("重新获取");
-					authCodeButton.setEnabled(true);
-				}
-			}
-		}
-	};
-
-	/**
-	 * 计时器
-	 */
-	TimerTask task = new TimerTask() {
-		@Override
-		public void run() {
-			recLen--;
-			Message message = new Message();
-			message.what = 1;
-			timeHandler.sendMessage(message);
-		}
-	};
-
-	//	/**
-	//	 * 验证验证码
-	//	 * @return
-	//	 */
-	//	private boolean vertifyAuthCode(String myAuthCode, String response) {
-	//		if (!TextUtils.isEmpty(response)) {
-	//			if (response.equals(myAuthCode)) {
-	//				return true;
-	//			} else {
-	//				return false;
-	//			}
-	//		} else {
-	//			return false;
-	//		}
-	//	}
-
-	/**
-	 * 匹配短信中间的6个数字（验证码等）
-	 * 
-	 * @param patternContent
-	 * @return
-	 */
-	private String patternCode(String patternContent) {
-		if (TextUtils.isEmpty(patternContent)) {
-			return null;
-		}
-		Pattern p = Pattern.compile(patternCoder);
-		Matcher matcher = p.matcher(patternContent);
-		if (matcher.find()) {
-			return matcher.group();
-		}
-		return null;
 	}
 
 	/**

@@ -385,6 +385,7 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					userPreference.setArticle_count(userPreference.getArticle_count() + 1);
 					ToastTool.showShort(ChannelTextActivity.this, jsonTool.getMessage());
 					commentEditText.setText("");
 					hideKeyboard();

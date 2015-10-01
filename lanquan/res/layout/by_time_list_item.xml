@@ -42,7 +42,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/day_recommend_dot_space"
                     android:ellipsize="end"
-                    android:maxLength="4"
                     android:textColor="@color/system_main_orange"
                     android:textSize="@dimen/day_recommend_user_font"
                     android:textStyle="bold" />

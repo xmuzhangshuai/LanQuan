@@ -21,20 +21,11 @@
         android:paddingRight="@dimen/day_recommend_help_padding"
         android:paddingTop="@dimen/personal_timecapsule_padding" >
 
-        <ImageView
-            android:id="@+id/circle_icon"
-            android:layout_width="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_height="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_centerVertical="true"
-            android:src="@drawable/channel_info_user" />
-
         <TextView
             android:id="@+id/label1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/time_capsule20"
-            android:layout_toRightOf="@+id/circle_icon"
             android:text="频道主"
             android:textColor="@color/font_gray_dark"
             android:textSize="16sp" />
@@ -49,7 +40,7 @@
             android:ellipsize="end"
             android:maxLength="10"
             android:singleLine="true"
-            android:textColor="@color/system_sky_blue" />
+            android:textColor="@color/system_main_orange" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -64,20 +55,11 @@
         android:paddingRight="@dimen/day_recommend_help_padding"
         android:paddingTop="@dimen/personal_timecapsule_padding" >
 
-        <ImageView
-            android:id="@+id/channel_name_icon"
-            android:layout_width="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_height="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_centerVertical="true"
-            android:src="@drawable/channel_info_name" />
-
         <TextView
             android:id="@+id/label2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/time_capsule20"
-            android:layout_toRightOf="@+id/channel_name_icon"
             android:text="频道名"
             android:textColor="@color/font_gray_dark"
             android:textSize="16sp" />
@@ -107,20 +89,11 @@
         android:paddingRight="@dimen/day_recommend_help_padding"
         android:paddingTop="@dimen/personal_timecapsule_padding" >
 
-        <ImageView
-            android:id="@+id/channel_explian_icon"
-            android:layout_width="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_height="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_centerVertical="true"
-            android:src="@drawable/channel_info_explian" />
-
         <TextView
             android:id="@+id/label3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/time_capsule20"
-            android:layout_toRightOf="@+id/channel_explian_icon"
             android:text="简介"
             android:textColor="@color/font_gray_dark"
             android:textSize="16sp" />
@@ -148,19 +121,10 @@
         android:paddingRight="@dimen/day_recommend_help_padding"
         android:paddingTop="@dimen/personal_timecapsule_padding" >
 
-        <ImageView
-            android:id="@+id/channel_share_icon"
-            android:layout_width="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_height="@dimen/day_recommend_viewpager_margin_top"
-            android:layout_centerVertical="true"
-            android:src="@drawable/channel_info_name" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/time_capsule20"
-            android:layout_toRightOf="@+id/channel_share_icon"
             android:text="分享频道二维码"
             android:textColor="@color/font_gray_dark"
             android:textSize="16sp" />

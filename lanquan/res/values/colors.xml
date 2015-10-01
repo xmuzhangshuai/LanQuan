@@ -17,8 +17,8 @@
     <color name="font_gray_dark">#555555 </color> <!-- 字体深灰色 -->
     <color name="system_gray">#F0F0F0</color> <!-- 系统背景色 -->
     <color name="system_sky_blue">#0092FF</color> <!-- 系统天蓝色 -->
-    <color name="nav_bg">#29232c</color>
-    <color name="login_bg_dark">#241F27</color> <!-- 登录注册背景色(深) -->
+    <color name="nav_bg">#3D4458</color>
+    <color name="login_bg_dark">#252C40</color> <!-- 登录注册背景色(深) -->
     <color name="login_divider">#332c37</color> <!-- 登录注册分隔条 -->
 
     <color name="system_female">#FF3366</color> <!-- 女生系统颜色 -->

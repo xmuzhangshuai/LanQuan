@@ -28,24 +28,6 @@
             android:textSize="@dimen/day_recommend_user_font" >
         </EditText>
 
-        <EditText
-            android:id="@+id/autncode"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/register_height"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/shape_login_radius"
-            android:drawableLeft="@drawable/icon_authcode_gray"
-            android:drawablePadding="10dp"
-            android:hint="输入6位手机验证码"
-            android:inputType="number"
-            android:maxLength="6"
-            android:maxLines="1"
-            android:paddingLeft="@dimen/personal_timecapsule_padding"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textCursorDrawable="@null"
-            android:textSize="@dimen/day_recommend_user_font" />
-
         <Button
             android:id="@+id/get_authcode"
             android:layout_width="match_parent"

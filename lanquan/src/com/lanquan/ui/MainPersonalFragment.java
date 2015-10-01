@@ -737,6 +737,8 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 
 			if (!TextUtils.isEmpty(jsonChannel.getIcon()) && !jsonChannel.getIcon().equals("null")) {
 				imageLoader.displayImage(jsonChannel.getIcon(), holder.channelIconImageView, ImageLoaderTool.getCircleHeadImageOptions());
+			} else {
+				imageLoader.displayImage("drawable://" + R.drawable.photoconor, holder.channelIconImageView, ImageLoaderTool.getCircleHeadImageOptions());
 			}
 
 			holder.titleTextView.setText(jsonChannel.getChannel_title());

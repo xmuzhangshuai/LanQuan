@@ -48,24 +48,42 @@
                 android:textColor="@color/font_gray"
                 android:textSize="13.0sp" />
 
-            <EditText
-                android:id="@+id/name"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/register_height"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/shape_login_radius"
-                android:drawableLeft="@drawable/icon_nickname_gray"
-                android:drawablePadding="10dp"
-                android:hint="昵称"
-                android:inputType="textPersonName"
-                android:maxLength="10"
-                android:maxLines="1"
-                android:paddingLeft="@dimen/personal_timecapsule_padding"
-                android:paddingRight="@dimen/personal_timecapsule_padding"
-                android:textColor="@color/white"
-                android:textCursorDrawable="@null"
-                android:textSize="@dimen/day_recommend_user_font" >
-            </EditText>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <EditText
+                    android:id="@+id/autncode"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/register_height"
+                    android:layout_weight="2"
+                    android:background="@drawable/shape_login_radius"
+                    android:drawableLeft="@drawable/icon_authcode_gray"
+                    android:drawablePadding="10dp"
+                    android:hint="验证码"
+                    android:inputType="number"
+                    android:maxLength="6"
+                    android:maxLines="1"
+                    android:paddingLeft="@dimen/personal_timecapsule_padding"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textCursorDrawable="@null"
+                    android:textSize="@dimen/day_recommend_user_font" />
+
+                <Button
+                    android:id="@+id/get_authcode"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/register_height"
+                    android:layout_marginLeft="20dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/sel_login_btn_bg"
+                    android:text="获取验证码"
+                    android:textColor="@color/sel_getauthcode_font_color"
+                    android:textSize="@dimen/day_recommend_user_font" />
+            </LinearLayout>
 
             <EditText
                 android:id="@+id/password"
@@ -84,6 +102,7 @@
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/day_recommend_user_font" />
 
+            <!--  
             <EditText
                 android:id="@+id/conform_password"
                 android:layout_width="match_parent"
@@ -99,7 +118,26 @@
                 android:paddingLeft="@dimen/personal_timecapsule_padding"
                 android:textColor="@color/white"
                 android:textCursorDrawable="@null"
-                android:textSize="@dimen/day_recommend_user_font" />
+                android:textSize="@dimen/day_recommend_user_font" />-->
+
+            <EditText
+                android:id="@+id/name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/register_height"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/shape_login_radius"
+                android:drawableLeft="@drawable/icon_nickname_gray"
+                android:drawablePadding="10dp"
+                android:hint="昵称"
+                android:inputType="textPersonName"
+                android:maxLength="10"
+                android:maxLines="1"
+                android:paddingLeft="@dimen/personal_timecapsule_padding"
+                android:paddingRight="@dimen/personal_timecapsule_padding"
+                android:textColor="@color/white"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/day_recommend_user_font" >
+            </EditText>
 
             <Button
                 android:id="@+id/register"

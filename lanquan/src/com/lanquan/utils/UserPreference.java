@@ -116,7 +116,7 @@ public class UserPreference {
 
 	// 内容数量
 	public int getArticle_count() {
-		return sp.getInt(UserTable.ARTICLE_COUNT, -1);
+		return sp.getInt(UserTable.ARTICLE_COUNT, 0);
 	}
 
 	public void setArticle_count(int count) {
@@ -126,7 +126,7 @@ public class UserPreference {
 
 	// 频道数量
 	public int getChannel_count() {
-		return sp.getInt(UserTable.CHANNEL_COUNT, -1);
+		return sp.getInt(UserTable.CHANNEL_COUNT, 0);
 	}
 
 	public void setChannel_count(int count) {
@@ -149,17 +149,6 @@ public class UserPreference {
 			editor.putLong(UserTable.U_CREATE_TIME, creatTime.getTime());
 			editor.commit();
 		}
-	}
-
-	//验证码
-	// access_token
-	public String getAuthCode() {
-		return sp.getString(UserTable.U_VERIFY_CODE, "123456");
-	}
-
-	public void setAuthCode(String authcode) {
-		editor.putString(UserTable.U_VERIFY_CODE, authcode);
-		editor.commit();
 	}
 
 }

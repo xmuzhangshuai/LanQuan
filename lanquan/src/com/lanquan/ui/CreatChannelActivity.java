@@ -169,6 +169,7 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					userPreference.setChannel_count(userPreference.getChannel_count() + 1);
 					LogTool.i(jsonTool.getMessage());
 					ToastTool.showShort(CreatChannelActivity.this, "创建成功");
 					finish();

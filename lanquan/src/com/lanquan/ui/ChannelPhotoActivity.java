@@ -392,6 +392,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					userPreference.setArticle_count(userPreference.getArticle_count() + 1);
 					ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
 					commentEditText.setText("");
 					hideKeyboard();
