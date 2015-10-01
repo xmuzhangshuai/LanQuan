@@ -165,7 +165,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
-				LogTool.i("推荐频道" + response + statusCode);
+				LogTool.i("推荐频道" + response);
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					JSONObject jsonObject = jsonTool.getJsonObject();
 					try {

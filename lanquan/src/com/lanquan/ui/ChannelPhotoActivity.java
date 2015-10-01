@@ -720,7 +720,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			holder.favorCountTextView.setText("" + channel.getLight());
 
 			// 设置图片
-			if (channel.getImage_url() != null && !channel.getImage_url().isEmpty()) {
+			if (!TextUtils.isEmpty(channel.getImage_url()) && channel.getImage_url() != "null") {
 				imageLoader.displayImage(channel.getImage_url(), holder.itemImageView, ImageLoaderTool.getImageOptions());
 				holder.itemImageView.setVisibility(View.VISIBLE);
 				holder.itemImageView.setOnClickListener(new OnClickListener() {

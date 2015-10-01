@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,7 +11,35 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Activity;
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.handmark.pulltorefresh.library.PullToRefreshListView;
+import com.lanquan.R;
+import com.lanquan.base.BaseActivity;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.config.Constants.Config;
+import com.lanquan.customwidget.MyAlertDialog;
+import com.lanquan.customwidget.MyMenuDialog;
+import com.lanquan.jsonobject.JsonChannel;
+import com.lanquan.jsonobject.JsonChannelComment;
+import com.lanquan.utils.AsyncHttpClientTool;
+import com.lanquan.utils.DateTimeTools;
+import com.lanquan.utils.ImageLoaderTool;
+import com.lanquan.utils.ImageTools;
+import com.lanquan.utils.JsonChannelTools;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LocationTool;
+import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
+import com.lanquan.utils.UserPreference;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
+
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -37,44 +64,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
-
-import com.baidu.location.BDLocation;
-import com.baidu.location.BDLocationListener;
-import com.baidu.location.LocationClient;
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.Mode;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
-import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.lanquan.R;
-import com.lanquan.base.BaseActivity;
-import com.lanquan.base.BaseApplication;
-import com.lanquan.config.Constants.Config;
-import com.lanquan.customwidget.MyAlertDialog;
-import com.lanquan.customwidget.MyMenuDialog;
-import com.lanquan.jsonobject.JsonChannel;
-import com.lanquan.jsonobject.JsonChannelComment;
-import com.lanquan.ui.ChannelPhotoActivity.MyLocationListener;
-import com.lanquan.utils.AsyncHttpClientTool;
-import com.lanquan.utils.DateTimeTools;
-import com.lanquan.utils.ImageLoaderTool;
-import com.lanquan.utils.ImageTools;
-import com.lanquan.utils.JsonChannelTools;
-import com.lanquan.utils.JsonTool;
-import com.lanquan.utils.LocationTool;
-import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
-import com.lanquan.utils.UserPreference;
-import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
-import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /** 
  * 类描述 ：打卡频道
@@ -338,7 +334,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 		params.put("pageIndex", page);
 		params.put("pageSize", Config.PAGE_NUM);
 		params.put("sort", "create_time");
-//		params.put("user_id", userPreference.getU_id());
+		//		params.put("user_id", userPreference.getU_id());
 		params.put("access_token", userPreference.getAccess_token());
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
@@ -544,48 +540,55 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 
 				@Override
 				public void onClick(View v) {
-					RequestParams params = new RequestParams();
-					params.put("article_id", channel.getArticle_id());
-					params.put("access_token", userPreference.getAccess_token());
-					TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+					if (userPreference.getUserLogin()) {
+						RequestParams params = new RequestParams();
+						params.put("article_id", channel.getArticle_id());
+						params.put("access_token", userPreference.getAccess_token());
+						TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
-						@Override
-						public void onSuccess(int statusCode, Header[] headers, String response) {
-							// TODO Auto-generated method stub
-							LogTool.i(statusCode + "===" + response);
-							JsonTool jsonTool = new JsonTool(response);
+							@Override
+							public void onSuccess(int statusCode, Header[] headers, String response) {
+								// TODO Auto-generated method stub
+								LogTool.i(statusCode + "===" + response);
+								JsonTool jsonTool = new JsonTool(response);
 
-							String status = jsonTool.getStatus();
-							String message = jsonTool.getMessage();
-							if (status.equals("success")) {
+								String status = jsonTool.getStatus();
+								String message = jsonTool.getMessage();
+								if (status.equals("success")) {
 
-								if (holder.favorBtn.isChecked()) {
-									channel.setLight(channel.getLight() + 1);
-									channel.setIslight(1);
-									LogTool.e("sssssss" + channel.getLight());
-									holder.favorCountTextView.setText("" + channel.getLight());
+									if (holder.favorBtn.isChecked()) {
+										channel.setLight(channel.getLight() + 1);
+										channel.setIslight(1);
+										LogTool.e("sssssss" + channel.getLight());
+										holder.favorCountTextView.setText("" + channel.getLight());
 
+									} else {
+										channel.setLight(channel.getLight() - 1);
+										// 标记为未亮
+										channel.setIslight(0);
+										holder.favorCountTextView.setText("" + channel.getLight());
+									}
+									holder.favorCountTextView.setVisibility(View.VISIBLE);
+									LogTool.i(message);
 								} else {
-									channel.setLight(channel.getLight() - 1);
-									// 标记为未亮
-									channel.setIslight(0);
-									holder.favorCountTextView.setText("" + channel.getLight());
+									LogTool.e(message);
 								}
-								holder.favorCountTextView.setVisibility(View.VISIBLE);
-								LogTool.i(message);
-							} else {
-								LogTool.e(message);
 							}
-						}
 
-						@Override
-						public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-							// TODO Auto-generated method stub
-							LogTool.e("点亮评论服务器错误，代码" + statusCode + errorResponse);
-						}
+							@Override
+							public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+								// TODO Auto-generated method stub
+								LogTool.e("点亮评论服务器错误，代码" + statusCode + errorResponse);
+							}
 
-					};
-					AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/article/light", params, responseHandler);
+						};
+						AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/article/light", params, responseHandler);
+					} else {
+						Intent intent = new Intent(ChannelPunchCardActivity.this, LoginActivity.class);
+						startActivity(intent);
+						overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+						holder.favorBtn.setChecked(false);
+					}
 				}
 			});
 
@@ -704,42 +707,6 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 		dialog.setPositiveButton("确定", comfirm);
 		dialog.setNegativeButton("取消", cancle);
 		dialog.show();
-	}
-
-	// 对评论点亮事件
-
-	public void light(final int article_id, final int position) {
-		RequestParams params = new RequestParams();
-		params.put("article_id", article_id);
-		params.put("access_token", userPreference.getAccess_token());
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				LogTool.i(statusCode + "===" + response);
-				JsonTool jsonTool = new JsonTool(response);
-
-				String status = jsonTool.getStatus();
-				String message = jsonTool.getMessage();
-				if (status.equals("success")) {
-
-					mAdapter.notifyDataSetChanged();
-					LogTool.i(message);
-				} else {
-					LogTool.e(message);
-				}
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("删除评论服务器错误，代码" + statusCode + errorResponse);
-			}
-
-		};
-		AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/article/delete", params, responseHandler);
-
 	}
 
 	/**

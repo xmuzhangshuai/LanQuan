@@ -618,48 +618,55 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 
 				@Override
 				public void onClick(View v) {
-					RequestParams params = new RequestParams();
-					params.put("article_id", channel.getArticle_id());
-					params.put("access_token", userPreference.getAccess_token());
-					TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
+					if (userPreference.getUserLogin()) {
+						RequestParams params = new RequestParams();
+						params.put("article_id", channel.getArticle_id());
+						params.put("access_token", userPreference.getAccess_token());
+						TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
 
-						@Override
-						public void onSuccess(int statusCode, Header[] headers, String response) {
-							// TODO Auto-generated method stub
-							LogTool.i(statusCode + "===" + response);
-							JsonTool jsonTool = new JsonTool(response);
+							@Override
+							public void onSuccess(int statusCode, Header[] headers, String response) {
+								// TODO Auto-generated method stub
+								LogTool.i(statusCode + "===" + response);
+								JsonTool jsonTool = new JsonTool(response);
 
-							String status = jsonTool.getStatus();
-							String message = jsonTool.getMessage();
-							if (status.equals("success")) {
+								String status = jsonTool.getStatus();
+								String message = jsonTool.getMessage();
+								if (status.equals("success")) {
 
-								if (holder.favorBtn.isChecked()) {
-									channel.setLight(channel.getLight() + 1);
-									channel.setIslight(1);
-									LogTool.e("sssssss" + channel.getLight());
-									holder.favorCountTextView.setText("" + channel.getLight());
+									if (holder.favorBtn.isChecked()) {
+										channel.setLight(channel.getLight() + 1);
+										channel.setIslight(1);
+										LogTool.e("sssssss" + channel.getLight());
+										holder.favorCountTextView.setText("" + channel.getLight());
 
+									} else {
+										channel.setLight(channel.getLight() - 1);
+										// 标记为未亮
+										channel.setIslight(0);
+										holder.favorCountTextView.setText("" + channel.getLight());
+									}
+									holder.favorCountTextView.setVisibility(View.VISIBLE);
+									LogTool.i(message);
 								} else {
-									channel.setLight(channel.getLight() - 1);
-									// 标记为未亮
-									channel.setIslight(0);
-									holder.favorCountTextView.setText("" + channel.getLight());
+									LogTool.e(message);
 								}
-								holder.favorCountTextView.setVisibility(View.VISIBLE);
-								LogTool.i(message);
-							} else {
-								LogTool.e(message);
 							}
-						}
 
-						@Override
-						public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-							// TODO Auto-generated method stub
-							LogTool.e("点亮评论服务器错误，代码" + statusCode + errorResponse);
-						}
+							@Override
+							public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+								// TODO Auto-generated method stub
+								LogTool.e("点亮评论服务器错误，代码" + statusCode + errorResponse);
+							}
 
-					};
-					AsyncHttpClientTool.post(ChannelTextActivity.this, "api/article/light", params, responseHandler);
+						};
+						AsyncHttpClientTool.post(ChannelTextActivity.this, "api/article/light", params, responseHandler);
+					} else {
+						Intent intent = new Intent(ChannelTextActivity.this, LoginActivity.class);
+						startActivity(intent);
+						overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+						holder.favorBtn.setChecked(false);
+					}
 				}
 			});
 
