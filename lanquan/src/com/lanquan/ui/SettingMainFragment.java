@@ -1,6 +1,8 @@
 package com.lanquan.ui;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
@@ -10,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseApplication;
@@ -37,7 +40,7 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 	private TextView phoneTextView;
 
 	private View settingData;// 资料
-	private View settingGrade;// 聊天设置
+	private View settingGrade;// 聊天设置..给我评分
 	private View settingTellFriend;// 告诉小伙伴
 
 	private View settingClearCache;// 清空缓存
@@ -198,6 +201,13 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 			getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;
 		case R.id.setting_grade:
+			Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
+			Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+			try {
+			    startActivity(goToMarket);
+			} catch (ActivityNotFoundException e) {
+			    Toast.makeText(getActivity(), "Couldn't launch the market !", Toast.LENGTH_SHORT).show();
+			} 
 			// transaction.setCustomAnimations(R.anim.zoomin2, R.anim.zoomout);
 			// transaction.replace(R.id.container, new SettingChatFragment());
 			// transaction.addToBackStack("setting");
