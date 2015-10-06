@@ -260,9 +260,9 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	 */
 	private void publish() {
 		if (channel_id > 0) {
+			sharecomment();
 			uploadImage(imagePath);
 			//发布后分享
-			sharecomment();
 		}
 	}
 
@@ -463,6 +463,26 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 						Toast.makeText(PublishCommentActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
 						//获取相关授权信息或者跳转到自定义的分享编辑页面
 						String uid = value.getString("uid");
+						//设置分享内容
+						//			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+						//设置分享图片
+						//			mController.setShareMedia(new UMImage(PublishCommentActivity.this, shareImageFile));
+						//直接分享
+						mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
+							@Override
+							public void onStart() {
+								Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
+							}
+
+							@Override
+							public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
+								if (eCode == StatusCode.ST_CODE_SUCCESSED) {
+									Toast.makeText(PublishCommentActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+								} else {
+									Toast.makeText(PublishCommentActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
+								}
+							}
+						});
 						LogTool.i("uid" + uid);
 					}
 
@@ -473,26 +493,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				});
 			}
 
-			//设置分享内容
-			//			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
-			//设置分享图片
-			//			mController.setShareMedia(new UMImage(PublishCommentActivity.this, shareImageFile));
-			//直接分享
-			mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
-				@Override
-				public void onStart() {
-					Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
-				}
-
-				@Override
-				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
-					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
-						Toast.makeText(PublishCommentActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
-					} else {
-						Toast.makeText(PublishCommentActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
-					}
-				}
-			});
 		}
 	}
 

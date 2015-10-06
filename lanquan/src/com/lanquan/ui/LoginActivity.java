@@ -203,6 +203,7 @@ public class LoginActivity extends BaseActivity {
 									for (String key : keys) {
 										sb.append(key + "=" + info.get(key).toString() + "\r\n");
 									}
+									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("headimgurl").toString();
 									other_login("wx", WeChatConfig.API_KEY, avatar);
 									Log.d("TestData", sb.toString());
@@ -288,26 +289,27 @@ public class LoginActivity extends BaseActivity {
 						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
 							Toast.makeText(LoginActivity.this, "授权成功.", Toast.LENGTH_SHORT).show();
 							mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.SINA, new UMDataListener() {
-							    @Override
-							    public void onStart() {
-							        Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
-							    }                                              
-							    @Override
-							        public void onComplete(int status, Map<String, Object> info) {
-							            if(status == 200 && info != null){
-							                StringBuilder sb = new StringBuilder();
-							                Set<String> keys = info.keySet();
-							                for(String key : keys){
-							                   sb.append(key+"="+info.get(key).toString()+"\r\n");
-							                }
-							              //如果第三方登录成功，获取avatar以及appid直接登录
-											String avatar = info.get("profile_image_url").toString();
-											other_login("weibo", WeiboConfig.API_KEY, avatar);
-							                Log.d("TestData",sb.toString());
-							            }else{
-							               Log.d("TestData","发生错误："+status);
-							           }
-							        }
+								@Override
+								public void onStart() {
+									Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+								}
+
+								@Override
+								public void onComplete(int status, Map<String, Object> info) {
+									if (status == 200 && info != null) {
+										StringBuilder sb = new StringBuilder();
+										Set<String> keys = info.keySet();
+										for (String key : keys) {
+											sb.append(key + "=" + info.get(key).toString() + "\r\n");
+										}
+										//如果第三方登录成功，获取avatar以及appid直接登录
+										String avatar = info.get("profile_image_url").toString();
+										other_login("weibo", WeiboConfig.API_KEY, avatar);
+										Log.d("TestData", sb.toString());
+									} else {
+										Log.d("TestData", "发生错误：" + status);
+									}
+								}
 							});
 						} else {
 							Toast.makeText(LoginActivity.this, "授权失败", Toast.LENGTH_SHORT).show();
@@ -328,14 +330,14 @@ public class LoginActivity extends BaseActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    super.onActivityResult(requestCode, resultCode, data);
-	    /**使用SSO授权必须添加如下代码 */  
-	    UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
-	    if(ssoHandler != null){
-	       ssoHandler.authorizeCallBack(requestCode, resultCode, data);
-	    }
+		super.onActivityResult(requestCode, resultCode, data);
+		/**使用SSO授权必须添加如下代码 */
+		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
+		if (ssoHandler != null) {
+			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+		}
 	}
-	
+
 	/**
 	 * Attempts to sign in or register the account specified by the login form.
 	 * If there are form errors (invalid email, missing fields, etc.), the
