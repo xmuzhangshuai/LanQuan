@@ -1,5 +1,6 @@
 package com.lanquan.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -8,6 +9,9 @@ import android.view.Window;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseFragmentActivity;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.update.UmengUpdateAgent;
 
 /** 
@@ -31,7 +35,6 @@ public class MainActivity extends BaseFragmentActivity {
 	// 当前fragment的index
 	private int currentTabIndex = 0;
 	private Fragment[] fragments;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class MainActivity extends BaseFragmentActivity {
 		// 添加显示第一个fragment
 		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, lanquanFragment).show(lanquanFragment).commit();
 	}
+
 
 	/**
 	 * button点击事件

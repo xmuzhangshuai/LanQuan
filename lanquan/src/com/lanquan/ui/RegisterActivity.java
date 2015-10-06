@@ -21,6 +21,9 @@ import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.sso.UMSsoHandler;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -56,7 +59,7 @@ public class RegisterActivity extends BaseFragmentActivity {
 	private UserPreference userPreference;
 
 	private Uri lastPhotoUri;
-
+	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.login");
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -92,6 +95,7 @@ public class RegisterActivity extends BaseFragmentActivity {
 		vertifyToTerminate();
 	}
 
+	
 	/**
 	 * 确认终止注册
 	 */
@@ -145,6 +149,11 @@ public class RegisterActivity extends BaseFragmentActivity {
 			break;
 		}
 		super.onActivityResult(requestCode, resultCode, data);
+		/**使用SSO授权必须添加如下代码 */
+		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
+		if (ssoHandler != null) {
+			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+		}
 	}
 
 	/** 

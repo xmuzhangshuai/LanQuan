@@ -10,6 +10,9 @@ import android.widget.Button;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseFragmentActivity;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.sso.UMSsoHandler;
 
 /**
  * 类名称：LoginOrRegisterActivity 
@@ -22,7 +25,6 @@ public class LoginOrRegisterActivity extends BaseFragmentActivity {
 	private Button loginButton;
 	private Button registerButton;
 	private Fragment mainFindFragment;
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);

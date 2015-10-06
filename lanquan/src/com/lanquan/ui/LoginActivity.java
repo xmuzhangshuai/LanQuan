@@ -205,7 +205,8 @@ public class LoginActivity extends BaseActivity {
 									}
 									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("headimgurl").toString();
-									other_login("wx", WeChatConfig.API_KEY, avatar);
+									String nickname = info.get("nickname").toString();
+									other_login("wx", WeChatConfig.API_KEY, avatar,nickname);
 									Log.d("TestData", sb.toString());
 								} else {
 									Log.d("TestData", "发生错误：" + status);
@@ -257,7 +258,8 @@ public class LoginActivity extends BaseActivity {
 									}
 									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("profile_image_url").toString();
-									other_login("qq", QQConfig.API_KEY, avatar);
+									String nickname = info.get("screen_name").toString();
+									other_login("qq", QQConfig.API_KEY, avatar,nickname);
 
 									Log.d("TestData", sb.toString());
 								} else {
@@ -304,7 +306,8 @@ public class LoginActivity extends BaseActivity {
 										}
 										//如果第三方登录成功，获取avatar以及appid直接登录
 										String avatar = info.get("profile_image_url").toString();
-										other_login("weibo", WeiboConfig.API_KEY, avatar);
+										String nickname = info.get("screen_name").toString();
+										other_login("weibo", WeiboConfig.API_KEY, avatar,nickname);
 										Log.d("TestData", sb.toString());
 									} else {
 										Log.d("TestData", "发生错误：" + status);
@@ -457,12 +460,13 @@ public class LoginActivity extends BaseActivity {
 	}
 
 	// 第三方登录
-	private void other_login(String source, String source_id, String avatar) {
+	private void other_login(String source, String source_id, String avatar,String nickname) {
 
 		RequestParams params = new RequestParams();
 		params.put("source", source);
 		params.put("source_id", source_id);
 		params.put("avatar", avatar);
+		params.put("nickname", nickname);
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
 
 			@Override

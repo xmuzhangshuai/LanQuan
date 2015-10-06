@@ -13,6 +13,7 @@ import com.lanquan.base.BaseApplication;
 import com.lanquan.base.BaseV4Fragment;
 import com.lanquan.config.Constants.QQConfig;
 import com.lanquan.config.Constants.WeChatConfig;
+import com.lanquan.config.Constants.WeiboConfig;
 import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
@@ -33,6 +34,7 @@ import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener
 import com.umeng.socialize.exception.SocializeException;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.UMQQSsoHandler;
+import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 
 import android.content.Intent;
@@ -92,7 +94,8 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		// 参数1为当前Activity， 参数2为开发者在QQ互联申请的APP ID，参数3为开发者在QQ互联申请的APP kEY.
 		UMQQSsoHandler qqSsoHandler = new UMQQSsoHandler(getActivity(), QQConfig.API_KEY, QQConfig.SECRIT_KEY);
 		qqSsoHandler.addToSocialSDK();
-		//
+		////设置新浪SSO handler
+		mController.getConfig().setSsoHandler(new SinaSsoHandler());
 
 		return rootView;
 	}
@@ -172,7 +175,8 @@ public class RegPhoneFragment extends BaseV4Fragment {
 										sb.append(key + "=" + info.get(key).toString() + "\r\n");
 									}
 									String avatar = info.get("headimgurl").toString();
-									other_login("wx", WeChatConfig.API_KEY, avatar);
+									String nickname = info.get("nickname").toString();
+									other_login("wx", WeChatConfig.API_KEY, avatar,nickname);
 									Log.d("TestData", sb.toString());
 								} else {
 									Log.d("TestData", "发生错误：" + status);
@@ -224,7 +228,8 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									}
 									// 如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("profile_image_url").toString();
-									other_login("qq", QQConfig.API_KEY, avatar);
+									String nickname = info.get("screen_name").toString();
+									other_login("qq", QQConfig.API_KEY, avatar,nickname);
 
 									Log.d("TestData", sb.toString());
 								} else {
@@ -246,8 +251,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			@Override
 			public void onClick(View v) {
 				ToastTool.showShort(getActivity(), "微博第三方登录");
-				// 设置新浪SSO handler
-				mController.getConfig().setSsoHandler(new SinaSsoHandler());
 				mController.doOauthVerify(getActivity(), SHARE_MEDIA.SINA, new UMAuthListener() {
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
@@ -271,6 +274,10 @@ public class RegPhoneFragment extends BaseV4Fragment {
 										for (String key : keys) {
 											sb.append(key + "=" + info.get(key).toString() + "\r\n");
 										}
+										//如果第三方登录成功，获取avatar以及appid直接登录
+										String avatar = info.get("profile_image_url").toString();
+										String nickname = info.get("screen_name").toString();
+										other_login("weibo", WeiboConfig.API_KEY, avatar,nickname);
 										Log.d("TestData", sb.toString());
 									} else {
 										Log.d("TestData", "发生错误：" + status);
@@ -424,12 +431,13 @@ public class RegPhoneFragment extends BaseV4Fragment {
 	/**
 	 * // 第三方登录
 	 */
-	private void other_login(String source, String source_id, String avatar) {
+	private void other_login(String source, String source_id, String avatar,String nickname) {
 
 		RequestParams params = new RequestParams();
 		params.put("source", source);
 		params.put("source_id", source_id);
 		params.put("avatar", avatar);
+		params.put("nickname", nickname);
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
 
 			@Override
@@ -557,5 +565,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			e.printStackTrace();
 		}
 	}
+	
 
 }

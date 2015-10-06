@@ -358,7 +358,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 
 				@Override
 				public void onClick(View v) {
-					goToDetail(jsonMyMessage.getObject_id(), jsonMyMessage.getObject_type());
+					goToDetail(jsonMyMessage.getChannel_id(), jsonMyMessage.getObject_type());
 				}
 			});
 
