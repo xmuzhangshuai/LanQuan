@@ -265,7 +265,13 @@ public class MainLanquanFragment extends BaseV4Fragment {
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
-				LogTool.e("获取最新频道列表失败" + errorResponse);
+				LogTool.e("篮圈页面获取最新频道列表失败" + errorResponse);
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				if (jsonTool.getMessage().contains("access_token失效")) {
+					startActivity(new Intent(getActivity(), LoginActivity.class));
+					userPreference.clear();
+					getActivity().finish();
+				}
 			}
 
 			@Override

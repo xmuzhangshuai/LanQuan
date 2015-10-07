@@ -536,7 +536,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
-				LogTool.e("获取最新频道列表失败" + errorResponse);
+				LogTool.e("ChannelPhotoActivity获取最新频道评论列表失败" + errorResponse);
 			}
 
 			@Override

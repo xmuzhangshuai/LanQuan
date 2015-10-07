@@ -243,7 +243,9 @@ public class MainFindNewFragment extends BaseV4Fragment {
 			@Override
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
-				LogTool.e("获取最新频道列表失败" + errorResponse);
+				LogTool.e("获取最新频道列表onFailure" + errorResponse);
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				jsonTool.getMessage();
 			}
 
 			@Override

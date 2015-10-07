@@ -18,9 +18,16 @@
 
 package com.loopj.android.http;
 
+import java.io.UnsupportedEncodingException;
+
 import org.apache.http.Header;
 
-import java.io.UnsupportedEncodingException;
+import com.lanquan.base.BaseApplication;
+import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.UserPreference;
+
+import android.content.Context;
+import android.content.Intent;
 
 /**
  * Used to intercept and handle the responses from requests made using {@link AsyncHttpClient}. The
@@ -55,71 +62,85 @@ import java.io.UnsupportedEncodingException;
  */
 public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
 
-    private static final String LOG_TAG = "TextHttpRH";
+	private static final String LOG_TAG = "TextHttpRH";
 
-    /**
-     * Creates new instance with default UTF-8 encoding
-     */
-    public TextHttpResponseHandler() {
-        this(DEFAULT_CHARSET);
-    }
+	/**
+	 * Creates new instance with default UTF-8 encoding
+	 */
+	public TextHttpResponseHandler() {
+		this(DEFAULT_CHARSET);
+	}
 
-    /**
-     * Creates new instance with given string encoding
-     *
-     * @param encoding String encoding, see {@link #setCharset(String)}
-     */
-    public TextHttpResponseHandler(String encoding) {
-        super();
-        setCharset(encoding);
-    }
+	/**
+	 * Creates new instance with given string encoding
+	 *
+	 * @param encoding String encoding, see {@link #setCharset(String)}
+	 */
+	public TextHttpResponseHandler(String encoding) {
+		super();
+		setCharset(encoding);
+	}
 
-    /**
-     * Called when request fails
-     *
-     * @param statusCode     http response status line
-     * @param headers        response headers if any
-     * @param responseString string response of given charset
-     * @param throwable      throwable returned when processing request
-     */
-    public abstract void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable);
+	/**
+	 * Called when request fails
+	 *
+	 * @param statusCode     http response status line
+	 * @param headers        response headers if any
+	 * @param responseString string response of given charset
+	 * @param throwable      throwable returned when processing request
+	 */
+	public abstract void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable);
 
-    /**
-     * Called when request succeeds
-     *
-     * @param statusCode     http response status line
-     * @param headers        response headers if any
-     * @param responseString string response of given charset
-     */
-    public abstract void onSuccess(int statusCode, Header[] headers, String responseString);
+	/**
+	 * Called when request succeeds
+	 *
+	 * @param statusCode     http response status line
+	 * @param headers        response headers if any
+	 * @param responseString string response of given charset
+	 */
+	public abstract void onSuccess(int statusCode, Header[] headers, String responseString);
 
-    @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBytes) {
-        onSuccess(statusCode, headers, getResponseString(responseBytes, getCharset()));
-    }
+	@Override
+	public void onSuccess(int statusCode, Header[] headers, byte[] responseBytes) {
+//		String response = getResponseString(responseBytes, getCharset());
+//		JsonTool jsonTool = new JsonTool(response);
+//		if (jsonTool.getMessage().contains("access_token失效")) {
+//			BaseApplication.getInstance().startActivity(new Intent("user_login").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
+//			userPreference.clear();
+//		}
+		onSuccess(statusCode, headers, getResponseString(responseBytes, getCharset()));
+	}
 
-    @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
-        onFailure(statusCode, headers, getResponseString(responseBytes, getCharset()), throwable);
-    }
+	@Override
+	public void onFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+//		String response = getResponseString(responseBytes, getCharset());
+//		JsonTool jsonTool = new JsonTool(response);
+//		if (jsonTool.getMessage().contains("access_token失效")) {
+//			BaseApplication.getInstance().startActivity(new Intent("user_login").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+//			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
+//			userPreference.clear();
+//		}
+		onFailure(statusCode, headers, getResponseString(responseBytes, getCharset()), throwable);
+	}
 
-    /**
-     * Attempts to encode response bytes as string of set encoding
-     *
-     * @param charset     charset to create string with
-     * @param stringBytes response bytes
-     * @return String of set encoding or null
-     */
-    public static String getResponseString(byte[] stringBytes, String charset) {
-        try {
-            String toReturn = (stringBytes == null) ? null : new String(stringBytes, charset);
-            if (toReturn != null && toReturn.startsWith(UTF8_BOM)) {
-                return toReturn.substring(1);
-            }
-            return toReturn;
-        } catch (UnsupportedEncodingException e) {
-            AsyncHttpClient.log.e(LOG_TAG, "Encoding response into string failed", e);
-            return null;
-        }
-    }
+	/**
+	 * Attempts to encode response bytes as string of set encoding
+	 *
+	 * @param charset     charset to create string with
+	 * @param stringBytes response bytes
+	 * @return String of set encoding or null
+	 */
+	public static String getResponseString(byte[] stringBytes, String charset) {
+		try {
+			String toReturn = (stringBytes == null) ? null : new String(stringBytes, charset);
+			if (toReturn != null && toReturn.startsWith(UTF8_BOM)) {
+				return toReturn.substring(1);
+			}
+			return toReturn;
+		} catch (UnsupportedEncodingException e) {
+			AsyncHttpClient.log.e(LOG_TAG, "Encoding response into string failed", e);
+			return null;
+		}
+	}
 }

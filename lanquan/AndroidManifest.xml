@@ -122,6 +122,10 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.lanquan.ui.LoginOrRegisterActivity" />
+
+            <intent-filter>
+                <action android:name="user_login" />
+            </intent-filter>
         </activity>
 
         <!-- 注册页面 -->
