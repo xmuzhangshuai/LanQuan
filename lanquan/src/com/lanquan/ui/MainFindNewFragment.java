@@ -143,8 +143,8 @@ public class MainFindNewFragment extends BaseV4Fragment {
 
 				if (pageNow >= 0)
 					++pageNow;
-				if (pageNow < 0)
-					pageNow = 0;
+				//				if (pageNow < 0)
+				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -168,6 +168,13 @@ public class MainFindNewFragment extends BaseV4Fragment {
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
+		if (p < 0) {
+			ToastTool.showShort(getActivity(), "没有更多了！");
+			if (postListView.isRefreshing()) {
+				postListView.onRefreshComplete();
+			}
+			return;
+		}
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("pageIndex", page);
@@ -212,7 +219,6 @@ public class MainFindNewFragment extends BaseV4Fragment {
 							else if (page > 0) {
 								if (temp.size() < Config.PAGE_NUM) {
 									pageNow = -1;
-									//									ToastTool.showShort(getActivity(), "没有更多了！");
 								}
 								jsonChannelList.addAll(temp);
 							}

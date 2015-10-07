@@ -21,6 +21,7 @@ import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.JsonChannelTools;
 import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -36,7 +37,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 /** 
  * 类描述 ：主页面——发现页面的推荐页面
@@ -125,8 +125,8 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 
 				if (pageNow >= 0)
 					++pageNow;
-				if (pageNow < 0)
-					pageNow = 0;
+				//				if (pageNow < 0)
+				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -161,6 +161,14 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 	 */
 
 	private void getDataTask(int p) {
+		if (p < 0) {
+			ToastTool.showShort(getActivity(), "没有更多了！");
+			if (postListView.isRefreshing()) {
+				postListView.onRefreshComplete();
+				LogTool.e("结束刷新");
+			}
+			return;
+		}
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("pageIndex", page);
@@ -206,7 +214,6 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 							else if (page > 0) {
 								if (temp.size() < Config.PAGE_NUM) {
 									pageNow = -1;
-									//									ToastTool.showShort(getActivity(), "没有更多了！");
 								}
 								jsonChannelList.addAll(temp);
 							}
