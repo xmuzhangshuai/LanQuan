@@ -145,6 +145,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				concernBtn.setVisibility(View.VISIBLE);
 				infoBtn.setVisibility(View.GONE);
 			}
+			refreshData();
 			//			inputBar.setVisibility(View.VISIBLE);
 		} else {
 			infoBtn.setVisibility(View.GONE);
@@ -180,6 +181,20 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		mIntent.putExtra("is_focus", jsonChannel.getIs_focus());
 		setResult(10, mIntent);
 		super.onBackPressed();
+	}
+
+	public void refreshData() {
+		pageNow = 0;
+		if (channelListView != null) {
+			channelListView.setRefreshing();
+		}
+		//		if (jsonChannelList.size() > 0) {
+		//			postListView.setVisibility(View.VISIBLE);
+		//			emptyView.setVisibility(View.GONE);
+		//		} else {
+		//			postListView.setVisibility(View.GONE);
+		//			emptyView.setVisibility(View.VISIBLE);
+		//		}
 	}
 
 	@Override
@@ -399,6 +414,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 						ToastTool.showShort(ChannelPhotoActivity.this, jsonTool.getMessage());
 						commentEditText.setText("");
 						hideKeyboard();
+						refreshData();
 					} else if (status.equals(JsonTool.STATUS_FAIL)) {
 						LogTool.e(jsonTool.getMessage());
 					}

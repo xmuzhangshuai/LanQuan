@@ -143,10 +143,10 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 				concernBtn.setVisibility(View.VISIBLE);
 				infoBtn.setVisibility(View.GONE);
 			}
-//			inputBar.setVisibility(View.VISIBLE);
+			//			inputBar.setVisibility(View.VISIBLE);
 		} else {
 			infoBtn.setVisibility(View.GONE);
-//			inputBar.setVisibility(View.GONE);
+			//			inputBar.setVisibility(View.GONE);
 		}
 
 	}
@@ -168,6 +168,20 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 				}
 			}
 		}
+	}
+
+	public void refreshData() {
+		pageNow = 0;
+		if (channelListView != null) {
+			channelListView.setRefreshing();
+		}
+		//		if (jsonChannelList.size() > 0) {
+		//			postListView.setVisibility(View.VISIBLE);
+		//			emptyView.setVisibility(View.GONE);
+		//		} else {
+		//			postListView.setVisibility(View.GONE);
+		//			emptyView.setVisibility(View.VISIBLE);
+		//		}
 	}
 
 	// 跳转时执行setresult
@@ -389,6 +403,7 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 						ToastTool.showShort(ChannelTextActivity.this, jsonTool.getMessage());
 						commentEditText.setText("");
 						hideKeyboard();
+						refreshData();
 					} else if (status.equals(JsonTool.STATUS_FAIL)) {
 						LogTool.e(jsonTool.getMessage());
 					}

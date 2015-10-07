@@ -212,6 +212,20 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 		super.onBackPressed();
 	}
 
+	public void refreshData() {
+		pageNow = 0;
+		if (channelListView != null) {
+			channelListView.setRefreshing();
+		}
+		//		if (jsonChannelList.size() > 0) {
+		//			postListView.setVisibility(View.VISIBLE);
+		//			emptyView.setVisibility(View.GONE);
+		//		} else {
+		//			postListView.setVisibility(View.GONE);
+		//			emptyView.setVisibility(View.VISIBLE);
+		//		}
+	}
+
 	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
@@ -953,6 +967,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					userPreference.setArticle_count(userPreference.getArticle_count() + 1);
 					ToastTool.showShort(ChannelPunchCardActivity.this, jsonTool.getMessage());
+					refreshData();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());
 				}
