@@ -95,7 +95,7 @@ public class ChannelInfoActivity extends BaseActivity implements OnClickListener
 			break;
 		case R.id.channel_share:
 			startActivity(new Intent(ChannelInfoActivity.this, ShareQrCodeActivity.class).putExtra("channelName", channelNameTextView.getText())
-					.putExtra("channelInfo", channelDescription.getText()));
+					.putExtra("channelInfo", channelDescription.getText()).putExtra("channelid", jsonChannel.getChannel_id()));
 
 			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			break;

@@ -31,6 +31,7 @@ import com.baidu.location.LocationClient;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
+import com.lanquan.config.Constants;
 import com.lanquan.config.DefaultKeys;
 import com.lanquan.config.Constants.WeChatConfig;
 import com.lanquan.customwidget.MyAlertDialog;
@@ -55,7 +56,9 @@ import com.umeng.socialize.controller.UMSocialService;
 import com.umeng.socialize.controller.listener.SocializeListeners.SnsPostListener;
 import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
 import com.umeng.socialize.exception.SocializeException;
+import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.sso.SinaSsoHandler;
+import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.socialize.utils.OauthHelper;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 import com.umeng.socialize.weixin.media.CircleShareContent;
@@ -210,6 +213,16 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		}
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		/**使用SSO授权必须添加如下代码 */
+		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
+		if (ssoHandler != null) {
+			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
+		}
+	}
+
 	/**
 	 * 位置监听类
 	 */
@@ -260,9 +273,9 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	 */
 	private void publish() {
 		if (channel_id > 0) {
-			sharecomment();
 			uploadImage(imagePath);
 			//发布后分享
+			sharecomment();
 		}
 	}
 
@@ -389,13 +402,13 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			//设置微信好友分享内容
 			WeiXinShareContent weixinContent = new WeiXinShareContent();
 			//设置分享文字
-			weixinContent.setShareContent("篮圈——频道分享");
+			weixinContent.setShareContent("篮圈--篮球人的天堂圣地");
 			//设置title
-			weixinContent.setTitle("频道分享");
+			weixinContent.setTitle("篮圈--篮球人的天堂圣地");
 			//设置分享内容跳转URL
-			weixinContent.setTargetUrl("www.baidu.com");
+			weixinContent.setTargetUrl(Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channel_id);
 			//设置分享图片
-			//			weixinContent.setShareImage(new UMImage(PublishCommentActivity.this, shareImageFile));
+			weixinContent.setShareImage(new UMImage(PublishCommentActivity.this, R.drawable.ic_launcher));
 			mController.setShareMedia(weixinContent);
 			//直接分享
 			mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.WEIXIN, new SnsPostListener() {
@@ -418,10 +431,13 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			//设置微信朋友圈分享内容
 			CircleShareContent circleMedia = new CircleShareContent();
 			circleMedia.setShareContent("篮圈——频道分享");
+			//设置title
+			circleMedia.setTitle("篮圈--篮球人的天堂圣地");
+			circleMedia.setShareContent("篮圈--篮球人的天堂圣地");
 			//设置朋友圈title
-			//			circleMedia.setShareImage(new UMImage(PublishCommentActivity.this, shareImageFile));
+			circleMedia.setShareImage(new UMImage(PublishCommentActivity.this, R.drawable.ic_launcher));
 			//设置分享内容跳转URL
-			circleMedia.setTargetUrl("http://www.baidu.com");
+			circleMedia.setTargetUrl(Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channel_id);
 			mController.setShareMedia(circleMedia);
 
 			//直接分享
@@ -461,29 +477,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
 						Toast.makeText(PublishCommentActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
-						//获取相关授权信息或者跳转到自定义的分享编辑页面
-						String uid = value.getString("uid");
-						//设置分享内容
-						//			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
-						//设置分享图片
-						//			mController.setShareMedia(new UMImage(PublishCommentActivity.this, shareImageFile));
-						//直接分享
-						mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
-							@Override
-							public void onStart() {
-								Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
-							}
 
-							@Override
-							public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
-								if (eCode == StatusCode.ST_CODE_SUCCESSED) {
-									Toast.makeText(PublishCommentActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
-								} else {
-									Toast.makeText(PublishCommentActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
-								}
-							}
-						});
-						LogTool.i("uid" + uid);
 					}
 
 					@Override
@@ -492,6 +486,28 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 					}
 				});
 			}
+
+			//获取相关授权信息或者跳转到自定义的分享编辑页面
+			//设置分享内容
+			mController.setShareContent("篮圈--篮球人的天堂圣地" + Constants.AppliactionServerIP_Share);
+			//设置分享图片
+			mController.setShareMedia(new UMImage(PublishCommentActivity.this, R.drawable.ic_launcher));
+			//直接分享
+			mController.directShare(PublishCommentActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
+				@Override
+				public void onStart() {
+					Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
+				}
+
+				@Override
+				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
+					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
+						Toast.makeText(PublishCommentActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(PublishCommentActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
+					}
+				}
+			});
 
 		}
 	}

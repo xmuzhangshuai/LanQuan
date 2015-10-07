@@ -5,6 +5,7 @@ import java.io.File;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
+import com.lanquan.config.Constants;
 import com.lanquan.config.Constants.WeChatConfig;
 import com.lanquan.utils.FileSizeUtil;
 import com.lanquan.utils.ImageTools;
@@ -65,6 +66,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	private String imagePath;
 	private String channelTitle;
 	private String channelDetail;
+	private int channelId;
 	// 首先在您的Activity中添加如下成员变量
 	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share");
 	private File shareImageFile;
@@ -108,6 +110,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		// 获取频道名称以及频道简介
 		channelTitle = getIntent().getStringExtra("channelName");
 		channelDetail = getIntent().getStringExtra("channelInfo");
+		channelId = getIntent().getIntExtra("channelid", 0);
 		//		Bitmap top = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_top);
 		Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.lanquan_checked);
 		//		Bitmap content = BitmapFactory.decodeResource(getResources(), R.drawable.qrcode_content);
@@ -119,7 +122,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		Bitmap qrcodebg = BitmapFactory.decodeResource(getResources(), R.drawable.sharebarcode);
 		// qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
 		//		qrCodeBitmap = EncodingHandler.createChannelCode(top, icon, content, blue_content, middle, bottom, channelTitle, channelDetail, "帅哥就是帅");
-		qrCodeBitmap = EncodingHandler.createChannelCode(qrcodebg, icon, channelTitle, channelDetail, "帅哥就是帅");
+		qrCodeBitmap = EncodingHandler.createChannelCode(qrcodebg, icon, channelTitle, channelDetail, Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
 		LogTool.i("宽度" + qrCodeBitmap.getWidth() + "  高度：" + qrCodeBitmap.getHeight());
 		qrImageView.setImageBitmap(qrCodeBitmap);
 		//图片压缩
@@ -190,9 +193,9 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			}
 
 			//设置分享内容
-			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+			mController.setShareContent("篮圈--篮球人的天堂圣地"+Constants.AppliactionServerIP_Share);
 			//设置分享图片
-			//			mController.setShareMedia(new UMImage(ShareQrCodeActivity.this, shareImageFile));
+			mController.setShareMedia(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//直接分享
 			mController.directShare(ShareQrCodeActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
 				@Override
@@ -214,11 +217,11 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			//设置微信好友分享内容
 			WeiXinShareContent weixinContent = new WeiXinShareContent();
 			//设置分享文字
-			weixinContent.setShareContent("篮圈——频道分享");
+			weixinContent.setShareContent("篮圈--篮球人的天堂圣地");
 			//设置title
-			weixinContent.setTitle("频道分享");
+			weixinContent.setTitle("篮圈--篮球人的天堂圣地");
 			//设置分享内容跳转URL
-			weixinContent.setTargetUrl("www.baidu.com");
+			weixinContent.setTargetUrl(Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
 			//设置分享图片
 			weixinContent.setShareImage(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			mController.setShareMedia(weixinContent);
@@ -243,11 +246,15 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		case R.id.friend:
 			//设置微信朋友圈分享内容
 			CircleShareContent circleMedia = new CircleShareContent();
-			circleMedia.setShareContent("篮圈——频道分享");
+
+			//设置title
+			circleMedia.setTitle("篮圈--篮球人的天堂圣地");
+			circleMedia.setShareContent("篮圈--篮球人的天堂圣地");
 			//设置朋友圈title
 			circleMedia.setShareImage(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//设置分享内容跳转URL
-			circleMedia.setTargetUrl("http://www.baidu.com");
+			circleMedia.setTargetUrl(Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
+			
 			mController.setShareMedia(circleMedia);
 
 			//直接分享

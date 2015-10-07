@@ -2,6 +2,7 @@ package com.lanquan.ui;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
+import com.lanquan.config.Constants;
 import com.lanquan.config.Constants.WeChatConfig;
 import com.lanquan.utils.LogTool;
 import com.umeng.socialize.bean.SHARE_MEDIA;
@@ -12,6 +13,7 @@ import com.umeng.socialize.controller.UMSocialService;
 import com.umeng.socialize.controller.listener.SocializeListeners.SnsPostListener;
 import com.umeng.socialize.controller.listener.SocializeListeners.UMAuthListener;
 import com.umeng.socialize.exception.SocializeException;
+import com.umeng.socialize.media.UMImage;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.utils.OauthHelper;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
@@ -108,9 +110,9 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 			}
 
 			//设置分享内容
-			//			mController.setShareContent("友盟社会化组件（SDK）让移动应用快速整合社交分享功能，http://www.umeng.com/social");
+			mController.setShareContent("篮圈--篮球人的天堂圣地,"+Constants.AppliactionServerIP_Share);
 			//设置分享图片
-			//			mController.setShareMedia(new UMImage(ShareMenuActivity.this, shareImageFile));
+			mController.setShareMedia(new UMImage(ShareMenuActivity.this, R.drawable.ic_launcher));
 			//直接分享
 			mController.directShare(ShareMenuActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
 				@Override
@@ -122,6 +124,7 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
 					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
 						Toast.makeText(ShareMenuActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+						finish();
 					} else {
 						Toast.makeText(ShareMenuActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
 					}
@@ -132,13 +135,13 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 			//设置微信好友分享内容
 			WeiXinShareContent weixinContent = new WeiXinShareContent();
 			//设置分享文字
-			weixinContent.setShareContent("篮圈——频道分享");
+			weixinContent.setShareContent("篮圈--篮球人的天堂圣地");
 			//设置title
-			weixinContent.setTitle("频道分享");
+			weixinContent.setTitle("篮圈--篮球人的天堂圣地");
 			//设置分享内容跳转URL
-			weixinContent.setTargetUrl("www.baidu.com");
+			weixinContent.setTargetUrl(Constants.AppliactionServerIP_Share);
 			//设置分享图片
-//			weixinContent.setShareImage(new UMImage(ShareMenuActivity.this, shareImageFile));
+			weixinContent.setShareImage(new UMImage(ShareMenuActivity.this,  R.drawable.ic_launcher));
 			mController.setShareMedia(weixinContent);
 			//直接分享
 			mController.directShare(ShareMenuActivity.this, SHARE_MEDIA.WEIXIN, new SnsPostListener() {
@@ -151,6 +154,7 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
 					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
 						Toast.makeText(ShareMenuActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
+						finish();
 					} else {
 						Toast.makeText(ShareMenuActivity.this, "发送失败", Toast.LENGTH_SHORT).show();
 					}
@@ -161,12 +165,13 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 		case R.id.menu3:
 			//设置微信朋友圈分享内容
 			CircleShareContent circleMedia = new CircleShareContent();
-			circleMedia.setShareContent("篮圈——频道分享");
+			//设置title
+			circleMedia.setTitle("篮圈--篮球人的天堂圣地");
+			circleMedia.setShareContent("篮圈--篮球人的天堂圣地");
 			//设置朋友圈title
-//			circleMedia.setShareImage(new UMImage(ShareMenuActivity.this, shareImageFile));
+			circleMedia.setShareImage(new UMImage(ShareMenuActivity.this, R.drawable.ic_launcher));
 			//设置分享内容跳转URL
-			circleMedia.setTargetUrl("http://www.baidu.com");
-			mController.setShareMedia(circleMedia);
+			circleMedia.setTargetUrl(Constants.AppliactionServerIP_Share);
 
 			//直接分享
 			mController.directShare(ShareMenuActivity.this, SHARE_MEDIA.WEIXIN_CIRCLE, new SnsPostListener() {
@@ -179,6 +184,7 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
 					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
 						Toast.makeText(ShareMenuActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+						finish();
 					} else {
 						Toast.makeText(ShareMenuActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
 					}

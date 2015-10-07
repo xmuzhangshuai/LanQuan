@@ -15,6 +15,7 @@ public class Constants {
 
 	public static String AppliactionServerDomain = "http://120.24.183.74/index.php/";
 
+	public static String AppliactionServerIP_Share = "http://120.25.62.195";
 	// 域名或者是IP
 //	public static String AppliactionServerIP = "http://120.25.62.195/";
 //
