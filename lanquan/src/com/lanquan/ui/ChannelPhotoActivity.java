@@ -705,15 +705,15 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 										channel.setLight(channel.getLight() + 1);
 										channel.setIslight(1);
 										holder.favorCountTextView.setText("" + channel.getLight());
-
+										holder.favorCountTextView.setVisibility(View.VISIBLE);
 									} else {
 										channel.setLight(channel.getLight() - 1);
 										// 标记为未亮
 										channel.setIslight(0);
-										holder.favorCountTextView.setText("" + channel.getLight());
+//										holder.favorCountTextView.setText("" + channel.getLight());
+										holder.favorCountTextView.setVisibility(View.GONE);
 									}
-									holder.favorCountTextView.setVisibility(View.VISIBLE);
-									LogTool.i(message);
+//									holder.favorCountTextView.setVisibility(View.VISIBLE);
 								} else {
 									LogTool.e(message);
 								}

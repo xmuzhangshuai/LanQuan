@@ -62,6 +62,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 	private UserPreference userPreference;
 	private LinkedList<JsonMyMessage> messageList;
 	private int unread_count = 0;
+	private View emptyView;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,6 +93,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 		// TODO Auto-generated method stub
 		navText = (TextView) rootView.findViewById(R.id.nav_text);
 		messageListView = (PullToRefreshListView) rootView.findViewById(R.id.msg_list);
+		emptyView = rootView.findViewById(R.id.empty);
 	}
 
 	@Override
@@ -135,24 +137,31 @@ public class MainMsgFragment extends BaseV4Fragment {
 		messageListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
 	}
 
+	private void refreshLayout() {
+		if (messageList.size() > 0) {
+			messageListView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
+		} else {
+			messageListView.setVisibility(View.GONE);
+			emptyView.setVisibility(View.VISIBLE);
+		}
+	}
+
 	public void refreshData() {
 		pageNow = 0;
 		if (messageListView != null) {
 			messageListView.setRefreshing();
 		}
-		//		if (jsonChannelList.size() > 0) {
-		//			postListView.setVisibility(View.VISIBLE);
-		//			emptyView.setVisibility(View.GONE);
-		//		} else {
-		//			postListView.setVisibility(View.GONE);
-		//			emptyView.setVisibility(View.VISIBLE);
-		//		}
+
 	}
 
 	/**
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
+		if (p == -1) {
+			return;
+		}
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("access_token", userPreference.getAccess_token());
@@ -206,6 +215,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 							}
 
 						}
+						refreshLayout();
 						mAdapter.notifyDataSetChanged();
 					} else {
 						LogTool.e("获取消息列表失败");
@@ -414,12 +424,12 @@ public class MainMsgFragment extends BaseV4Fragment {
 			// 设置的内容
 			if (!TextUtils.isEmpty(jsonMyMessage.getImage_url())) {// 如果有图片
 				imageLoader.displayImage(jsonMyMessage.getImage_url(), holder.itemImageView, ImageLoaderTool.getImageOptions());
-				holder.commentTextView.setText("赞了你的图片");
+				holder.commentTextView.setText(jsonMyMessage.getMessage());
 				holder.itemTextView.setVisibility(View.GONE);
 				holder.itemImageView.setVisibility(View.VISIBLE);
 			} else {
 				holder.itemTextView.setText(jsonMyMessage.getContent());
-				holder.commentTextView.setText("赞了你的想法");
+				holder.commentTextView.setText(jsonMyMessage.getMessage());
 				holder.itemTextView.setVisibility(View.VISIBLE);
 				holder.itemImageView.setVisibility(View.GONE);
 			}

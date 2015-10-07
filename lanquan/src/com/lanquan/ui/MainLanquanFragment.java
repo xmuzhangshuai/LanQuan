@@ -109,18 +109,23 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		}
 	}
 
+	private void refreshLayout() {
+		LogTool.i("refreshLayout");
+		if (jsonChannelList.size() > 0) {
+			postListView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
+		} else {
+			postListView.setVisibility(View.GONE);
+			emptyView.setVisibility(View.VISIBLE);
+		}
+	}
+
 	public void refreshData() {
+		LogTool.i("refreshData");
 		pageNow = 0;
 		if (postListView != null) {
 			postListView.setRefreshing();
 		}
-//		if (jsonChannelList.size() > 0) {
-//			postListView.setVisibility(View.VISIBLE);
-//			emptyView.setVisibility(View.GONE);
-//		} else {
-//			postListView.setVisibility(View.GONE);
-//			emptyView.setVisibility(View.VISIBLE);
-//		}
 	}
 
 	/**
@@ -230,12 +235,12 @@ public class MainLanquanFragment extends BaseV4Fragment {
 						else if (page > 0) {
 							if (temp.size() < Config.PAGE_NUM) {
 								pageNow = -1;
-//								ToastTool.showShort(getActivity(), "没有更多了！");
+								//								ToastTool.showShort(getActivity(), "没有更多了！");
 							}
 							jsonChannelList.addAll(temp);
 							mAdapter.notifyDataSetChanged();
 						}
-
+						refreshLayout();
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();

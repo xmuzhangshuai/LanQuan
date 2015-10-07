@@ -691,16 +691,16 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 									if (holder.favorBtn.isChecked()) {
 										channel.setLight(channel.getLight() + 1);
 										channel.setIslight(1);
-										LogTool.e("sssssss" + channel.getLight());
 										holder.favorCountTextView.setText("" + channel.getLight());
-
+										holder.favorCountTextView.setVisibility(View.VISIBLE);
 									} else {
 										channel.setLight(channel.getLight() - 1);
 										// 标记为未亮
 										channel.setIslight(0);
 										holder.favorCountTextView.setText("" + channel.getLight());
+										holder.favorCountTextView.setVisibility(View.GONE);
 									}
-									holder.favorCountTextView.setVisibility(View.VISIBLE);
+
 									LogTool.i(message);
 								} else {
 									LogTool.e(message);
