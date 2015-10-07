@@ -216,7 +216,7 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 			focusView.requestFocus();
 		} else {
 //			getAccess(mAuthcode, mAuthcode);
-			change(mAuthcode);
+			change(mPhone,mAuthcode);
 		}
 	}
 
@@ -227,7 +227,7 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 	private void getAuthCode(String phone) {
 		RequestParams params = new RequestParams();
 		params.put(UserTable.U_TEL, phone);
-		params.put("type", 0);
+		params.put("type", 2);
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
 
 			@Override
@@ -346,10 +346,11 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 	/**
 	 * 变更手机号
 	 */
-	private void change(final String newPhone) {
+	private void change(final String newPhone,final String mAuthcode) {
 		RequestParams params = new RequestParams();
 
 		params.put("new_phone", newPhone);
+		params.put("verify_code", mAuthcode);
 		params.put("access_token", userPreference.getAccess_token());
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
@@ -382,6 +383,11 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
 				LogTool.e("变更手机号服务器错误" + statusCode + errorResponse);
+				// 如果错误，则提示错误
+				JsonTool jsonTool = new JsonTool(errorResponse);
+				mPhoneView.setError(jsonTool.getMessage());
+				focusView = mPhoneView;
+				focusView.requestFocus();
 			}
 		};
 		AsyncHttpClientTool.post("api/user/modifyPhone", params, responseHandler);
