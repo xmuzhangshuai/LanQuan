@@ -302,8 +302,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 
 				if (pageNow >= 0)
 					++pageNow;
-				if (pageNow < 0)
-					pageNow = 0;
+				//				if (pageNow < 0)
+				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -467,6 +467,16 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
+		if (p < 0) {
+			channelListView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					channelListView.onRefreshComplete();
+					ToastTool.showShort(ChannelPhotoActivity.this, "没有更多了！");
+				}
+			}, 100);
+			return;
+		}
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("channel_id", jsonChannel.getChannel_id());
@@ -710,10 +720,10 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 										channel.setLight(channel.getLight() - 1);
 										// 标记为未亮
 										channel.setIslight(0);
-//										holder.favorCountTextView.setText("" + channel.getLight());
+										//										holder.favorCountTextView.setText("" + channel.getLight());
 										holder.favorCountTextView.setVisibility(View.GONE);
 									}
-//									holder.favorCountTextView.setVisibility(View.VISIBLE);
+									//									holder.favorCountTextView.setVisibility(View.VISIBLE);
 								} else {
 									LogTool.e(message);
 								}

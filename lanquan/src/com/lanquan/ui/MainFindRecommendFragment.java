@@ -125,8 +125,6 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 
 				if (pageNow >= 0)
 					++pageNow;
-				//				if (pageNow < 0)
-				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -162,11 +160,13 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 
 	private void getDataTask(int p) {
 		if (p < 0) {
-			ToastTool.showShort(getActivity(), "没有更多了！");
-			if (postListView.isRefreshing()) {
-				postListView.onRefreshComplete();
-				LogTool.e("结束刷新");
-			}
+			postListView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					postListView.onRefreshComplete();
+					ToastTool.showShort(getActivity(), "没有更多了！");
+				}
+			}, 100);
 			return;
 		}
 		final int page = p;

@@ -298,8 +298,8 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 
 				if (pageNow >= 0)
 					++pageNow;
-				if (pageNow < 0)
-					pageNow = 0;
+				//				if (pageNow < 0)
+				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -457,6 +457,16 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
+		if (p < 0) {
+			channelListView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					channelListView.onRefreshComplete();
+					ToastTool.showShort(ChannelTextActivity.this, "没有更多了！");
+				}
+			}, 100);
+			return;
+		}
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("channel_id", jsonChannel.getChannel_id());

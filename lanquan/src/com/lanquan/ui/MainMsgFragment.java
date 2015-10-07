@@ -123,8 +123,8 @@ public class MainMsgFragment extends BaseV4Fragment {
 
 				if (pageNow >= 0)
 					++pageNow;
-				if (pageNow < 0)
-					pageNow = 0;
+//				if (pageNow < 0)
+//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -159,7 +159,14 @@ public class MainMsgFragment extends BaseV4Fragment {
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
-		if (p == -1) {
+		if (p < 0) {
+			messageListView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					messageListView.onRefreshComplete();
+					ToastTool.showShort(getActivity(), "没有更多了！");
+				}
+			}, 100);
 			return;
 		}
 		final int page = p;

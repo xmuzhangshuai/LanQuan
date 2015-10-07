@@ -387,6 +387,16 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		 * 网络获取数据
 		 */
 		public void getDataTask(int p) {
+			if (p < 0) {
+				mPullRefreshScrollView.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						mPullRefreshScrollView.onRefreshComplete();
+						ToastTool.showShort(getActivity(), "没有更多了！");
+					}
+				}, 100);
+				return;
+			}
 			final int page = p;
 			RequestParams params = new RequestParams();
 			params.put("access_token", userPreference.getAccess_token());
@@ -640,6 +650,16 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		 * 网络获取数据
 		 */
 		public void getDataTask(int p) {
+			if (p < 0) {
+				mPullRefreshScrollView.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						mPullRefreshScrollView.onRefreshComplete();
+						ToastTool.showShort(getActivity(), "没有更多了！");
+					}
+				}, 100);
+				return;
+			}
 			final int page = p;
 			RequestParams params = new RequestParams();
 			params.put("access_token", userPreference.getAccess_token());

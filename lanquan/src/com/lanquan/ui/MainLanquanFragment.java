@@ -21,6 +21,7 @@ import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.JsonChannelTools;
 import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -187,8 +188,8 @@ public class MainLanquanFragment extends BaseV4Fragment {
 
 				if (pageNow >= 0)
 					++pageNow;
-				if (pageNow < 0)
-					pageNow = 0;
+				//				if (pageNow < 0)
+				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -198,6 +199,16 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	 * 网络获取数据
 	 */
 	private void getDataTask(int p) {
+		if (p < 0) {
+			postListView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					postListView.onRefreshComplete();
+					ToastTool.showShort(getActivity(), "没有更多了！");
+				}
+			}, 100);
+			return;
+		}
 		final int page = p;
 		RequestParams params = new RequestParams();
 		params.put("access_token", userPreference.getAccess_token());

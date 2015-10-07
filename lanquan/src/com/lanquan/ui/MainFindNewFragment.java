@@ -169,10 +169,13 @@ public class MainFindNewFragment extends BaseV4Fragment {
 	 */
 	private void getDataTask(int p) {
 		if (p < 0) {
-			ToastTool.showShort(getActivity(), "没有更多了！");
-			if (postListView.isRefreshing()) {
-				postListView.onRefreshComplete();
-			}
+			postListView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					postListView.onRefreshComplete();
+					ToastTool.showShort(getActivity(), "没有更多了！");
+				}
+			}, 100);
 			return;
 		}
 		final int page = p;
