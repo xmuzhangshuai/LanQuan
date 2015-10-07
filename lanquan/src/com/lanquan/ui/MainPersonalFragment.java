@@ -179,8 +179,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		if (index == 0) {
 			getFragmentManager().beginTransaction().replace(R.id.channel_fragment_container, myChannelByTime, "myChannelByTime").addToBackStack(null).commit();
 		} else if (index == 1) {
-			getFragmentManager().beginTransaction().replace(R.id.channel_fragment_container, myChannelByChannel, "myChannelByChannel").addToBackStack(null)
-					.commit();
+			getFragmentManager().beginTransaction().replace(R.id.channel_fragment_container, myChannelByChannel, "myChannelByChannel").addToBackStack(null).commit();
 		}
 
 	}
@@ -496,7 +495,7 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-//					goToDetail(jsonMyArticle.getChannel_id(), jsonMyArticle.get);
+					//					goToDetail(jsonMyArticle.getChannel_id(), jsonMyArticle.get);
 				}
 			});
 
@@ -735,6 +734,15 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 			} else {
 				holder = (ViewHolder) view.getTag(); // 把数据取出来
 			}
+
+			view.setOnClickListener(new OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					goToDetail(jsonChannel.getChannel_id(), jsonChannel.getType());
+				}
+			});
 
 			if (!TextUtils.isEmpty(jsonChannel.getIcon()) && !jsonChannel.getIcon().equals("null")) {
 				imageLoader.displayImage(jsonChannel.getIcon(), holder.channelIconImageView, ImageLoaderTool.getCircleHeadImageOptions());

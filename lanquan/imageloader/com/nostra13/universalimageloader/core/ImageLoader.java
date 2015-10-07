@@ -344,10 +344,13 @@ public class ImageLoader {
 	 */
 	public void displayImage(String uri, ImageView imageView, DisplayImageOptions options) {
 		String path = uri;
-		if (uri != null && uri.startsWith("/application")) {
-			LogTool.i("拼接" + uri);
-			path = Constants.AppliactionServerIP + uri;
+		if (uri != null) {
+			if (uri.startsWith("/application") || uri.startsWith("/ui")) {
+				LogTool.i("拼接" + uri);
+				path = Constants.AppliactionServerIP + uri;
+			}
 		}
+
 		displayImage(path, new ImageViewAware(imageView), options, null, null);
 	}
 
