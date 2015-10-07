@@ -1,5 +1,8 @@
 package com.lanquan.ui;
 
+import com.lanquan.R;
+import com.lanquan.base.BaseV4Fragment;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,10 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-
-import com.lanquan.R;
-import com.lanquan.base.BaseV4Fragment;
-import com.lanquan.utils.LogTool;
 
 /** 
  * 类描述 ：主页面--发现页面，包括最新和推荐两个子页面
@@ -24,6 +23,7 @@ import com.lanquan.utils.LogTool;
  * 创建时间:    2015-8-6 上午10:59:19  
 */
 public class MainFindFragment extends BaseV4Fragment implements OnClickListener {
+	public final static String TAG = "MainFindFragment";
 	private View rootView;// 根View
 
 	private int index;
@@ -78,6 +78,24 @@ public class MainFindFragment extends BaseV4Fragment implements OnClickListener 
 				mTabs[currentTabIndex].setSelected(true);
 			}
 		});
+	}
+
+	/**
+	 * 刷新
+	 */
+	public void refreshData() {
+		if (currentTabIndex == 0) {
+			MainFindRecommendFragment mainFindRecommendFragment = (MainFindRecommendFragment) getFragmentManager()
+					.findFragmentByTag("android:switcher:" + R.id.mian_find_pager + ":0");
+			if (mainFindRecommendFragment != null) {
+				mainFindRecommendFragment.refreshData();
+			}
+		} else if (currentTabIndex == 1) {
+			MainFindNewFragment mainFindNewFragment = (MainFindNewFragment) getFragmentManager().findFragmentByTag("android:switcher:" + R.id.mian_find_pager + ":1");
+			if (mainFindNewFragment != null) {
+				mainFindNewFragment.refreshData();
+			}
+		}
 	}
 
 	/**

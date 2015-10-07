@@ -50,6 +50,7 @@ import android.widget.TextView;
  * @version: 1.0 创建时间: 2015-8-6 上午10:59:38
  */
 public class MainMsgFragment extends BaseV4Fragment {
+	public final static String TAG = "MainMsgFragment";
 	private View rootView;// 根View
 	private TextView navText;
 	private PullToRefreshListView messageListView;
@@ -132,6 +133,20 @@ public class MainMsgFragment extends BaseV4Fragment {
 		// TODO Auto-generated method stub
 		super.onResume();
 		messageListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
+	}
+
+	public void refreshData() {
+		pageNow = 0;
+		if (messageListView != null) {
+			messageListView.setRefreshing();
+		}
+		//		if (jsonChannelList.size() > 0) {
+		//			postListView.setVisibility(View.VISIBLE);
+		//			emptyView.setVisibility(View.GONE);
+		//		} else {
+		//			postListView.setVisibility(View.GONE);
+		//			emptyView.setVisibility(View.VISIBLE);
+		//		}
 	}
 
 	/**

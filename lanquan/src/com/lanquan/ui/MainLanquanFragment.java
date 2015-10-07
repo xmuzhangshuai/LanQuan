@@ -46,6 +46,7 @@ import android.widget.TextView;
  * @version: 1.0 创建时间: 2015-8-6 上午10:58:57
  */
 public class MainLanquanFragment extends BaseV4Fragment {
+	public final static String TAG = "MainLanquanFragment";
 	private View rootView;// 根View
 	private TextView navText;
 	private View rightBtn;
@@ -108,7 +109,11 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		}
 	}
 
-	private void refreshLayout() {
+	public void refreshData() {
+		pageNow = 0;
+		if (postListView != null) {
+			postListView.setRefreshing();
+		}
 //		if (jsonChannelList.size() > 0) {
 //			postListView.setVisibility(View.VISIBLE);
 //			emptyView.setVisibility(View.GONE);
@@ -220,7 +225,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 							jsonChannelList = new LinkedList<JsonChannel>();
 							jsonChannelList.addAll(temp);
 							mAdapter.notifyDataSetChanged();
-							refreshLayout();
 						}
 						// 如果是获取更多
 						else if (page > 0) {

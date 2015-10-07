@@ -1,18 +1,14 @@
 package com.lanquan.ui;
 
-import android.content.Intent;
+import com.lanquan.R;
+import com.lanquan.base.BaseFragmentActivity;
+import com.umeng.update.UmengUpdateAgent;
+
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.Window;
-
-import com.lanquan.R;
-import com.lanquan.base.BaseFragmentActivity;
-import com.umeng.socialize.controller.UMServiceFactory;
-import com.umeng.socialize.controller.UMSocialService;
-import com.umeng.socialize.sso.UMSsoHandler;
-import com.umeng.update.UmengUpdateAgent;
 
 /** 
  * 类描述 ：登录后主页，包含四个Fragments,MainLanquanFragment、MainFindFragment、MainMsgFragment、MainPernalFragment。
@@ -35,6 +31,7 @@ public class MainActivity extends BaseFragmentActivity {
 	// 当前fragment的index
 	private int currentTabIndex = 0;
 	private Fragment[] fragments;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -69,9 +66,8 @@ public class MainActivity extends BaseFragmentActivity {
 	protected void initView() {
 		// TODO Auto-generated method stub
 		// 添加显示第一个fragment
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, lanquanFragment).show(lanquanFragment).commit();
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, lanquanFragment, MainLanquanFragment.TAG).show(lanquanFragment).commit();
 	}
-
 
 	/**
 	 * button点击事件
@@ -97,9 +93,35 @@ public class MainActivity extends BaseFragmentActivity {
 			FragmentTransaction trx = getSupportFragmentManager().beginTransaction();
 			trx.hide(fragments[currentTabIndex]);
 			if (!fragments[index].isAdded()) {
-				trx.add(R.id.fragment_container, fragments[index]);
+
+				if (index == 0) {
+					trx.add(R.id.fragment_container, fragments[index], MainLanquanFragment.TAG);
+				} else if (index == 1) {
+					trx.add(R.id.fragment_container, fragments[index], MainFindFragment.TAG);
+				} else if (index == 2) {
+					trx.add(R.id.fragment_container, fragments[index], MainMsgFragment.TAG);
+				} else {
+					trx.add(R.id.fragment_container, fragments[index]);
+				}
 			}
 			trx.show(fragments[index]).commit();
+		} else {
+			if (currentTabIndex == 0) {
+				MainLanquanFragment myQuanziFragment = (MainLanquanFragment) getSupportFragmentManager().findFragmentByTag(MainLanquanFragment.TAG);
+				if (myQuanziFragment != null) {
+					myQuanziFragment.refreshData();
+				}
+			} else if (currentTabIndex == 1) {
+				MainFindFragment mainFindFragment = (MainFindFragment) getSupportFragmentManager().findFragmentByTag(MainFindFragment.TAG);
+				if (mainFindFragment != null) {
+					mainFindFragment.refreshData();
+				}
+			} else if (currentTabIndex == 2) {
+				MainMsgFragment mainMsgFragment = (MainMsgFragment) getSupportFragmentManager().findFragmentByTag(MainMsgFragment.TAG);
+				if (mainMsgFragment != null) {
+					mainMsgFragment.refreshData();
+				}
+			}
 		}
 		mTabs[currentTabIndex].setSelected(false);
 		// 把当前tab设为选中状态

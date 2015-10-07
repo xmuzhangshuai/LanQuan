@@ -142,6 +142,20 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		}
 	}
 
+	public void refreshData() {
+		pageNow = 0;
+		if (postListView != null) {
+			postListView.setRefreshing();
+		}
+		//		if (jsonChannelList.size() > 0) {
+		//			postListView.setVisibility(View.VISIBLE);
+		//			emptyView.setVisibility(View.GONE);
+		//		} else {
+		//			postListView.setVisibility(View.GONE);
+		//			emptyView.setVisibility(View.VISIBLE);
+		//		}
+	}
+
 	/**
 	 * 网络获取数据
 	 */
@@ -239,7 +253,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 
 		private class ViewHolder {
 			public ImageView backPhotoImageView;
-			public TextView titleTextView;
+			//			public TextView titleTextView;
 		}
 
 		@Override
@@ -274,7 +288,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 				view = LayoutInflater.from(getActivity()).inflate(R.layout.re_channel_list_item, null);
 				holder = new ViewHolder();
 				holder.backPhotoImageView = (ImageView) view.findViewById(R.id.channel_bg);
-				holder.titleTextView = (TextView) view.findViewById(R.id.title);
+				//				holder.titleTextView = (TextView) view.findViewById(R.id.title);
 				view.setTag(holder); // 给View添加一个格外的数据
 			} else {
 				holder = (ViewHolder) view.getTag(); // 把数据取出来
@@ -293,8 +307,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 			});
 
 			imageLoader.displayImage(jsonChannel.getRecommend_background(), holder.backPhotoImageView, ImageLoaderTool.getImageOptions());
-			holder.titleTextView.setVisibility(View.GONE);
-//			holder.titleTextView.setText(jsonChannel.getTitle());
+			//			holder.titleTextView.setText(jsonChannel.getTitle());
 
 			return view;
 		}

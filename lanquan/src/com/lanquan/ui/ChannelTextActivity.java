@@ -143,10 +143,10 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 				concernBtn.setVisibility(View.VISIBLE);
 				infoBtn.setVisibility(View.GONE);
 			}
-			inputBar.setVisibility(View.VISIBLE);
+//			inputBar.setVisibility(View.VISIBLE);
 		} else {
 			infoBtn.setVisibility(View.GONE);
-			inputBar.setVisibility(View.GONE);
+//			inputBar.setVisibility(View.GONE);
 		}
 
 	}
@@ -352,54 +352,90 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 	 * 评论
 	 */
 	private void comment(String content) {
-		RequestParams params = new RequestParams();
-		params.put("message", content);
-		params.put("image_url", "");
-		params.put("address", detailLocation);
-		params.put("latitude", latitude);
-		params.put("longitude", longtitude);
-		params.put("access_token", userPreference.getAccess_token());
-		params.put("channel_id", jsonChannel.getChannel_id());
-		final Dialog dialog = showProgressDialog("请稍后...");
-		dialog.setCancelable(false);
+		if (userPreference.getUserLogin()) {
+			RequestParams params = new RequestParams();
+			params.put("message", content);
+			params.put("image_url", "");
+			params.put("address", detailLocation);
+			params.put("latitude", latitude);
+			params.put("longitude", longtitude);
+			params.put("access_token", userPreference.getAccess_token());
+			params.put("channel_id", jsonChannel.getChannel_id());
+			final Dialog dialog = showProgressDialog("请稍后...");
+			dialog.setCancelable(false);
 
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-			@Override
-			public void onStart() {
-				// TODO Auto-generated method stub
-				super.onStart();
-				dialog.show();
-			}
+			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+				@Override
+				public void onStart() {
+					// TODO Auto-generated method stub
+					super.onStart();
+					dialog.show();
+				}
+
+				@Override
+				public void onFinish() {
+					// TODO Auto-generated method stub
+					dialog.dismiss();
+					super.onFinish();
+				}
+
+				@Override
+				public void onSuccess(int statusCode, Header[] headers, String response) {
+					// TODO Auto-generated method stub
+					JsonTool jsonTool = new JsonTool(response);
+					String status = jsonTool.getStatus();
+					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+						userPreference.setArticle_count(userPreference.getArticle_count() + 1);
+						ToastTool.showShort(ChannelTextActivity.this, jsonTool.getMessage());
+						commentEditText.setText("");
+						hideKeyboard();
+					} else if (status.equals(JsonTool.STATUS_FAIL)) {
+						LogTool.e(jsonTool.getMessage());
+					}
+				}
+
+				@Override
+				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+					// TODO Auto-generated method stub
+					LogTool.e("创建评论错误" + statusCode + errorResponse);
+				}
+			};
+			AsyncHttpClientTool.post("api/article/create", params, responseHandler);
+		} else {
+			vertifyToLogin();
+		}
+
+	}
+
+	/**
+	 * 弹出确认登陆的对话框
+	 */
+	private void vertifyToLogin() {
+		final MyAlertDialog dialog = new MyAlertDialog(ChannelTextActivity.this);
+		dialog.setTitle("提示");
+		dialog.setMessage("是否去登录？");
+		View.OnClickListener comfirm = new OnClickListener() {
 
 			@Override
-			public void onFinish() {
+			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				dialog.dismiss();
-				super.onFinish();
-			}
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				JsonTool jsonTool = new JsonTool(response);
-				String status = jsonTool.getStatus();
-				if (status.equals(JsonTool.STATUS_SUCCESS)) {
-					userPreference.setArticle_count(userPreference.getArticle_count() + 1);
-					ToastTool.showShort(ChannelTextActivity.this, jsonTool.getMessage());
-					commentEditText.setText("");
-					hideKeyboard();
-				} else if (status.equals(JsonTool.STATUS_FAIL)) {
-					LogTool.e(jsonTool.getMessage());
-				}
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("创建评论错误" + statusCode + errorResponse);
+				Intent intent = new Intent(ChannelTextActivity.this, LoginActivity.class);
+				startActivity(intent);
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
 			}
 		};
-		AsyncHttpClientTool.post("api/article/create", params, responseHandler);
+		View.OnClickListener cancle = new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+			}
+		};
+		dialog.setPositiveButton("确定", comfirm);
+		dialog.setNegativeButton("取消", cancle);
+		dialog.show();
 	}
 
 	/**
@@ -528,9 +564,7 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 			};
 			AsyncHttpClientTool.post(ChannelTextActivity.this, "api/channel/focus", params, responseHandler);
 		} else {
-			Intent intent = new Intent(ChannelTextActivity.this, LoginActivity.class);
-			startActivity(intent);
-			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+			vertifyToLogin();
 		}
 	}
 
@@ -667,9 +701,7 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 						};
 						AsyncHttpClientTool.post(ChannelTextActivity.this, "api/article/light", params, responseHandler);
 					} else {
-						Intent intent = new Intent(ChannelTextActivity.this, LoginActivity.class);
-						startActivity(intent);
-						overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+						vertifyToLogin();
 						holder.favorBtn.setChecked(false);
 					}
 				}
@@ -774,42 +806,6 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 		dialog.setPositiveButton("确定", comfirm);
 		dialog.setNegativeButton("取消", cancle);
 		dialog.show();
-	}
-
-	// 对评论点亮事件
-
-	public void light(final int article_id, final int position) {
-		RequestParams params = new RequestParams();
-		params.put("article_id", article_id);
-		params.put("access_token", userPreference.getAccess_token());
-		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
-
-			@Override
-			public void onSuccess(int statusCode, Header[] headers, String response) {
-				// TODO Auto-generated method stub
-				LogTool.i(statusCode + "===" + response);
-				JsonTool jsonTool = new JsonTool(response);
-
-				String status = jsonTool.getStatus();
-				String message = jsonTool.getMessage();
-				if (status.equals("success")) {
-
-					mAdapter.notifyDataSetChanged();
-					LogTool.i(message);
-				} else {
-					LogTool.e(message);
-				}
-			}
-
-			@Override
-			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-				// TODO Auto-generated method stub
-				LogTool.e("删除评论服务器错误，代码" + statusCode + errorResponse);
-			}
-
-		};
-		AsyncHttpClientTool.post(ChannelTextActivity.this, "api/article/delete", params, responseHandler);
-
 	}
 
 	/**

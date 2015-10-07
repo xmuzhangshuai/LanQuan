@@ -54,7 +54,12 @@ public class GuideActivity extends BaseActivity {
 			// 第一次运行拷贝数据库文件
 			new initDataBase().execute();
 			sharePreferenceUtil.setUseCount(++count);// 次数加1
-			startActivity(new Intent(GuideActivity.this, GuidePagerActivity.class));
+//			startActivity(new Intent(GuideActivity.this, GuidePagerActivity.class));
+			setContentView(R.layout.activity_guide);
+			findViewById();
+			initView();
+			startActivity(new Intent(GuideActivity.this, LoginOrRegisterActivity.class));
+//			finish();
 		} else {// 如果不是第一次使用,则不启动向导页面，显示欢迎页面。
 			if (userPreference.getUserLogin()) {// 如果是已经登陆过
 				setContentView(R.layout.activity_guide);

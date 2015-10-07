@@ -443,11 +443,40 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 			};
 			AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/channel/focus", params, responseHandler);
 		} else {
-			Intent intent = new Intent(ChannelPunchCardActivity.this, LoginActivity.class);
-			startActivity(intent);
-			overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+			vertifyToLogin();
 		}
 
+	}
+
+	/**
+	* 弹出确认登陆的对话框
+	*/
+	private void vertifyToLogin() {
+		final MyAlertDialog dialog = new MyAlertDialog(ChannelPunchCardActivity.this);
+		dialog.setTitle("提示");
+		dialog.setMessage("是否去登录？");
+		View.OnClickListener comfirm = new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				Intent intent = new Intent(ChannelPunchCardActivity.this, LoginActivity.class);
+				startActivity(intent);
+				overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+			}
+		};
+		View.OnClickListener cancle = new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+			}
+		};
+		dialog.setPositiveButton("确定", comfirm);
+		dialog.setNegativeButton("取消", cancle);
+		dialog.show();
 	}
 
 	/** 
@@ -590,9 +619,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 						};
 						AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/article/light", params, responseHandler);
 					} else {
-						Intent intent = new Intent(ChannelPunchCardActivity.this, LoginActivity.class);
-						startActivity(intent);
-						overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+						vertifyToLogin();
 						holder.favorBtn.setChecked(false);
 					}
 				}
