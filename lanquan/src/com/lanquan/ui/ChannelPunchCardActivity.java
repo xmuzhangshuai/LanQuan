@@ -28,6 +28,7 @@ import com.lanquan.jsonobject.JsonChannel;
 import com.lanquan.jsonobject.JsonChannelComment;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
+import com.lanquan.utils.FileSizeUtil;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
 import com.lanquan.utils.JsonChannelTools;
@@ -40,6 +41,7 @@ import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -163,6 +165,11 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 		// TODO Auto-generated method stub
 		LogTool.e("requestCode" + requestCode + "resultCode" + resultCode + "data" + data);
 		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode != Activity.RESULT_OK) {
+			photoUri = null;
+			return;
+		}
+
 		if (requestCode == TAKE_PICTURE) {// 拍照
 			PunchDialogFragment prev = (PunchDialogFragment) getFragmentManager().findFragmentByTag("punch_dialog");
 			if (prev != null) {
@@ -987,6 +994,11 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 	 * @param filePath
 	 */
 	public void uploadImage(final String imageUrl, final String content) {
+		LogTool.e("路径：" + imageUrl);
+		File f = new File(imageUrl);
+		if (!f.exists() || FileSizeUtil.getFileOrFilesSize(imageUrl, FileSizeUtil.SIZETYPE_KB) < 1) {
+			return;
+		}
 		String tempPath = Environment.getExternalStorageDirectory() + "/lanquan/image";
 		String photoName = "temp" + ".jpg";
 		File file = ImageTools.compressBySizeAndQuality(tempPath, photoName, imageUrl, 400);
