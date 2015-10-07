@@ -123,8 +123,8 @@ public class MainMsgFragment extends BaseV4Fragment {
 
 				if (pageNow >= 0)
 					++pageNow;
-//				if (pageNow < 0)
-//					pageNow = 0;
+				//				if (pageNow < 0)
+				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -150,6 +150,8 @@ public class MainMsgFragment extends BaseV4Fragment {
 	public void refreshData() {
 		pageNow = 0;
 		if (messageListView != null) {
+			messageListView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
 			messageListView.setRefreshing();
 		}
 
@@ -160,6 +162,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 	 */
 	private void getDataTask(int p) {
 		if (p < 0) {
+			refreshLayout();
 			messageListView.postDelayed(new Runnable() {
 				@Override
 				public void run() {

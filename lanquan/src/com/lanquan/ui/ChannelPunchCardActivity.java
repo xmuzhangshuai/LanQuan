@@ -277,8 +277,8 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 
 				if (pageNow >= 0)
 					++pageNow;
-//				if (pageNow < 0)
-//					pageNow = 0;
+				//				if (pageNow < 0)
+				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -996,7 +996,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 				LogTool.e("打卡错误" + statusCode + errorResponse);
 			}
 		};
-		AsyncHttpClientTool.post("api/article/create", params, responseHandler);
+		AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/article/create", params, responseHandler);
 	}
 
 	/**
@@ -1063,7 +1063,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 					LogTool.e("图像上传失败！" + errorResponse);
 				}
 			};
-			AsyncHttpClientTool.post("api/file/upload", params, responseHandler);
+			AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/file/upload", params, responseHandler);
 		} else {
 			LogTool.e("本地文件为空");
 		}

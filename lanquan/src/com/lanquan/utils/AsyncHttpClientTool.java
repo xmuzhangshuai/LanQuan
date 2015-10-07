@@ -15,7 +15,7 @@ import com.loopj.android.http.RequestParams;
  * @author:     zhangshuai    
  * @version:    1.0    
  * 创建时间:    2015-8-4 上午10:49:42  
-*/ 
+*/
 public class AsyncHttpClientTool {
 	private static final String BASE_URL = Constants.AppliactionServerDomain;
 
@@ -34,7 +34,13 @@ public class AsyncHttpClientTool {
 	}
 
 	public static void post(Context context, String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
-		client.post(context, getAbsoluteUrl(url), params, responseHandler);
+		if (context != null) {
+			responseHandler.setContext(context);
+			client.post(context, getAbsoluteUrl(url), params, responseHandler);
+		} else {
+			LogTool.e("AsyncHttpClientTool context为空");
+		}
+
 	}
 
 	public static String getAbsoluteUrl(String relativeUrl) {

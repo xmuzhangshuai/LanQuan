@@ -215,8 +215,8 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 			// 如果错误，则提示错误
 			focusView.requestFocus();
 		} else {
-//			getAccess(mAuthcode, mAuthcode);
-			change(mPhone,mAuthcode);
+			//			getAccess(mAuthcode, mAuthcode);
+			change(mPhone, mAuthcode);
 		}
 	}
 
@@ -272,7 +272,7 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 					JSONObject jsonObject = new JSONObject(errorResponse);
 					String status = jsonObject.getString("status");
 					if (status.equals(JsonTool.STATUS_FAIL)) {
-						mPhoneView.setError(jsonObject.getString("error_message"));
+						mPhoneView.setError(jsonObject.getString("message"));
 						mPhoneView.requestFocus();
 					}
 				} catch (JSONException e1) {
@@ -289,64 +289,64 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 	 * 获取访问令牌
 	 * @param newPhone
 	 */
-//	private void getAccess(final String newPhone, String code) {
-//		RequestParams params = new RequestParams();
-//
-//		params.put("phone", newPhone);
-//		params.put("verify_code", code);
-//
-//		dialog.setMessage("正在变更...");
-//		dialog.setCancelable(false);
-//
-//		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-//
-//			@Override
-//			public void onStart() {
-//				// TODO Auto-generated method stub
-//				super.onStart();
-//				dialog.show();
-//			}
-//
-//			@Override
-//			public void onSuccess(int statusCode, Header[] headers, String response) {
-//				// TODO Auto-generated method stub
-//				LogTool.e("变更手机号获取权限：" + response);
-//				JsonTool jsonTool = new JsonTool(response);
-//				String status = jsonTool.getStatus();
-//				if (status.equals(JsonTool.STATUS_SUCCESS)) {
-//					jsonTool.saveAccess_token();
-//					change(newPhone);
-//				} else if (status.equals(JsonTool.STATUS_FAIL)) {
-//					LogTool.e(jsonTool.getMessage());
-//					ToastTool.showShort(ModifyPhoneActivity.this, jsonTool.getMessage());
-//				}
-//			}
-//
-//			@Override
-//			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
-//				// TODO Auto-generated method stub
-//				LogTool.e("获取访问令牌服务器错误" + statusCode + errorResponse);
-//				try {
-//					JSONObject jsonObject = new JSONObject(errorResponse);
-//					String status = jsonObject.getString("status");
-//					if (status.equals(JsonTool.STATUS_FAIL)) {
-//						authCodeView.setError(jsonObject.getString("message"));
-//						authCodeView.requestFocus();
-//					}
-//				} catch (JSONException e1) {
-//					// TODO Auto-generated catch block
-//					e1.printStackTrace();
-//				}
-//				dialog.dismiss();
-//			}
-//		};
-//		AsyncHttpClientTool.post("api/sms/login", params, responseHandler);
-//	}
+	//	private void getAccess(final String newPhone, String code) {
+	//		RequestParams params = new RequestParams();
+	//
+	//		params.put("phone", newPhone);
+	//		params.put("verify_code", code);
+	//
+	//		dialog.setMessage("正在变更...");
+	//		dialog.setCancelable(false);
+	//
+	//		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
+	//
+	//			@Override
+	//			public void onStart() {
+	//				// TODO Auto-generated method stub
+	//				super.onStart();
+	//				dialog.show();
+	//			}
+	//
+	//			@Override
+	//			public void onSuccess(int statusCode, Header[] headers, String response) {
+	//				// TODO Auto-generated method stub
+	//				LogTool.e("变更手机号获取权限：" + response);
+	//				JsonTool jsonTool = new JsonTool(response);
+	//				String status = jsonTool.getStatus();
+	//				if (status.equals(JsonTool.STATUS_SUCCESS)) {
+	//					jsonTool.saveAccess_token();
+	//					change(newPhone);
+	//				} else if (status.equals(JsonTool.STATUS_FAIL)) {
+	//					LogTool.e(jsonTool.getMessage());
+	//					ToastTool.showShort(ModifyPhoneActivity.this, jsonTool.getMessage());
+	//				}
+	//			}
+	//
+	//			@Override
+	//			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
+	//				// TODO Auto-generated method stub
+	//				LogTool.e("获取访问令牌服务器错误" + statusCode + errorResponse);
+	//				try {
+	//					JSONObject jsonObject = new JSONObject(errorResponse);
+	//					String status = jsonObject.getString("status");
+	//					if (status.equals(JsonTool.STATUS_FAIL)) {
+	//						authCodeView.setError(jsonObject.getString("message"));
+	//						authCodeView.requestFocus();
+	//					}
+	//				} catch (JSONException e1) {
+	//					// TODO Auto-generated catch block
+	//					e1.printStackTrace();
+	//				}
+	//				dialog.dismiss();
+	//			}
+	//		};
+	//		AsyncHttpClientTool.post("api/sms/login", params, responseHandler);
+	//	}
 
 	/**
 	 * 变更手机号
 	 */
-	private void change(final String newPhone,final String mAuthcode) {
+	private void change(final String newPhone, final String mAuthcode) {
 		RequestParams params = new RequestParams();
 
 		params.put("new_phone", newPhone);
@@ -390,7 +390,7 @@ public class ModifyPhoneActivity extends BaseActivity implements OnClickListener
 				focusView.requestFocus();
 			}
 		};
-		AsyncHttpClientTool.post("api/user/modifyPhone", params, responseHandler);
+		AsyncHttpClientTool.post(ModifyPhoneActivity.this, "api/user/modifyPhone", params, responseHandler);
 	}
 
 	/**

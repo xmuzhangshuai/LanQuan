@@ -426,7 +426,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 					LogTool.e("创建评论错误" + statusCode + errorResponse);
 				}
 			};
-			AsyncHttpClientTool.post("api/article/create", params, responseHandler);
+			AsyncHttpClientTool.post(ChannelPhotoActivity.this, "api/article/create", params, responseHandler);
 		} else {
 			vertifyToLogin();
 		}

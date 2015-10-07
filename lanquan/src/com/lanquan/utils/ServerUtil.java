@@ -96,7 +96,7 @@ public class ServerUtil {
 				LogTool.e("服务器错误" + errorResponse);
 			}
 		};
-		AsyncHttpClientTool.post("api/user/user", params, responseHandler);
+		AsyncHttpClientTool.post(context, "api/user/user", params, responseHandler);
 
 	}
 

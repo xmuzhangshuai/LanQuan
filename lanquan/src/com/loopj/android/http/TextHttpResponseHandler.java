@@ -23,7 +23,9 @@ import java.io.UnsupportedEncodingException;
 import org.apache.http.Header;
 
 import com.lanquan.base.BaseApplication;
+import com.lanquan.ui.LoginActivity;
 import com.lanquan.utils.JsonTool;
+import com.lanquan.utils.LogTool;
 import com.lanquan.utils.UserPreference;
 
 import android.content.Context;
@@ -102,26 +104,26 @@ public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
 
 	@Override
 	public void onSuccess(int statusCode, Header[] headers, byte[] responseBytes) {
-//		String response = getResponseString(responseBytes, getCharset());
-//		JsonTool jsonTool = new JsonTool(response);
-//		if (jsonTool.getMessage().contains("access_token失效")) {
-//			BaseApplication.getInstance().startActivity(new Intent("user_login").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-//			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
-//			userPreference.clear();
-//		}
-		onSuccess(statusCode, headers, getResponseString(responseBytes, getCharset()));
+		String response = getResponseString(responseBytes, getCharset());
+		JsonTool jsonTool = new JsonTool(response);
+		if (jsonTool.getMessage().contains("access_token失效")) {
+			context.startActivity(new Intent(context, LoginActivity.class));
+			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
+			userPreference.clear();
+		}
+		onSuccess(statusCode, headers, response);
 	}
 
 	@Override
 	public void onFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
-//		String response = getResponseString(responseBytes, getCharset());
-//		JsonTool jsonTool = new JsonTool(response);
-//		if (jsonTool.getMessage().contains("access_token失效")) {
-//			BaseApplication.getInstance().startActivity(new Intent("user_login").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-//			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
-//			userPreference.clear();
-//		}
-		onFailure(statusCode, headers, getResponseString(responseBytes, getCharset()), throwable);
+		String response = getResponseString(responseBytes, getCharset());
+		JsonTool jsonTool = new JsonTool(response);
+		if (jsonTool.getMessage().contains("access_token失效") || jsonTool.getMessage().contains("该用户不存在")) {
+			context.startActivity(new Intent(context, LoginActivity.class));
+			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
+			userPreference.clear();
+		}
+		onFailure(statusCode, headers, response, throwable);
 	}
 
 	/**

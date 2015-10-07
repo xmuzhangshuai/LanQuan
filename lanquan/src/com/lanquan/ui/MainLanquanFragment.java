@@ -125,6 +125,8 @@ public class MainLanquanFragment extends BaseV4Fragment {
 		LogTool.i("refreshData");
 		pageNow = 0;
 		if (postListView != null) {
+			postListView.setVisibility(View.VISIBLE);
+			emptyView.setVisibility(View.GONE);
 			postListView.setRefreshing();
 		}
 	}
@@ -200,6 +202,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	 */
 	private void getDataTask(int p) {
 		if (p < 0) {
+			refreshLayout();
 			postListView.postDelayed(new Runnable() {
 				@Override
 				public void run() {
@@ -246,7 +249,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 						else if (page > 0) {
 							if (temp.size() < Config.PAGE_NUM) {
 								pageNow = -1;
-								//								ToastTool.showShort(getActivity(), "没有更多了！");
 							}
 							jsonChannelList.addAll(temp);
 							mAdapter.notifyDataSetChanged();
@@ -266,12 +268,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 			public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 				// TODO Auto-generated method stub
 				LogTool.e("篮圈页面获取最新频道列表失败" + errorResponse);
-				JsonTool jsonTool = new JsonTool(errorResponse);
-				if (jsonTool.getMessage().contains("access_token失效")) {
-					startActivity(new Intent(getActivity(), LoginActivity.class));
-					userPreference.clear();
-					getActivity().finish();
-				}
 			}
 
 			@Override

@@ -415,7 +415,7 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 					LogTool.e("创建评论错误" + statusCode + errorResponse);
 				}
 			};
-			AsyncHttpClientTool.post("api/article/create", params, responseHandler);
+			AsyncHttpClientTool.post(ChannelTextActivity.this, "api/article/create", params, responseHandler);
 		} else {
 			vertifyToLogin();
 		}

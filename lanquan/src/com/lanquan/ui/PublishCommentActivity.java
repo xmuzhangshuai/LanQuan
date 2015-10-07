@@ -375,7 +375,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				LogTool.e("创建评论错误" + statusCode + errorResponse);
 			}
 		};
-		AsyncHttpClientTool.post("api/article/create", params, responseHandler);
+		AsyncHttpClientTool.post(PublishCommentActivity.this, "api/article/create", params, responseHandler);
 
 	}
 

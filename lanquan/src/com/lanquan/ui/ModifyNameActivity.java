@@ -140,11 +140,11 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 					@Override
 					public void onSuccess(int statusCode, Header[] headers, String response) {
 						// TODO Auto-generated method stub
-						
+
 						JsonTool jsonTool = new JsonTool(response);
 						String status = jsonTool.getStatus();
 						String message = jsonTool.getMessage();
-						if(status.equals("success")){
+						if (status.equals("success")) {
 							ToastTool.showShort(ModifyNameActivity.this, "修改成功！");
 							LogTool.i(message);
 							jsonTool.saveAccess_token();
@@ -153,19 +153,18 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 							finish();
 							//动画效果往右滑出
 							overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
-						}
-						else {
-							LogTool.e("修改用户名之后的操作失败"+message);
+						} else {
+							LogTool.e("修改用户名之后的操作失败" + message);
 						}
 					}
 
 					@Override
 					public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 						// TODO Auto-generated method stub
-						LogTool.e("修改昵称"+statusCode+"==="+errorResponse);
+						LogTool.e("修改昵称" + statusCode + "===" + errorResponse);
 					}
 				};
-				AsyncHttpClientTool.post("api/user/modifyNickname", params, responseHandler);
+				AsyncHttpClientTool.post(ModifyNameActivity.this, "api/user/modifyNickname", params, responseHandler);
 			}
 		} else {
 			finish();

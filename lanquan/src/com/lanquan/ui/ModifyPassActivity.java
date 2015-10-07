@@ -172,7 +172,7 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 					focusView.requestFocus();
 				}
 			};
-			AsyncHttpClientTool.post("api/user/modifyPassword", params, responseHandler);
+			AsyncHttpClientTool.post(ModifyPassActivity.this, "api/user/modifyPassword", params, responseHandler);
 		}
 	}
 

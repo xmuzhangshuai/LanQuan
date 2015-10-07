@@ -370,6 +370,6 @@ public class ModifyDataActivity extends BaseFragmentActivity implements OnClickL
 				LogTool.e("修改失败！" + errorResponse);
 			}
 		};
-		AsyncHttpClientTool.post("api/user/modifyAvatar", params, responseHandler);
+		AsyncHttpClientTool.post(ModifyDataActivity.this, "api/user/modifyAvatar", params, responseHandler);
 	}
 }

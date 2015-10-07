@@ -144,21 +144,21 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 						userPreference.setU_password(MD5For32.GetMD5Code(newPass));
 						jsonTool.saveAccess_token();
 						reLogin();
-					} 
+					}
 				}
 
 				@Override
 				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 					// TODO Auto-generated method stub
 					LogTool.e("重置密码", "服务器错误,错误代码" + statusCode + "，  原因" + errorResponse);
-//
-//					JsonTool jsonTool = new JsonTool(errorResponse);
-//					String status = jsonTool.getStatus();
-//					if (status.equals(JsonTool.STATUS_SUCCESS)) {
-//						LogTool.e("重置密码失败" + status);
-//					} else if (status.equals(JsonTool.STATUS_FAIL)) {
-//						LogTool.e("重置密码失败" + status);
-//					}
+					//
+					//					JsonTool jsonTool = new JsonTool(errorResponse);
+					//					String status = jsonTool.getStatus();
+					//					if (status.equals(JsonTool.STATUS_SUCCESS)) {
+					//						LogTool.e("重置密码失败" + status);
+					//					} else if (status.equals(JsonTool.STATUS_FAIL)) {
+					//						LogTool.e("重置密码失败" + status);
+					//					}
 				}
 
 				@Override
@@ -167,7 +167,7 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 					super.onFinish();
 				}
 			};
-			AsyncHttpClientTool.post("api/user/resetPassword", params, responseHandler);
+			AsyncHttpClientTool.post(ResetPassActivity.this, "api/user/resetPassword", params, responseHandler);
 			reLogin();
 		}
 	}
