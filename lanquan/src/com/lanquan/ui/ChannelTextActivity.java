@@ -428,7 +428,7 @@ public class ChannelTextActivity extends BaseActivity implements OnClickListener
 	private void vertifyToLogin() {
 		final MyAlertDialog dialog = new MyAlertDialog(ChannelTextActivity.this);
 		dialog.setTitle("提示");
-		dialog.setMessage("是否去登录？");
+		dialog.setMessage(getResources().getString(R.string.login_now));
 		View.OnClickListener comfirm = new OnClickListener() {
 
 			@Override

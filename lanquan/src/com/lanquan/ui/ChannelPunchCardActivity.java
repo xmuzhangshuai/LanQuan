@@ -486,7 +486,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 	private void vertifyToLogin() {
 		final MyAlertDialog dialog = new MyAlertDialog(ChannelPunchCardActivity.this);
 		dialog.setTitle("提示");
-		dialog.setMessage("是否去登录？");
+		dialog.setMessage(getResources().getString(R.string.login_now));
 		View.OnClickListener comfirm = new OnClickListener() {
 
 			@Override

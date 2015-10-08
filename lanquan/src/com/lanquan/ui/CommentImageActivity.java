@@ -134,7 +134,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 				// TODO: handle exception
 				e.printStackTrace();
 			}
-		}
+		} 
 		if (intent != null) {
 			startActivity(intent);
 			finish();
@@ -214,9 +214,9 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 		String sdcardPath = Environment.getExternalStorageDirectory().toString();
 
 		ContentResolver mContentResolver = CommentImageActivity.this.getContentResolver();
-		Cursor mCursor = mContentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] { MediaStore.Images.Media._ID,
-				MediaStore.Images.Media.DATA }, MediaStore.Images.Media.MIME_TYPE + "=? OR " + MediaStore.Images.Media.MIME_TYPE + "=?", new String[] {
-				"image/jpeg", "image/png" }, MediaStore.Images.Media._ID + " DESC"); // 按图片ID降序排列
+		Cursor mCursor = mContentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new String[] { MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA },
+				MediaStore.Images.Media.MIME_TYPE + "=? OR " + MediaStore.Images.Media.MIME_TYPE + "=?", new String[] { "image/jpeg", "image/png" },
+				MediaStore.Images.Media._ID + " DESC"); // 按图片ID降序排列
 
 		while (mCursor.moveToNext()) {
 			// 打印LOG查看照片ID的值

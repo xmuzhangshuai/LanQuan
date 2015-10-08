@@ -7,24 +7,6 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.Bundle;
-import android.os.Environment;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -32,22 +14,17 @@ import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.config.Constants;
-import com.lanquan.config.DefaultKeys;
 import com.lanquan.config.Constants.WeChatConfig;
 import com.lanquan.customwidget.MyAlertDialog;
-import com.lanquan.table.UserTable;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.FileSizeUtil;
-import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
 import com.lanquan.utils.JsonTool;
 import com.lanquan.utils.LocationTool;
 import com.lanquan.utils.LogTool;
-import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
-import com.nostra13.universalimageloader.core.ImageLoader;
 import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.umeng.socialize.bean.SocializeEntity;
 import com.umeng.socialize.bean.StatusCode;
@@ -63,6 +40,23 @@ import com.umeng.socialize.utils.OauthHelper;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 import com.umeng.socialize.weixin.media.CircleShareContent;
 import com.umeng.socialize.weixin.media.WeiXinShareContent;
+
+import android.app.Dialog;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /** 
  * 类描述 ：发布评论
@@ -153,7 +147,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		 */
 		int degree = ImageTools.readPictureDegree(imagePath);
 		BitmapFactory.Options opts = new BitmapFactory.Options();// 获取缩略图显示到屏幕上
-		opts.inSampleSize = 2;
+		opts.inSampleSize = 3;
 		Bitmap cbitmap = BitmapFactory.decodeFile(imagePath, opts);
 
 		/** 
@@ -234,7 +228,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				longtitude = "" + location.getLongitude();
 				detailLocation = location.getAddrStr();// 详细地址
 			}
-
 		}
 	}
 
@@ -286,12 +279,22 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	public void uploadImage(final String imageUrl) {
 		String tempPath = Environment.getExternalStorageDirectory() + "/lanquan/image";
 		String photoName = "temp" + ".jpg";
-		File file = ImageTools.compressBySizeAndQuality(tempPath, photoName, imageUrl, 400);
-		LogTool.e("图片大小：" + FileSizeUtil.getAutoFileOrFilesSize(file.getAbsolutePath()));
+		File file = null;
 		dialog = showProgressDialog("正在发布...");
 		dialog.setCancelable(false);
+		dialog.show();
 
-		if (file.exists()) {
+		try {
+			file = ImageTools.compressBySizeAndQuality(tempPath, photoName, imageUrl, 400);
+		} catch (Exception e) {
+			// TODO: handle exception
+			dialog.dismiss();
+			return;
+		}
+
+		LogTool.e("图片大小：" + FileSizeUtil.getAutoFileOrFilesSize(file.getAbsolutePath()));
+
+		if (file != null && file.exists()) {
 			RequestParams params = new RequestParams();
 			try {
 				params.put("userfile", file);
@@ -300,12 +303,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				e1.printStackTrace();
 			}
 			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
-				@Override
-				public void onStart() {
-					// TODO Auto-generated method stub
-					super.onStart();
-					dialog.show();
-				}
 
 				@Override
 				public void onSuccess(int statusCode, Header[] headers, String response) {
@@ -341,6 +338,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			};
 			AsyncHttpClientTool.post("api/file/upload", params, responseHandler);
 		} else {
+			dialog.dismiss();
 			LogTool.e("本地文件为空");
 		}
 	}
@@ -370,12 +368,12 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
+				LogTool.i("发布评论" + response);
 				JsonTool jsonTool = new JsonTool(response);
 				String status = jsonTool.getStatus();
 				if (status.equals(JsonTool.STATUS_SUCCESS)) {
 					userPreference.setArticle_count(userPreference.getArticle_count() + 1);
 					LogTool.i(jsonTool.getMessage());
-					userPreference.setUserLogin(true);
 					finish();
 				} else if (status.equals(JsonTool.STATUS_FAIL)) {
 					LogTool.e(jsonTool.getMessage());

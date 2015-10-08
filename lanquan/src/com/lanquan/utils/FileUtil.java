@@ -240,8 +240,7 @@ public class FileUtil {
 
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(filePathName));
 			in.skip(readOffset);
-			while (readedTotalSize < readLength
-					&& (onceReadSize = in.read(dataBuf, bufOffset + readedTotalSize, readLength - readedTotalSize)) >= 0) {
+			while (readedTotalSize < readLength && (onceReadSize = in.read(dataBuf, bufOffset + readedTotalSize, readLength - readedTotalSize)) >= 0) {
 				readedTotalSize += onceReadSize;
 			}
 			in.read(dataBuf, bufOffset, readLength);

@@ -99,7 +99,16 @@ public final class ImageTools {
 	 * @return
 	 */
 	public static File compressBySizeAndQuality(String path, String photoName, String src, int sizeOfKB) {
-		Bitmap bitmap = BitmapFactory.decodeFile(src);
+
+		int size = (int) FileSizeUtil.getFileOrFilesSize(src, FileSizeUtil.SIZETYPE_KB);
+		BitmapFactory.Options options = new BitmapFactory.Options();
+		if (size > 2000) {//大于2M
+			options.inSampleSize = 2;//图片宽高都为原来的二分之一，即图片为原来的四分之一
+		} else {
+			options.inSampleSize = 1;
+		}
+
+		Bitmap bitmap = BitmapFactory.decodeFile(src, options);
 		int degree = ImageTools.readPictureDegree(path + "/" + photoName);
 		//把图片旋转为正的方向
 		bitmap = ImageTools.rotaingImageView(degree, bitmap);

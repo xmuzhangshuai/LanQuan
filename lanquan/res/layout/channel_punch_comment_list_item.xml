@@ -72,11 +72,10 @@
         <ImageView
             android:id="@+id/item_image"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/setting_list_margin"
             android:gravity="center"
-            android:maxHeight="@dimen/message_maxlength"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerInside" />
 
         <LinearLayout
             android:layout_width="match_parent"

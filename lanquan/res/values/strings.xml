@@ -48,5 +48,6 @@
     <string name="province">省份</string>
     <string name="city">城市</string>
     <string name="reg_now">立即注册>></string>
+    <string name="login_now">您尚未登录，是否去登录？</string>
 
 </resources>
