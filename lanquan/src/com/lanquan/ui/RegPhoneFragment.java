@@ -34,7 +34,6 @@ import com.umeng.socialize.controller.listener.SocializeListeners.UMDataListener
 import com.umeng.socialize.exception.SocializeException;
 import com.umeng.socialize.sso.SinaSsoHandler;
 import com.umeng.socialize.sso.UMQQSsoHandler;
-import com.umeng.socialize.sso.UMSsoHandler;
 import com.umeng.socialize.weixin.controller.UMWXHandler;
 
 import android.content.Intent;
@@ -176,7 +175,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									}
 									String avatar = info.get("headimgurl").toString();
 									String nickname = info.get("nickname").toString();
-									other_login("wx", WeChatConfig.API_KEY, avatar,nickname);
+									other_login("wx", WeChatConfig.API_KEY, avatar, nickname);
 									Log.d("TestData", sb.toString());
 								} else {
 									Log.d("TestData", "发生错误：" + status);
@@ -229,7 +228,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									// 如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("profile_image_url").toString();
 									String nickname = info.get("screen_name").toString();
-									other_login("qq", QQConfig.API_KEY, avatar,nickname);
+									other_login("qq", QQConfig.API_KEY, avatar, nickname);
 
 									Log.d("TestData", sb.toString());
 								} else {
@@ -277,7 +276,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 										//如果第三方登录成功，获取avatar以及appid直接登录
 										String avatar = info.get("profile_image_url").toString();
 										String nickname = info.get("screen_name").toString();
-										other_login("weibo", WeiboConfig.API_KEY, avatar,nickname);
+										other_login("weibo", WeiboConfig.API_KEY, avatar, nickname);
 										Log.d("TestData", sb.toString());
 									} else {
 										Log.d("TestData", "发生错误：" + status);
@@ -412,11 +411,13 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				LogTool.e("服务器错误,错误代码" + statusCode + "，  原因：" + errorResponse);
 
 				boolean cancel = false;
-				JsonTool jsonTool = new JsonTool(errorResponse);
-				if (jsonTool.getStatus().equals("fail")) {
-					mPhoneView.setError(jsonTool.getMessage());
-					focusView = mPhoneView;
-					cancel = true;
+				if (statusCode != 0) {
+					JsonTool jsonTool = new JsonTool(errorResponse);
+					if (jsonTool.getStatus().equals("fail")) {
+						mPhoneView.setError(jsonTool.getMessage());
+						focusView = mPhoneView;
+						cancel = true;
+					}
 				}
 				if (cancel) {
 					focusView.requestFocus();
@@ -431,7 +432,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 	/**
 	 * // 第三方登录
 	 */
-	private void other_login(String source, String source_id, String avatar,String nickname) {
+	private void other_login(String source, String source_id, String avatar, String nickname) {
 
 		RequestParams params = new RequestParams();
 		params.put("source", source);
@@ -565,6 +566,5 @@ public class RegPhoneFragment extends BaseV4Fragment {
 			e.printStackTrace();
 		}
 	}
-	
 
 }

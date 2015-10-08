@@ -1,22 +1,23 @@
 package com.lanquan.ui;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.AsyncTask;
-import android.os.Bundle;
-
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
 import com.lanquan.db.CopyDataBase;
 import com.lanquan.utils.LocationTool;
 import com.lanquan.utils.LogTool;
+import com.lanquan.utils.NetworkUtils;
 import com.lanquan.utils.ServerUtil;
 import com.lanquan.utils.SharePreferenceUtil;
 import com.lanquan.utils.UserPreference;
 import com.umeng.analytics.MobclickAgent;
+
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.os.AsyncTask;
+import android.os.Bundle;
 
 /**
  * 类名称：GuideActivity
@@ -54,18 +55,23 @@ public class GuideActivity extends BaseActivity {
 			// 第一次运行拷贝数据库文件
 			new initDataBase().execute();
 			sharePreferenceUtil.setUseCount(++count);// 次数加1
-//			startActivity(new Intent(GuideActivity.this, GuidePagerActivity.class));
+			//			startActivity(new Intent(GuideActivity.this, GuidePagerActivity.class));
 			setContentView(R.layout.activity_guide);
 			findViewById();
 			initView();
 			startActivity(new Intent(GuideActivity.this, LoginOrRegisterActivity.class));
-//			finish();
 		} else {// 如果不是第一次使用,则不启动向导页面，显示欢迎页面。
 			if (userPreference.getUserLogin()) {// 如果是已经登陆过
-				setContentView(R.layout.activity_guide);
-				findViewById();
-				initView();
-				ServerUtil.getInstance().login(GuideActivity.this, MainActivity.class);
+				if (NetworkUtils.isNetworkAvailable(GuideActivity.this)) {//如果网络可用
+					LogTool.i("网络可用");
+					setContentView(R.layout.activity_guide);
+					findViewById();
+					initView();
+					ServerUtil.getInstance().login(GuideActivity.this, MainActivity.class);
+				} else {
+					LogTool.e("网络不可用");
+					startActivity(new Intent(GuideActivity.this, MainActivity.class));
+				}
 			} else {// 如果用户没有登录过或者已经注销
 				startActivity(new Intent(GuideActivity.this, LoginOrRegisterActivity.class));
 				finish();

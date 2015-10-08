@@ -105,11 +105,13 @@ public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
 	@Override
 	public void onSuccess(int statusCode, Header[] headers, byte[] responseBytes) {
 		String response = getResponseString(responseBytes, getCharset());
-		JsonTool jsonTool = new JsonTool(response);
-		if (jsonTool.getMessage().contains("access_token失效")) {
-			context.startActivity(new Intent(context, LoginActivity.class));
-			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
-			userPreference.clear();
+		if (statusCode / 100 != 2) {
+			JsonTool jsonTool = new JsonTool(response);
+			if (jsonTool.getMessage().contains("access_token失效")) {
+				context.startActivity(new Intent(context, LoginActivity.class));
+				UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
+				userPreference.clear();
+			}
 		}
 		onSuccess(statusCode, headers, response);
 	}
@@ -117,12 +119,15 @@ public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
 	@Override
 	public void onFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
 		String response = getResponseString(responseBytes, getCharset());
-		JsonTool jsonTool = new JsonTool(response);
-		if (jsonTool.getMessage().contains("access_token失效") || jsonTool.getMessage().contains("该用户不存在")) {
-			context.startActivity(new Intent(context, LoginActivity.class));
-			UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
-			userPreference.clear();
+		if (statusCode != 0) {
+			JsonTool jsonTool = new JsonTool(response);
+			if (jsonTool.getMessage().contains("access_token失效") || jsonTool.getMessage().contains("该用户不存在")) {
+				context.startActivity(new Intent(context, LoginActivity.class));
+				UserPreference userPreference = BaseApplication.getInstance().getUserPreference();
+				userPreference.clear();
+			}
 		}
+
 		onFailure(statusCode, headers, response, throwable);
 	}
 

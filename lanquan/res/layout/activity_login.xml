@@ -177,21 +177,21 @@
             <ImageView
                 android:id="@+id/loginwechat"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:src="@drawable/sel_login_wechat" />
 
             <ImageView
                 android:id="@+id/loginqq"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:src="@drawable/sel_login_qq" />
 
             <ImageView
                 android:id="@+id/loginweibo"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="35dp"
                 android:layout_weight="1"
                 android:src="@drawable/sel_login_weibo" />
         </LinearLayout>
