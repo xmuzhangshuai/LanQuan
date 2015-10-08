@@ -111,7 +111,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	}
 
 	private void refreshLayout() {
-		LogTool.i("refreshLayout");
 		if (jsonChannelList.size() > 0) {
 			postListView.setVisibility(View.VISIBLE);
 			emptyView.setVisibility(View.GONE);
@@ -122,7 +121,6 @@ public class MainLanquanFragment extends BaseV4Fragment {
 	}
 
 	public void refreshData() {
-		LogTool.i("refreshData");
 		pageNow = 0;
 		if (postListView != null) {
 			postListView.setVisibility(View.VISIBLE);
@@ -144,6 +142,7 @@ public class MainLanquanFragment extends BaseV4Fragment {
 			}
 		}
 		mAdapter.notifyDataSetChanged();
+		refreshLayout();
 	}
 
 	@Override

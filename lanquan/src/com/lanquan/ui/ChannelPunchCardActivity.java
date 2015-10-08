@@ -28,6 +28,7 @@ import com.lanquan.jsonobject.JsonChannel;
 import com.lanquan.jsonobject.JsonChannelComment;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
+import com.lanquan.utils.DensityUtil;
 import com.lanquan.utils.FileSizeUtil;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.ImageTools;
@@ -693,6 +694,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 
 			// 设置被赞次数
 			holder.favorCountTextView.setText("" + channel.getLight());
+			holder.itemImageView.setMaxHeight(DensityUtil.getMaxImageHeight(ChannelPunchCardActivity.this));
 
 			// 设置图片
 			if (channel.getImage_url() != null && !channel.getImage_url().isEmpty()) {
@@ -1061,6 +1063,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 				public void onFailure(int statusCode, Header[] headers, String errorResponse, Throwable e) {
 					// TODO Auto-generated method stub
 					LogTool.e("图像上传失败！" + errorResponse);
+					dialog.dismiss();
 				}
 			};
 			AsyncHttpClientTool.post(ChannelPunchCardActivity.this, "api/file/upload", params, responseHandler);

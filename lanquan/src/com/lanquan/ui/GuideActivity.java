@@ -63,13 +63,11 @@ public class GuideActivity extends BaseActivity {
 		} else {// 如果不是第一次使用,则不启动向导页面，显示欢迎页面。
 			if (userPreference.getUserLogin()) {// 如果是已经登陆过
 				if (NetworkUtils.isNetworkAvailable(GuideActivity.this)) {//如果网络可用
-					LogTool.i("网络可用");
 					setContentView(R.layout.activity_guide);
 					findViewById();
 					initView();
 					ServerUtil.getInstance().login(GuideActivity.this, MainActivity.class);
 				} else {
-					LogTool.e("网络不可用");
 					startActivity(new Intent(GuideActivity.this, MainActivity.class));
 				}
 			} else {// 如果用户没有登录过或者已经注销

@@ -1,5 +1,8 @@
 package com.lanquan.utils;
 
+import com.lanquan.R;
+import com.lanquan.ui.ChannelPhotoActivity;
+
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
@@ -23,6 +26,13 @@ import android.view.WindowManager;
 public class DensityUtil {
 	private static DisplayMetrics dm;
 	private static WindowManager wm;
+
+	/**
+	 * 根据手机的分辨率从 dp 的单位 转成为 px(像素)
+	 */
+	public static int getMaxImageHeight(Context context) {
+		return getScreenHeightforPX(context) - 2 * DensityUtil.dip2px(context, context.getResources().getDimension(R.dimen.navigation_height));
+	}
 
 	/**
 	 * 根据手机的分辨率从 dp 的单位 转成为 px(像素)

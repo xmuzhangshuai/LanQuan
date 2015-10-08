@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -53,6 +54,7 @@ import com.lanquan.jsonobject.JsonChannel;
 import com.lanquan.jsonobject.JsonChannelComment;
 import com.lanquan.utils.AsyncHttpClientTool;
 import com.lanquan.utils.DateTimeTools;
+import com.lanquan.utils.DensityUtil;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.JsonChannelTools;
 import com.lanquan.utils.JsonTool;
@@ -62,6 +64,8 @@ import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 /** 
@@ -145,11 +149,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				concernBtn.setVisibility(View.VISIBLE);
 				infoBtn.setVisibility(View.GONE);
 			}
-			refreshData();
-			//			inputBar.setVisibility(View.VISIBLE);
 		} else {
 			infoBtn.setVisibility(View.GONE);
-			//			inputBar.setVisibility(View.GONE);
 		}
 	}
 
@@ -188,13 +189,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		if (channelListView != null) {
 			channelListView.setRefreshing();
 		}
-		//		if (jsonChannelList.size() > 0) {
-		//			postListView.setVisibility(View.VISIBLE);
-		//			emptyView.setVisibility(View.GONE);
-		//		} else {
-		//			postListView.setVisibility(View.GONE);
-		//			emptyView.setVisibility(View.VISIBLE);
-		//		}
 	}
 
 	@Override
@@ -302,8 +296,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 
 				if (pageNow >= 0)
 					++pageNow;
-				//				if (pageNow < 0)
-				//					pageNow = 0;
 				getDataTask(pageNow);
 			}
 		});
@@ -614,6 +606,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	 * 创建时间:    2015-8-7 下午4:23:59  
 	*/
 	class CommentAdapter extends BaseAdapter {
+
 		private class ViewHolder {
 			public ImageView headImageView;
 			public TextView nameTextView;
@@ -772,7 +765,12 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 
 			// 设置内容
-			holder.contentTextView.setText(channel.getMessage());
+			String content = channel.getMessage();
+			if (!TextUtils.isEmpty(content)) {
+				holder.contentTextView.setText(channel.getMessage());
+			} else {
+				holder.contentTextView.setVisibility(View.GONE);
+			}
 
 			// 设置姓名
 			holder.nameTextView.setText(channel.getNickame());
@@ -782,6 +780,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 
 			// 设置被赞次数
 			holder.favorCountTextView.setText("" + channel.getLight());
+
+			holder.itemImageView.setMaxHeight(DensityUtil.getMaxImageHeight(ChannelPhotoActivity.this));
 
 			// 设置图片
 			if (!TextUtils.isEmpty(channel.getImage_url()) && channel.getImage_url() != "null") {

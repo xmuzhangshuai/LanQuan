@@ -107,9 +107,9 @@ public class MainActivity extends BaseFragmentActivity {
 			trx.show(fragments[index]).commit();
 		} else {
 			if (currentTabIndex == 0) {
-				MainLanquanFragment myQuanziFragment = (MainLanquanFragment) getSupportFragmentManager().findFragmentByTag(MainLanquanFragment.TAG);
-				if (myQuanziFragment != null) {
-					myQuanziFragment.refreshData();
+				MainLanquanFragment myLanquanFragment = (MainLanquanFragment) getSupportFragmentManager().findFragmentByTag(MainLanquanFragment.TAG);
+				if (myLanquanFragment != null) {
+					myLanquanFragment.refreshData();
 				}
 			} else if (currentTabIndex == 1) {
 				MainFindFragment mainFindFragment = (MainFindFragment) getSupportFragmentManager().findFragmentByTag(MainFindFragment.TAG);
