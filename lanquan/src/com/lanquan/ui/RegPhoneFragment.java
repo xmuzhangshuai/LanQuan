@@ -117,9 +117,15 @@ public class RegPhoneFragment extends BaseV4Fragment {
 		// TODO Auto-generated method stub
 		rightImageButton.setVisibility(View.GONE);
 		// 显示用户手机号
-		SIMCardInfo siminfo = new SIMCardInfo(getActivity());
-		mPhoneView.setText(siminfo.getNativePhoneNumber());
-		mPhone = mPhoneView.getText().toString();
+		String loginedPhone = userPreference.getU_tel();
+
+		if (!TextUtils.isEmpty(loginedPhone)) {
+			mPhoneView.setText(loginedPhone);
+		} else {
+			SIMCardInfo siminfo = new SIMCardInfo(getActivity());
+			String number = siminfo.getNativePhoneNumber();
+			mPhoneView.setText(number);
+		}
 
 		leftNavigation.setText("注册 1/2");
 		leftImageButton.setOnClickListener(new OnClickListener() {

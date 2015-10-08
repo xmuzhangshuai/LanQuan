@@ -29,8 +29,10 @@ public class SIMCardInfo {
 		NativePhoneNumber = telephonyManager.getLine1Number();
 		if (NativePhoneNumber != null) {
 			if (NativePhoneNumber.length() >= 11)
-				NativePhoneNumber = NativePhoneNumber.substring(NativePhoneNumber.length() - 11,
-						NativePhoneNumber.length());
+				NativePhoneNumber = NativePhoneNumber.substring(NativePhoneNumber.length() - 11, NativePhoneNumber.length());
+			if (NativePhoneNumber.startsWith("0")) {
+				NativePhoneNumber = null;
+			}
 		}
 		return NativePhoneNumber;
 	}
