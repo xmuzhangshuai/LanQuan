@@ -322,8 +322,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			break;
 		case R.id.add_image:
 			if (userPreference.getUserLogin()) {
-				startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()).putExtra("commentcontent",
-						commentEditText.getText().toString()).putExtra("channeltitle", jsonChannel.getTitle()));
+				startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id())
+						.putExtra("commentcontent", commentEditText.getText().toString()).putExtra("channeltitle", jsonChannel.getTitle()));
 			} else {
 				vertifyToLogin();
 			}
@@ -471,10 +471,11 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		params.put("channel_id", jsonChannel.getChannel_id());
 		params.put("pageIndex", page);
 		params.put("pageSize", Config.PAGE_NUM);
+		params.put("sort", "create_time");
 		if (showRecommentOnly) {
-			params.put("sort", "recommend");
+			params.put("recommend", "1");
 		} else {
-			params.put("sort", "create_time");
+			params.put("recommend", "0");
 		}
 		if (userPreference.getUserLogin()) {
 			// params.put("user_id", userPreference.getU_id());
@@ -660,9 +661,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			}
 
 			if (channel.getUser_id() == userPreference.getU_id()) {
+				holder.favorCountTextView.setVisibility(View.VISIBLE);
 				holder.deleteBtn.setVisibility(View.VISIBLE);
 				holder.deleteBtn.setOnClickListener(new OnClickListener() {
-
 					@Override
 					public void onClick(View v) {
 						deleteComment(channel.getArticle_id(), position);
@@ -670,16 +671,14 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 				});
 			} else {
 				holder.deleteBtn.setVisibility(View.GONE);
+				if (channel.getIslight() == 0) {
+					holder.favorBtn.setChecked(false);
+					holder.favorCountTextView.setVisibility(View.GONE);
+				} else if (channel.getIslight() == 1) {
+					holder.favorBtn.setChecked(true);
+					holder.favorCountTextView.setVisibility(View.VISIBLE);
+				}
 			}
-
-			if (channel.getIslight() == 0) {
-				holder.favorBtn.setChecked(false);
-				holder.favorCountTextView.setVisibility(View.GONE);
-			} else if (channel.getIslight() == 1) {
-				holder.favorBtn.setChecked(true);
-				holder.favorCountTextView.setVisibility(View.VISIBLE);
-			}
-
 			// 点亮事件
 			holder.favorBtn.setOnClickListener(new OnClickListener() {
 
@@ -710,8 +709,10 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 										channel.setLight(channel.getLight() - 1);
 										// 标记为未亮
 										channel.setIslight(0);
-										//										holder.favorCountTextView.setText("" + channel.getLight());
-										holder.favorCountTextView.setVisibility(View.GONE);
+										holder.favorCountTextView.setText("" + channel.getLight());
+										if (channel.getUser_id() != userPreference.getU_id()) {
+											holder.favorCountTextView.setVisibility(View.GONE);
+										}
 									}
 									//									holder.favorCountTextView.setVisibility(View.VISIBLE);
 								} else {

@@ -29,7 +29,7 @@ public class MainActivity extends BaseFragmentActivity {
 
 	private int index;
 	// 当前fragment的index
-	private int currentTabIndex = 0;
+	private int currentTabIndex = 1;
 	private Fragment[] fragments;
 
 	@Override
@@ -59,14 +59,14 @@ public class MainActivity extends BaseFragmentActivity {
 		mTabs[2] = (View) findViewById(R.id.btn_container_msg);
 		mTabs[3] = (View) findViewById(R.id.btn_container_personal);
 		// 把第一个tab设为选中状态
-		mTabs[0].setSelected(true);
+		mTabs[1].setSelected(true);
 	}
 
 	@Override
 	protected void initView() {
 		// TODO Auto-generated method stub
 		// 添加显示第一个fragment
-		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, lanquanFragment, MainLanquanFragment.TAG).show(lanquanFragment).commit();
+		getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, findFragment, MainFindFragment.TAG).show(findFragment).commit();
 	}
 
 	/**

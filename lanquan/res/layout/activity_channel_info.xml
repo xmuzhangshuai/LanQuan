@@ -162,7 +162,7 @@
             android:layout_below="@+id/phone"
             android:background="@drawable/sel_auth_code_again_bg"
             android:text="取消关注"
-            android:textColor="@color/font_gray_dark"
+            android:textColor="@color/white"
             android:textSize="@dimen/day_recommend_user_font" />
     </LinearLayout>
 

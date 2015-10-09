@@ -580,6 +580,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 
 			if (channel.getUser_id() == userPreference.getU_id()) {
 				holder.deleteBtn.setVisibility(View.VISIBLE);
+				holder.favorCountTextView.setVisibility(View.VISIBLE);
 				holder.deleteBtn.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -589,14 +590,13 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 				});
 			} else {
 				holder.deleteBtn.setVisibility(View.GONE);
-			}
-
-			if (channel.getIslight() == 0) {
-				holder.favorBtn.setChecked(false);
-				holder.favorCountTextView.setVisibility(View.GONE);
-			} else if (channel.getIslight() == 1) {
-				holder.favorBtn.setChecked(true);
-				holder.favorCountTextView.setVisibility(View.VISIBLE);
+				if (channel.getIslight() == 0) {
+					holder.favorBtn.setChecked(false);
+					holder.favorCountTextView.setVisibility(View.GONE);
+				} else if (channel.getIslight() == 1) {
+					holder.favorBtn.setChecked(true);
+					holder.favorCountTextView.setVisibility(View.VISIBLE);
+				}
 			}
 
 			// 设置位置
@@ -633,7 +633,9 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 										// 标记为未亮
 										channel.setIslight(0);
 										holder.favorCountTextView.setText("" + channel.getLight());
-										holder.favorCountTextView.setVisibility(View.GONE);
+										if (channel.getUser_id() != userPreference.getU_id()) {
+											holder.favorCountTextView.setVisibility(View.GONE);
+										}
 									}
 
 									LogTool.i(message);

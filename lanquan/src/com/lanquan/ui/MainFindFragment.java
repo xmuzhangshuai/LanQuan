@@ -119,6 +119,7 @@ public class MainFindFragment extends BaseV4Fragment implements OnClickListener 
 		// 把当前tab设为选中状态
 		mTabs[index].setSelected(true);
 		currentTabIndex = index;
+		refreshData();
 	}
 
 	@Override

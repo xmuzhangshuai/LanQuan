@@ -93,6 +93,22 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 	}
 
 	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == 201 && resultCode == 10) {
+			if (data != null) {
+				int position = data.getIntExtra("position", -1);
+				int is_focus = data.getIntExtra("is_focus", 0);
+				if (position > -1) {
+					jsonChannelList.get(position).setIs_focus(is_focus);
+					mAdapter.notifyDataSetChanged();
+				}
+			}
+		}
+	}
+
+	@Override
 	protected void findViewById() {
 		// TODO Auto-generated method stub
 		postListView = (PullToRefreshListView) rootView.findViewById(R.id.channel_list);
@@ -282,7 +298,7 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			// TODO Auto-generated method stub
 			View view = convertView;
 			final JsonChannel jsonChannel = jsonChannelList.get(position);
@@ -306,10 +322,21 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					Intent intent = new Intent(getActivity(), ChannelPhotoActivity.class);
-					intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
-					startActivity(intent);
-					getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+					int type = jsonChannel.getType();
+					Intent intent = null;
+					if (type == 0) {// 图文
+						intent = new Intent(getActivity(), ChannelPhotoActivity.class);
+					} else if (type == 1) {
+						intent = new Intent(getActivity(), ChannelTextActivity.class);
+					} else if (type == 2) {
+						intent = new Intent(getActivity(), ChannelPunchCardActivity.class);
+					}
+					if (intent != null) {
+						intent.putExtra(ChannelPhotoActivity.JSONCHANNEL, jsonChannel);
+						intent.putExtra("position", position);
+						startActivityForResult(intent, 201);
+						getActivity().overridePendingTransition(R.anim.push_left_in, R.anim.push_left_out);
+					}
 				}
 			});
 
