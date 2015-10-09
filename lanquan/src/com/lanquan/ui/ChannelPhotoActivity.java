@@ -95,7 +95,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	private CommentAdapter mAdapter;
 	private JsonChannel jsonChannel;
 	private ChoicenessMenuPopupWindow choicenessMenuPopupWindow;
-	private InputMethodManager inputMethodManager;
 	public LocationClient mLocationClient = null;
 	public BDLocationListener myListener = new MyLocationListener();
 	private String detailLocation;// 详细地址
@@ -103,6 +102,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	private String longtitude;
 	private int position;
 	private boolean showRecommentOnly = false;
+	private boolean refresh_flag = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +113,6 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		mLocationClient = LocationTool.initLocation(getApplicationContext());
 		mLocationClient.registerLocationListener(myListener);
 		userPreference = BaseApplication.getInstance().getUserPreference();
-		inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 		jsonChannelCommentList = new LinkedList<JsonChannelComment>();
 		jsonChannel = (JsonChannel) getIntent().getSerializableExtra(JSONCHANNEL);
 		position = getIntent().getIntExtra("position", -1);
@@ -138,6 +137,11 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		// TODO Auto-generated method stub
 		super.onResume();
 		channelListView.setOnScrollListener(new PauseOnScrollListener(imageLoader, pauseOnScroll, pauseOnFling));
+
+		if (refresh_flag) {
+			refreshData();
+		}
+
 		if (userPreference.getUserLogin()) {
 			if (jsonChannel.getIs_focus() == 1) {
 				concernBtn.setVisibility(View.GONE);
@@ -182,6 +186,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	}
 
 	public void refreshData() {
+		hideKeyboard();
 		pageNow = 0;
 		if (channelListView != null) {
 			channelListView.setRefreshing();
@@ -322,6 +327,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			break;
 		case R.id.add_image:
 			if (userPreference.getUserLogin()) {
+				refresh_flag = true;
 				startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id())
 						.putExtra("commentcontent", commentEditText.getText().toString()).putExtra("channeltitle", jsonChannel.getTitle()));
 			} else {
@@ -337,7 +343,8 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 	* 隐藏软键盘
 	*/
 	private void hideKeyboard() {
-		inputMethodManager.hideSoftInputFromWindow(commentEditText.getWindowToken(), 0);
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
 	/**
@@ -737,7 +744,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			});
 
 			// 设置头像
-			if (!TextUtils.isEmpty(channel.getAvatar())) {
+			if (!TextUtils.isEmpty(channel.getAvatar()))
+
+			{
 				imageLoader.displayImage(channel.getAvatar(), holder.headImageView, ImageLoaderTool.getCircleHeadImageOptions());
 				if (userPreference.getU_id() != channel.getUser_id()) {
 					// 点击头像进入详情页面
@@ -764,10 +773,14 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 
 			// 设置内容
 			String content = channel.getMessage();
-			if (!TextUtils.isEmpty(content)) {
+			if (!TextUtils.isEmpty(content))
+
+			{
 				holder.contentTextView.setText(channel.getMessage());
 				holder.contentTextView.setVisibility(View.VISIBLE);
-			} else {
+			} else
+
+			{
 				holder.contentTextView.setVisibility(View.GONE);
 			}
 
@@ -783,7 +796,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			holder.itemImageView.setMaxHeight(DensityUtil.getMaxImageHeight(ChannelPhotoActivity.this));
 
 			// 设置图片
-			if (!TextUtils.isEmpty(channel.getImage_url()) && channel.getImage_url() != "null") {
+			if (!TextUtils.isEmpty(channel.getImage_url()) && channel.getImage_url() != "null")
+
+			{
 				imageLoader.displayImage(channel.getImage_url(), holder.itemImageView, ImageLoaderTool.getImageOptions());
 				holder.itemImageView.setVisibility(View.VISIBLE);
 				holder.itemImageView.setOnClickListener(new OnClickListener() {
@@ -791,17 +806,21 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 					@Override
 					public void onClick(View v) {
 						// TODO Auto-generated method stub
+						refresh_flag = false;
 						Intent intent = new Intent(ChannelPhotoActivity.this, ImageShowerActivity.class);
 						intent.putExtra(ImageShowerActivity.SHOW_BIG_IMAGE, channel.getImage_url());
 						startActivity(intent);
 						overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);
 					}
 				});
-			} else {
+			} else
+
+			{
 				holder.itemImageView.setVisibility(View.GONE);
 			}
 
 			return view;
+
 		}
 	}
 

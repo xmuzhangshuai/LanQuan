@@ -152,15 +152,10 @@ public class CreatChannelActivity extends BaseActivity implements OnClickListene
 		params.put("access_token", userPreference.getAccess_token());
 		final Dialog dialog = showProgressDialog("正在创建，请稍后...");
 		dialog.setCancelable(false);
+		dialog.show();
+		rightBtn.setEnabled(false);
 
 		TextHttpResponseHandler responseHandler = new TextHttpResponseHandler("utf-8") {
-
-			@Override
-			public void onStart() {
-				// TODO Auto-generated method stub
-				super.onStart();
-				dialog.show();
-			}
 
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {

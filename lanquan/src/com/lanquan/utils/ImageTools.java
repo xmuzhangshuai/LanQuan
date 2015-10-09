@@ -48,11 +48,11 @@ public final class ImageTools {
 	 */
 	public static Bitmap compressByQueality(Bitmap image, int sizeOfKB) {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+		image.compress(Bitmap.CompressFormat.JPEG, 50, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
 		int options = 100;
 		while (baos.toByteArray().length / 1024 > sizeOfKB) { //循环判断如果压缩后图片是否大于100kb,大于继续压缩        
 			baos.reset();//重置baos即清空baos
-			options -= 10;//每次都减少10
+			options -= 20;//每次都减少10
 			image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
 
 		}
@@ -69,11 +69,11 @@ public final class ImageTools {
 	public static File compressByQualityForFile(String path, String photoName, Bitmap image, int sizeOfKB) {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		image.compress(Bitmap.CompressFormat.JPEG, 100, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
+		image.compress(Bitmap.CompressFormat.JPEG, 50, baos);//质量压缩方法，这里100表示不压缩，把压缩后的数据存放到baos中
 		int options = 100;
 		while (baos.toByteArray().length / 1024 > sizeOfKB) { //循环判断如果压缩后图片是否大于sizeOfKB kb,大于继续压缩	
 			baos.reset();//重置baos即清空baos
-			options -= 10;//每次都减少10
+			options -= 20;//每次都减少10
 			image.compress(Bitmap.CompressFormat.JPEG, options, baos);//这里压缩options%，把压缩后的数据存放到baos中
 		}
 
@@ -103,7 +103,9 @@ public final class ImageTools {
 		int size = (int) FileSizeUtil.getFileOrFilesSize(src, FileSizeUtil.SIZETYPE_KB);
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		if (size > 2000) {//大于2M
-			options.inSampleSize = 2;//图片宽高都为原来的二分之一，即图片为原来的四分之一
+			options.inSampleSize = 3;//图片宽高都为原来的二分之一，即图片为原来的四分之一
+		} else if (size > 1000) {
+			options.inSampleSize = 2;
 		} else {
 			options.inSampleSize = 1;
 		}
