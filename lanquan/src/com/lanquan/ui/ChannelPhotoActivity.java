@@ -832,6 +832,11 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 						if (status.equals("success")) {
 							jsonChannelCommentList.remove(position);
 							mAdapter.notifyDataSetChanged();
+							int art_count = userPreference.getArticle_count();
+							if (art_count > 0) {
+								userPreference.setArticle_count(art_count - 1);
+							}
+
 							LogTool.i(message);
 						} else {
 							LogTool.e(message);
