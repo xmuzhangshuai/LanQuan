@@ -260,6 +260,9 @@ public class MainMsgFragment extends BaseV4Fragment {
 
 		RequestParams params = new RequestParams();
 		params.put("channel_id", channelId);
+		if (userPreference.getUserLogin()) {
+			params.put("access_token", userPreference.getAccess_token());
+		}
 		final ProgressDialog dialog = new ProgressDialog(getActivity());
 		dialog.setMessage("正在加载...");
 		dialog.setCancelable(false);
@@ -281,7 +284,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 					String status = jsonObject.getString("status");
 					if (status.equals(JsonTool.STATUS_SUCCESS)) {
 						String data = jsonObject.getString("data");
-						JsonChannel jsonChannel = JsonChannel.getJsonChannelByJsonString(data);
+						JsonChannel jsonChannel = JsonChannel.getJsonChannelByJsonStringWihtFocus(data);
 						if (jsonChannel != null) {
 							Intent intent = null;
 							switch (type) {
@@ -393,7 +396,7 @@ public class MainMsgFragment extends BaseV4Fragment {
 
 				@Override
 				public void onClick(View v) {
-					goToDetail(jsonMyMessage.getChannel_id(), jsonMyMessage.getObject_type());
+					goToDetail(jsonMyMessage.getChannel_id(), jsonMyMessage.getType());
 				}
 			});
 

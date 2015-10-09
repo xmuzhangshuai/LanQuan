@@ -64,6 +64,23 @@ public class JsonChannel implements Serializable {
 		this.is_focus = is_foucus;
 	}
 
+	public static JsonChannel getJsonChannelByJsonStringWihtFocus(String jsonChannelString) {
+		try {
+			JSONObject object = new JSONObject(jsonChannelString);
+			JsonChannel jsonChannel = new JsonChannel(Integer.parseInt(object.getString("channel_id")), object.getString("title"), object.getString("description"),
+					object.getString("recommend_background"), Integer.parseInt(object.getString("type")), Integer.parseInt(object.getString("user_id")),
+					Integer.parseInt(object.getString("status")), DateTimeTools.StringToDate(object.getString("create_time")),
+					DateTimeTools.StringToDate(object.getString("update_time")), Integer.parseInt(object.getString("recommend")), object.getString("icon"),
+					Integer.parseInt(object.getString("from")), object.getString("nickname"), object.getString("avatar"), Integer.parseInt(object.getString("is_focus")));
+
+			return jsonChannel;
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public static JsonChannel getJsonChannelByJsonString(String jsonChannelString) {
 		try {
 			JSONObject object = new JSONObject(jsonChannelString);
