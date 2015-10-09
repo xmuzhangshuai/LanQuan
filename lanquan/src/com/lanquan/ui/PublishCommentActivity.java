@@ -42,6 +42,7 @@ import com.umeng.socialize.weixin.media.CircleShareContent;
 import com.umeng.socialize.weixin.media.WeiXinShareContent;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -51,6 +52,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.Window;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -196,6 +198,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
+		hideKeyboard();
 		giveUpPublish();
 	}
 
@@ -237,6 +240,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	 * 放弃发布
 	 */
 	private void giveUpPublish() {
+		hideKeyboard();
 		final MyAlertDialog myAlertDialog = new MyAlertDialog(this);
 		myAlertDialog.setTitle("提示");
 		myAlertDialog.setMessage("放弃发布？  ");
@@ -264,9 +268,18 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	}
 
 	/**
+	* 隐藏软键盘
+	*/
+	private void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(publishEditeEditText.getWindowToken(), 0);
+	}
+
+	/**
 	 * 发布
 	 */
 	private void publish() {
+		hideKeyboard();
 		if (channel_id > 0) {
 			uploadImage(imagePath);
 			//发布后分享
@@ -498,6 +511,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				public void onStart() {
 					Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
 				}
+
 				@Override
 				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
 					if (eCode == StatusCode.ST_CODE_SUCCESSED) {

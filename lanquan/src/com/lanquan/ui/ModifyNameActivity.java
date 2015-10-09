@@ -1,17 +1,6 @@
 package com.lanquan.ui;
 
 import org.apache.http.Header;
-import org.json.JSONObject;
-
-import android.app.Dialog;
-import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
@@ -24,6 +13,17 @@ import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+
+import android.app.Dialog;
+import android.content.Context;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
+import android.widget.TextView;
 
 /** 
  * 类描述 ：修改昵称
@@ -72,6 +72,7 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
+		hideKeyboard();
 		finish();
 		overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
 	}
@@ -81,6 +82,7 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.left_btn_bg:
+			hideKeyboard();
 			finish();
 			overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
 			break;
@@ -90,6 +92,14 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 		default:
 			break;
 		}
+	}
+
+	/**
+	* 隐藏软键盘
+	*/
+	private void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(nameEditEditText.getWindowToken(), 0);
 	}
 
 	/**
@@ -115,6 +125,7 @@ public class ModifyNameActivity extends BaseActivity implements OnClickListener 
 				focusView.requestFocus();
 			} else {
 				// 没有错误，则修改
+				hideKeyboard();
 				RequestParams params = new RequestParams();
 				String access_token = userPreference.getAccess_token();
 				params.put(UserTable.U_ACCESS_TOKEN, access_token);

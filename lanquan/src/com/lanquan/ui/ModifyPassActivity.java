@@ -3,11 +3,13 @@ package com.lanquan.ui;
 import org.apache.http.Header;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -76,6 +78,16 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 		backBtn.setOnClickListener(this);
 	}
 
+	/**
+	* 隐藏软键盘
+	*/
+	private void hideKeyboard() {
+		InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+		imm.hideSoftInputFromWindow(mOldPassView.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(mNewPassView.getWindowToken(), 0);
+		imm.hideSoftInputFromWindow(mConformPassView.getWindowToken(), 0);
+	}
+
 	private void attemptModifyPass() {
 		// 重置错误
 		mOldPassView.setError(null);
@@ -126,6 +138,7 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 			focusView.requestFocus();
 		} else {
 			// 没有错误，则修改
+			hideKeyboard();
 			RequestParams params = new RequestParams();
 			params.put(UserTable.U_PASSWORD, MD5For32.GetMD5Code(oldPass));
 			params.put(UserTable.U_NEW_PASSWORD, MD5For32.GetMD5Code(newPass));
@@ -192,6 +205,7 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 	@Override
 	public void onBackPressed() {
 		// TODO Auto-generated method stub
+		hideKeyboard();
 		super.onBackPressed();
 		overridePendingTransition(R.anim.push_right_in, R.anim.push_right_out);
 	}
@@ -201,6 +215,7 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 		// TODO Auto-generated method stub
 		switch (v.getId()) {
 		case R.id.left_btn_bg:
+			hideKeyboard();
 			finish();
 			break;
 		case R.id.publish_btn:
