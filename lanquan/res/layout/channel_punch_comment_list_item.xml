@@ -96,7 +96,7 @@
                 android:id="@+id/location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:maxLength="15"
+                android:maxLength="20"
                 android:singleLine="true"
                 android:textColor="@color/font_gray"
                 android:textSize="@dimen/comment_font_size" />

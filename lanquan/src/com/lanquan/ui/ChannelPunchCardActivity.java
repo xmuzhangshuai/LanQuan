@@ -878,6 +878,7 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 		private ImageView headImage;// 头像
 		private ImageView cameraImage;
 		private EditText contenteEditText;
+		private TextView locationText;//定位
 
 		@Override
 		public void onCreate(Bundle savedInstanceState) {
@@ -903,10 +904,12 @@ public class ChannelPunchCardActivity extends BaseActivity implements OnClickLis
 			uploadHeadImageBtn = (View) rootView.findViewById(R.id.gethead_btn);
 			headImage = (ImageView) rootView.findViewById(R.id.headimage);
 			cameraImage = (ImageView) rootView.findViewById(R.id.camera_image);
+			locationText = (TextView) rootView.findViewById(R.id.location);
 			contenteEditText = (EditText) rootView.findViewById(R.id.content);
 		}
 
 		private void initView() {
+			locationText.setText(detailLocation);
 			confirmBtn.setOnClickListener(this);
 			headImage.setVisibility(View.GONE);
 			cameraImage.setVisibility(View.VISIBLE);

@@ -83,6 +83,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 	private String latitude;
 	private String longtitude;
 	private int channel_id;
+	private String channeltitle;
 	private String commentcontent;
 
 	private CheckBox wechat;
@@ -107,6 +108,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		mLocationClient.registerLocationListener(myListener);
 
 		channel_id = getIntent().getIntExtra("channel_id", -1);
+		channeltitle = getIntent().getStringExtra("channeltitle");
 		commentcontent = getIntent().getStringExtra("commentcontent");
 
 		findViewById();
@@ -487,7 +489,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 
 			//获取相关授权信息或者跳转到自定义的分享编辑页面
 			//设置分享内容
-			mController.setShareContent("篮圈--篮球人的天堂圣地" + Constants.AppliactionServerIP_Share);
+			mController.setShareContent(channeltitle + Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channel_id);
 			//设置分享图片
 			mController.setShareMedia(new UMImage(PublishCommentActivity.this, R.drawable.ic_launcher));
 			//直接分享
@@ -496,7 +498,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 				public void onStart() {
 					Toast.makeText(PublishCommentActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
 				}
-
 				@Override
 				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
 					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
@@ -506,7 +507,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 					}
 				}
 			});
-
 		}
 	}
 

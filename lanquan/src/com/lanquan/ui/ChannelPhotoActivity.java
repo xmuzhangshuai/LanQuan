@@ -323,7 +323,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 		case R.id.add_image:
 			if (userPreference.getUserLogin()) {
 				startActivity(new Intent(ChannelPhotoActivity.this, CommentImageActivity.class).putExtra("channel_id", jsonChannel.getChannel_id()).putExtra("commentcontent",
-						commentEditText.getText().toString()));
+						commentEditText.getText().toString()).putExtra("channeltitle", jsonChannel.getTitle()));
 			} else {
 				vertifyToLogin();
 			}

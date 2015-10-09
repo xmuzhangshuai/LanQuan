@@ -34,6 +34,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 	private View choosePhoto;
 	private String photoUri;// 图片地址
 	private int channel_id;
+	private String channeltitle;
 	private String commentcontent;
 	private List<String> recentImages;
 	private View imageContainer;
@@ -47,6 +48,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 		recentImages = new ArrayList<String>();
 		getRecentPhotos();
 		channel_id = getIntent().getIntExtra("channel_id", -1);
+		channeltitle = getIntent().getStringExtra("channeltitle");
 		commentcontent = getIntent().getStringExtra("commentcontent");
 		findViewById();
 		initView();
@@ -93,6 +95,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 								intent.putExtra("path", path);
 								intent.putExtra("channel_id", channel_id);
 								intent.putExtra("commentcontent", commentcontent);
+								intent.putExtra("channeltitle", channeltitle);
 								startActivity(intent);
 								finish();
 							}
@@ -117,6 +120,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 			intent = new Intent(CommentImageActivity.this, PublishCommentActivity.class);
 			intent.putExtra("path", photoUri);
 			intent.putExtra("channel_id", channel_id);
+			intent.putExtra("channeltitle", channeltitle);
 		} else if (requestCode == CHOOSE_PICTURE) {// 相册
 			try {
 				Uri selectedImage = data.getData();
@@ -130,6 +134,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 				intent = new Intent(CommentImageActivity.this, PublishCommentActivity.class);
 				intent.putExtra("path", photoUri);
 				intent.putExtra("channel_id", channel_id);
+				intent.putExtra("channeltitle", channeltitle);
 			} catch (Exception e) {
 				// TODO: handle exception
 				e.printStackTrace();

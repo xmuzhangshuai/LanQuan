@@ -26,6 +26,7 @@ import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.umeng.socialize.net.v;
 
 /** 
  * 类描述 ：重置密码页面
@@ -41,6 +42,7 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 	private TextView topNavigation;// 导航栏文字
 	private View leftImageButton;// 导航栏左侧按钮
 	private Button resetBtn;// 导航栏右侧按钮
+	private TextView phoneView;
 	private EditText mNewPassView;// 新密码
 	private EditText mConformPassView;// 确认密码
 	private UserPreference userPreference;
@@ -70,6 +72,7 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 	protected void findViewById() {
 		// TODO Auto-generated method stub
 		topNavigation = (TextView) findViewById(R.id.nav_text);
+		phoneView = (TextView) findViewById(R.id.reg_now);
 		leftImageButton = (View) findViewById(R.id.left_btn_bg);
 		resetBtn = (Button) findViewById(R.id.resetBtn);
 		mNewPassView = (EditText) findViewById(R.id.newpass);
@@ -87,6 +90,7 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 	protected void initView() {
 		// TODO Auto-generated method stub
 		topNavigation.setText("重置密码");
+		phoneView.setText("+" + mPhone + "的验证码");
 		leftImageButton.setOnClickListener(this);
 		resetBtn.setOnClickListener(this);
 	}
