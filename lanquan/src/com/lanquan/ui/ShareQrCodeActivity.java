@@ -122,7 +122,8 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		Bitmap qrcodebg = BitmapFactory.decodeResource(getResources(), R.drawable.sharebarcode);
 		// qrCodeBitmap = EncodingHandler.createQRCode("帅哥就是帅！", 800);
 		//		qrCodeBitmap = EncodingHandler.createChannelCode(top, icon, content, blue_content, middle, bottom, channelTitle, channelDetail, "帅哥就是帅");
-		qrCodeBitmap = EncodingHandler.createChannelCode(qrcodebg, icon, channelTitle, channelDetail, Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
+		qrCodeBitmap = EncodingHandler.createChannelCode(qrcodebg, icon, channelTitle, channelDetail,
+				Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
 		LogTool.i("宽度" + qrCodeBitmap.getWidth() + "  高度：" + qrCodeBitmap.getHeight());
 		qrImageView.setImageBitmap(qrCodeBitmap);
 		//图片压缩
@@ -193,7 +194,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			}
 
 			//设置分享内容
-			mController.setShareContent("篮圈--篮球人的天堂圣地"+Constants.AppliactionServerIP_Share);
+			mController.setShareContent("篮圈--篮球人的天堂圣地" + Constants.AppliactionServerIP_Share);
 			//设置分享图片
 			mController.setShareMedia(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//直接分享
@@ -254,7 +255,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			circleMedia.setShareImage(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//设置分享内容跳转URL
 			circleMedia.setTargetUrl(Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
-			
+
 			mController.setShareMedia(circleMedia);
 
 			//直接分享
@@ -277,8 +278,12 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			break;
 		case R.id.photo:
 			LogTool.i("保存到手机");
-			MediaStore.Images.Media.insertImage(getContentResolver(), qrCodeBitmap, System.currentTimeMillis() + "", "");
-			sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+			try {
+				MediaStore.Images.Media.insertImage(getContentResolver(), qrCodeBitmap, System.currentTimeMillis() + "", "");
+				sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 			break;
 		default:
 			break;

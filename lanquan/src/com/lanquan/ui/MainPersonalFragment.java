@@ -329,7 +329,6 @@ public class MainPersonalFragment extends BaseV4Fragment implements OnClickListe
 		public void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
-			userPreference = BaseApplication.getInstance().getUserPreference();
 			jsonMyArticleList = new ArrayList<JsonMyArticle>();
 		}
 
