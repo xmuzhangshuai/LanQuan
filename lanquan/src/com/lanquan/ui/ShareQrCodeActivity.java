@@ -1,6 +1,10 @@
 package com.lanquan.ui;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
@@ -28,8 +32,10 @@ import com.umeng.socialize.weixin.controller.UMWXHandler;
 import com.umeng.socialize.weixin.media.CircleShareContent;
 import com.umeng.socialize.weixin.media.WeiXinShareContent;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -70,6 +76,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 	// 首先在您的Activity中添加如下成员变量
 	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.share");
 	private File shareImageFile;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -201,13 +208,14 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			mController.directShare(ShareQrCodeActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
 				@Override
 				public void onStart() {
-					Toast.makeText(ShareQrCodeActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
+					//Toast.makeText(ShareQrCodeActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
 				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
 					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
 						Toast.makeText(ShareQrCodeActivity.this, "分享成功", Toast.LENGTH_SHORT).show();
+
 					} else {
 						Toast.makeText(ShareQrCodeActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
 					}
@@ -230,7 +238,6 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			mController.directShare(ShareQrCodeActivity.this, SHARE_MEDIA.WEIXIN, new SnsPostListener() {
 				@Override
 				public void onStart() {
-					Toast.makeText(ShareQrCodeActivity.this, "发送开始", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
@@ -262,7 +269,6 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			mController.directShare(ShareQrCodeActivity.this, SHARE_MEDIA.WEIXIN_CIRCLE, new SnsPostListener() {
 				@Override
 				public void onStart() {
-					Toast.makeText(ShareQrCodeActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
@@ -277,12 +283,18 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 
 			break;
 		case R.id.photo:
-			LogTool.i("保存到手机");
+			Toast.makeText(ShareQrCodeActivity.this, "正在保存...", Toast.LENGTH_SHORT).show();
 			try {
-				MediaStore.Images.Media.insertImage(getContentResolver(), qrCodeBitmap, System.currentTimeMillis() + "", "");
-				sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+
+				saveImageToGallery(ShareQrCodeActivity.this,qrCodeBitmap);
+				Toast.makeText(ShareQrCodeActivity.this, "保存成功", Toast.LENGTH_SHORT).show();
+//				MediaStore.Images.Media.insertImage(getContentResolver(), qrCodeBitmap, System.currentTimeMillis() + "", "");
+//				sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://" + Environment.getExternalStorageDirectory())));
+				
 			} catch (Exception e) {
 				// TODO: handle exception
+				Toast.makeText(ShareQrCodeActivity.this, "保存不成功", Toast.LENGTH_SHORT).show();
+				LogTool.e("保存出问题" + e);
 			}
 			break;
 		default:
@@ -298,6 +310,34 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 		if (ssoHandler != null) {
 			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 		}
+	}
+	public static void saveImageToGallery(Context context, Bitmap bmp) {
+		// 首先保存图片
+		File appDir = new File(Environment.getExternalStorageDirectory(), "lanquan");
+		if (!appDir.exists()) {
+			appDir.mkdir();
+		}
+		String fileName = System.currentTimeMillis() + ".jpg";
+		File file = new File(appDir, fileName);
+		try {
+			FileOutputStream fos = new FileOutputStream(file);
+			bmp.compress(CompressFormat.JPEG, 100, fos);
+			fos.flush();
+			fos.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// 其次把文件插入到系统图库
+		try {
+			MediaStore.Images.Media.insertImage(context.getContentResolver(), file.getAbsolutePath(), fileName, null);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		// 最后通知图库更新
+		context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file.getAbsolutePath())));
 	}
 
 }

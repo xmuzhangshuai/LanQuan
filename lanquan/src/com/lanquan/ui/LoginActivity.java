@@ -203,7 +203,7 @@ public class LoginActivity extends BaseActivity {
 
 							@Override
 							public void onComplete(int status, Map<String, Object> info) {
-								dialog.dismiss();
+								
 								if (status == 200 && info != null) {
 //									StringBuilder sb = new StringBuilder();
 //									Set<String> keys = info.keySet();
@@ -216,7 +216,9 @@ public class LoginActivity extends BaseActivity {
 									other_login("wx", WeChatConfig.API_KEY, avatar, nickname);
 //									Log.d("TestData", sb.toString());
 								} else {
+									dialog.dismiss();
 									Log.d("TestData", "发生错误：" + status);
+									
 								}
 							}
 						});
@@ -275,6 +277,7 @@ public class LoginActivity extends BaseActivity {
 
 //									Log.d("TestData", sb.toString());
 								} else {
+									dialog.dismiss();
 									Log.d("TestData", "发生错误：" + status);
 								}
 							}
@@ -313,7 +316,7 @@ public class LoginActivity extends BaseActivity {
 
 								@Override
 								public void onComplete(int status, Map<String, Object> info) {
-									dialog.dismiss();
+//									dialog.dismiss();
 									if (status == 200 && info != null) {
 //										StringBuilder sb = new StringBuilder();
 //										Set<String> keys = info.keySet();
@@ -326,6 +329,7 @@ public class LoginActivity extends BaseActivity {
 										other_login("weibo", WeiboConfig.API_KEY, avatar, nickname);
 //										Log.d("TestData", sb.toString());
 									} else {
+										dialog.dismiss();
 										Log.d("TestData", "发生错误：" + status);
 									}
 								}
@@ -503,6 +507,7 @@ public class LoginActivity extends BaseActivity {
 				// TODO Auto-generated method stub
 				LogTool.i(statusCode + "===" + response);
 				try {
+					dialog.dismiss();
 					JsonTool jsonTool = new JsonTool(response);
 					JSONObject jsonObject = jsonTool.getJsonObject();
 

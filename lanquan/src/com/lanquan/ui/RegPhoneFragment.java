@@ -158,6 +158,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					public void onStart(SHARE_MEDIA platform) {
 						dialog = new ProgressDialog(getActivity());
 						dialog.setMessage("正在登录...");
+						dialog.show();
 						dialog.setCancelable(false);
 //						Toast.makeText(getActivity(), "授权开始", Toast.LENGTH_SHORT).show();
 					}
@@ -180,7 +181,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 							@Override
 							public void onComplete(int status, Map<String, Object> info) {
-								dialog.dismiss();
 								if (status == 200 && info != null) {
 									StringBuilder sb = new StringBuilder();
 									Set<String> keys = info.keySet();
@@ -192,6 +192,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									other_login("wx", WeChatConfig.API_KEY, avatar, nickname);
 									Log.d("TestData", sb.toString());
 								} else {
+									dialog.dismiss();
 									Log.d("TestData", "发生错误：" + status);
 								}
 							}
@@ -216,6 +217,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					public void onStart(SHARE_MEDIA platform) {
 						dialog = new ProgressDialog(getActivity());
 						dialog.setMessage("正在登录...");
+						dialog.show();
 						dialog.setCancelable(false);
 //						Toast.makeText(getActivity(), "授权开始", Toast.LENGTH_SHORT).show();
 					}
@@ -238,7 +240,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 							@Override
 							public void onComplete(int status, Map<String, Object> info) {
-								dialog.dismiss();
 								if (status == 200 && info != null) {
 									dialog.dismiss();
 //									StringBuilder sb = new StringBuilder();
@@ -253,6 +254,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 //									Log.d("TestData", sb.toString());
 								} else {
+									dialog.dismiss();
 									Log.d("TestData", "发生错误：" + status);
 								}
 							}
@@ -290,7 +292,6 @@ public class RegPhoneFragment extends BaseV4Fragment {
 
 								@Override
 								public void onComplete(int status, Map<String, Object> info) {
-									dialog.dismiss();
 									if (status == 200 && info != null) {
 //										StringBuilder sb = new StringBuilder();
 //										Set<String> keys = info.keySet();
@@ -322,6 +323,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					public void onStart(SHARE_MEDIA platform) {
 						dialog = new ProgressDialog(getActivity());
 						dialog.setMessage("正在登录...");
+						dialog.show();
 						dialog.setCancelable(false);
 					}
 				});
@@ -481,6 +483,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 				// TODO Auto-generated method stub
 				LogTool.i(statusCode + "===" + response);
 				try {
+					dialog.dismiss();
 					JsonTool jsonTool = new JsonTool(response);
 					JSONObject jsonObject = jsonTool.getJsonObject();
 

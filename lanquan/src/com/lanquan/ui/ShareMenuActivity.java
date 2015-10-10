@@ -21,6 +21,7 @@ import com.umeng.socialize.weixin.controller.UMWXHandler;
 import com.umeng.socialize.weixin.media.CircleShareContent;
 import com.umeng.socialize.weixin.media.WeiXinShareContent;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -88,17 +89,17 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 				mController.doOauthVerify(ShareMenuActivity.this, SHARE_MEDIA.SINA, new UMAuthListener() {
 					@Override
 					public void onStart(SHARE_MEDIA platform) {
-						Toast.makeText(ShareMenuActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(ShareMenuActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
-						Toast.makeText(ShareMenuActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(ShareMenuActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
-						Toast.makeText(ShareMenuActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(ShareMenuActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
 						//获取相关授权信息或者跳转到自定义的分享编辑页面
 						String uid = value.getString("uid");
 						LogTool.i("uid" + uid);
@@ -106,7 +107,7 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 
 					@Override
 					public void onCancel(SHARE_MEDIA platform) {
-						Toast.makeText(ShareMenuActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(ShareMenuActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
 					}
 				});
 			}
@@ -119,7 +120,7 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 			mController.directShare(ShareMenuActivity.this, SHARE_MEDIA.SINA, new SnsPostListener() {
 				@Override
 				public void onStart() {
-					Toast.makeText(ShareMenuActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
+//					Toast.makeText(ShareMenuActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
@@ -149,16 +150,14 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 			mController.directShare(ShareMenuActivity.this, SHARE_MEDIA.WEIXIN, new SnsPostListener() {
 				@Override
 				public void onStart() {
-					Toast.makeText(ShareMenuActivity.this, "发送开始", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
 				public void onComplete(SHARE_MEDIA platform, int eCode, SocializeEntity entity) {
 					if (eCode == StatusCode.ST_CODE_SUCCESSED) {
-						Toast.makeText(ShareMenuActivity.this, "发送成功", Toast.LENGTH_SHORT).show();
 						finish();
 					} else {
-						Toast.makeText(ShareMenuActivity.this, "发送失败", Toast.LENGTH_SHORT).show();
+						finish();
 					}
 				}
 			});
@@ -180,7 +179,7 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 			mController.directShare(ShareMenuActivity.this, SHARE_MEDIA.WEIXIN_CIRCLE, new SnsPostListener() {
 				@Override
 				public void onStart() {
-					Toast.makeText(ShareMenuActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
+//					Toast.makeText(ShareMenuActivity.this, "分享开始", Toast.LENGTH_SHORT).show();
 				}
 
 				@Override
@@ -190,6 +189,7 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 						finish();
 					} else {
 						Toast.makeText(ShareMenuActivity.this, "分享失败", Toast.LENGTH_SHORT).show();
+						finish();
 					}
 				}
 			});
