@@ -104,8 +104,12 @@ public class MainLanquanFragment extends BaseV4Fragment {
 				int position = data.getIntExtra("position", -1);
 				int is_focus = data.getIntExtra("is_focus", 0);
 				if (position > -1) {
-					jsonChannelList.get(position).setIs_focus(is_focus);
-					refresh();
+					try {
+						jsonChannelList.get(position).setIs_focus(is_focus);
+						refresh();
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
 				}
 			}
 		}

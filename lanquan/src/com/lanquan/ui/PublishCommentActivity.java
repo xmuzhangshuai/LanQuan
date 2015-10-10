@@ -145,6 +145,12 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 
 		publishBtn.setOnClickListener(this);
 		backBtn.setOnClickListener(this);
+		if (imagePath == null) {
+			hideKeyboard();
+			finish();
+			return;
+		}
+		LogTool.e("PublishCommentActivity图片路径：" + imagePath);
 
 		/** 
 		 * 获取图片的旋转角度，有些系统把拍照的图片旋转了，有的没有旋转 

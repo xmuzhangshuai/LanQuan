@@ -17,6 +17,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -139,10 +140,12 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 				// TODO: handle exception
 				e.printStackTrace();
 			}
-		} 
-		if (intent != null) {
+		}
+		if (intent != null && !TextUtils.isEmpty(photoUri)) {
 			startActivity(intent);
 			finish();
+		}else {
+			LogTool.e("CommentImageActivity photoUri为空");
 		}
 	}
 
@@ -167,7 +170,7 @@ public class CommentImageActivity extends BaseActivity implements OnClickListene
 			String fileName;
 
 			// 删除上一次的临时文件
-			SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_WORLD_WRITEABLE);
+			SharedPreferences sharedPreferences = getSharedPreferences("temp", Context.MODE_PRIVATE);
 			ImageTools.deletePhotoAtPathAndName(Environment.getExternalStorageDirectory().getAbsolutePath(), sharedPreferences.getString("tempName", ""));
 
 			// 保存本次截图临时文件名字
