@@ -168,13 +168,14 @@ public class ShareMenuActivity extends BaseActivity implements OnClickListener {
 			//设置微信朋友圈分享内容
 			CircleShareContent circleMedia = new CircleShareContent();
 			//设置title
-			circleMedia.setTitle("篮圈--篮球人的天堂圣地");
 			circleMedia.setShareContent("篮圈--篮球人的天堂圣地");
+			circleMedia.setTitle("篮圈--篮球人的天堂圣地");
 			//设置朋友圈title
 			circleMedia.setShareImage(new UMImage(ShareMenuActivity.this, R.drawable.ic_launcher));
 			//设置分享内容跳转URL
 			circleMedia.setTargetUrl(Constants.AppliactionServerIP_Share);
-
+			mController.setShareMedia(circleMedia);
+			
 			//直接分享
 			mController.directShare(ShareMenuActivity.this, SHARE_MEDIA.WEIXIN_CIRCLE, new SnsPostListener() {
 				@Override

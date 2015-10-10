@@ -11,6 +11,8 @@ import org.json.JSONObject;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -79,6 +81,7 @@ public class LoginActivity extends BaseActivity {
 	private Button loginButton;// 登录
 	View focusView = null;
 	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.login");
+	private Dialog dialog;
 	// List<JsonUser> jsonUsers;
 
 	@Override
@@ -177,37 +180,41 @@ public class LoginActivity extends BaseActivity {
 				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.WEIXIN, new UMAuthListener() {
 					@Override
 					public void onStart(SHARE_MEDIA platform) {
-						Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+						dialog = showProgressDialog("正在登录...");
+						dialog.setCancelable(false);
 					}
 
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
+						dialog.dismiss();
 						Toast.makeText(LoginActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
-						Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
 						//获取相关授权信息
 						mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.WEIXIN, new UMDataListener() {
 							@Override
 							public void onStart() {
-								Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+//								Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
 							}
 
 							@Override
 							public void onComplete(int status, Map<String, Object> info) {
+								dialog.dismiss();
 								if (status == 200 && info != null) {
-									StringBuilder sb = new StringBuilder();
-									Set<String> keys = info.keySet();
-									for (String key : keys) {
-										sb.append(key + "=" + info.get(key).toString() + "\r\n");
-									}
+//									StringBuilder sb = new StringBuilder();
+//									Set<String> keys = info.keySet();
+//									for (String key : keys) {
+//										sb.append(key + "=" + info.get(key).toString() + "\r\n");
+//									}
 									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("headimgurl").toString();
 									String nickname = info.get("nickname").toString();
 									other_login("wx", WeChatConfig.API_KEY, avatar, nickname);
-									Log.d("TestData", sb.toString());
+//									Log.d("TestData", sb.toString());
 								} else {
 									Log.d("TestData", "发生错误：" + status);
 								}
@@ -217,7 +224,8 @@ public class LoginActivity extends BaseActivity {
 
 					@Override
 					public void onCancel(SHARE_MEDIA platform) {
-						Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
+//						Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
 					}
 				});
 			}
@@ -230,38 +238,42 @@ public class LoginActivity extends BaseActivity {
 				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.QQ, new UMAuthListener() {
 					@Override
 					public void onStart(SHARE_MEDIA platform) {
-						Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+						dialog = showProgressDialog("正在登录...");
+						dialog.setCancelable(false);
+						//Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
-						Toast.makeText(LoginActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(LoginActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
 					}
 
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
-						Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
 						//获取相关授权信息
 						mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.QQ, new UMDataListener() {
 							@Override
 							public void onStart() {
-								Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+//								Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
 							}
 
 							@Override
 							public void onComplete(int status, Map<String, Object> info) {
+								dialog.dismiss();
 								if (status == 200 && info != null) {
-									StringBuilder sb = new StringBuilder();
-									Set<String> keys = info.keySet();
-									for (String key : keys) {
-										sb.append(key + "=" + info.get(key).toString() + "\r\n");
-									}
+//									StringBuilder sb = new StringBuilder();
+//									Set<String> keys = info.keySet();
+//									for (String key : keys) {
+//										sb.append(key + "=" + info.get(key).toString() + "\r\n");
+//									}
 									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("profile_image_url").toString();
 									String nickname = info.get("screen_name").toString();
 									other_login("qq", QQConfig.API_KEY, avatar, nickname);
 
-									Log.d("TestData", sb.toString());
+//									Log.d("TestData", sb.toString());
 								} else {
 									Log.d("TestData", "发生错误：" + status);
 								}
@@ -271,7 +283,8 @@ public class LoginActivity extends BaseActivity {
 
 					@Override
 					public void onCancel(SHARE_MEDIA platform) {
-						Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
+						dialog.dismiss();
+//						Toast.makeText(LoginActivity.this, "授权取消", Toast.LENGTH_SHORT).show();
 					}
 				});
 			}
@@ -284,47 +297,54 @@ public class LoginActivity extends BaseActivity {
 				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.SINA, new UMAuthListener() {
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
+						dialog.dismiss();
 					}
 
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
 						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
-							Toast.makeText(LoginActivity.this, "授权成功.", Toast.LENGTH_SHORT).show();
+							
+//							Toast.makeText(LoginActivity.this, "授权成功.", Toast.LENGTH_SHORT).show();
 							mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.SINA, new UMDataListener() {
 								@Override
 								public void onStart() {
-									Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
+//									Toast.makeText(LoginActivity.this, "获取平台数据开始...", Toast.LENGTH_SHORT).show();
 								}
 
 								@Override
 								public void onComplete(int status, Map<String, Object> info) {
+									dialog.dismiss();
 									if (status == 200 && info != null) {
-										StringBuilder sb = new StringBuilder();
-										Set<String> keys = info.keySet();
-										for (String key : keys) {
-											sb.append(key + "=" + info.get(key).toString() + "\r\n");
-										}
+//										StringBuilder sb = new StringBuilder();
+//										Set<String> keys = info.keySet();
+//										for (String key : keys) {
+//											sb.append(key + "=" + info.get(key).toString() + "\r\n");
+//										}
 										//如果第三方登录成功，获取avatar以及appid直接登录
 										String avatar = info.get("profile_image_url").toString();
 										String nickname = info.get("screen_name").toString();
 										other_login("weibo", WeiboConfig.API_KEY, avatar, nickname);
-										Log.d("TestData", sb.toString());
+//										Log.d("TestData", sb.toString());
 									} else {
 										Log.d("TestData", "发生错误：" + status);
 									}
 								}
 							});
 						} else {
-							Toast.makeText(LoginActivity.this, "授权失败", Toast.LENGTH_SHORT).show();
+							dialog.dismiss();
+//							Toast.makeText(LoginActivity.this, "授权失败", Toast.LENGTH_SHORT).show();
 						}
 					}
 
 					@Override
 					public void onCancel(SHARE_MEDIA platform) {
+						dialog.dismiss();
 					}
 
 					@Override
 					public void onStart(SHARE_MEDIA platform) {
+						dialog = showProgressDialog("正在登录...");
+						dialog.setCancelable(false);
 					}
 				});
 			}

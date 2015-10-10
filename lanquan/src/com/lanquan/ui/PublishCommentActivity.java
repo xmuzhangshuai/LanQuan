@@ -218,16 +218,6 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 		}
 	}
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		/**使用SSO授权必须添加如下代码 */
-		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
-		if (ssoHandler != null) {
-			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
-		}
-	}
-
 	/**
 	 * 位置监听类
 	 */
@@ -496,7 +486,9 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 					@Override
 					public void onComplete(Bundle value, SHARE_MEDIA platform) {
 						Toast.makeText(PublishCommentActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
-
+						//获取相关授权信息或者跳转到自定义的分享编辑页面
+						String uid = value.getString("uid");
+						LogTool.i("uid" + uid);
 					}
 
 					@Override
@@ -508,6 +500,7 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 
 			//获取相关授权信息或者跳转到自定义的分享编辑页面
 			//设置分享内容
+			//mController.setShareContent(channeltitle + Constants.AppliactionServerDomain + "wap/channel_article/index/" + channel_id);
 			mController.setShareContent(channeltitle + Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channel_id);
 			//设置分享图片
 			mController.setShareMedia(new UMImage(PublishCommentActivity.this, R.drawable.ic_launcher));
@@ -545,6 +538,16 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			break;
 		default:
 			break;
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		/**使用SSO授权必须添加如下代码 */
+		UMSsoHandler ssoHandler = mController.getConfig().getSsoHandler(requestCode);
+		if (ssoHandler != null) {
+			ssoHandler.authorizeCallBack(requestCode, resultCode, data);
 		}
 	}
 

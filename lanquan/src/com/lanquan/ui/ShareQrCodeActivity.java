@@ -194,7 +194,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			}
 
 			//设置分享内容
-			mController.setShareContent("篮圈--篮球人的天堂圣地" + Constants.AppliactionServerIP_Share);
+			mController.setShareContent("篮圈--篮球人的天堂圣地" + Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
 			//设置分享图片
 			mController.setShareMedia(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//直接分享
