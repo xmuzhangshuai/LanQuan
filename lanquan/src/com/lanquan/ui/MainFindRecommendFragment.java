@@ -161,13 +161,6 @@ public class MainFindRecommendFragment extends BaseV4Fragment {
 		if (postListView != null) {
 			postListView.setRefreshing();
 		}
-		//		if (jsonChannelList.size() > 0) {
-		//			postListView.setVisibility(View.VISIBLE);
-		//			emptyView.setVisibility(View.GONE);
-		//		} else {
-		//			postListView.setVisibility(View.GONE);
-		//			emptyView.setVisibility(View.VISIBLE);
-		//		}
 	}
 
 	/**

@@ -182,7 +182,7 @@ public class MainFindNewFragment extends BaseV4Fragment {
 		RequestParams params = new RequestParams();
 		params.put("pageIndex", page);
 		params.put("pageSize", Config.PAGE_NUM);
-		params.put("sort", "create_time");
+		params.put("sort", "update_time");
 		params.put("from", 0);
 		params.put("recommend", 0);
 		if (userPreference.getUserLogin()) {
