@@ -6,21 +6,21 @@ public class Constants {
 	public static final String PACKAGENAME = "com.lanquan";
 
 	// 域名或者是IP(旧)
-	public static String AppliactionServerIP = "http://120.24.183.74";
+	//	public static String AppliactionServerIP = "http://120.24.183.74";
 
-	public static String AppliactionServerDomain = "http://120.24.183.74/index.php/";
+	//	public static String AppliactionServerDomain = "http://120.24.183.74/index.php/";
 
-	public static String AppliactionServerIP_Share = "http://120.25.62.195";
+	public static String AppliactionServerIP_Share = "http://www.theballer.cn";
 	// 域名或者是IP
-	//	public static String AppliactionServerIP = "http://120.25.62.195/";
+	public static String AppliactionServerIP = "http://www.theballer.cn/";
 	//
-	//	public static String AppliactionServerDomain = "http://120.25.62.195/index.php/";
+	public static String AppliactionServerDomain = "http://www.theballer.cn/index.php/";
 
 	public static String SignKey = "dfeb3d35bc3543rdc234";
 
 	public static class Config {
 		// 是否处于开发模式
-		public static final boolean DEVELOPER_MODE = true;
+		public static final boolean DEVELOPER_MODE = false;
 
 		// 接受验证码时间为120s
 		public static int AUTN_CODE_TIME = 120;
