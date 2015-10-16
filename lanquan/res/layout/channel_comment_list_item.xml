@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/setting_list_margin"
             android:gravity="center"
-            android:scaleType="centerInside" />
+            android:scaleType="fitCenter" />
 
         <View
             android:layout_width="match_parent"

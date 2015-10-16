@@ -14,6 +14,7 @@
         android:gravity="center_horizontal"
         android:text="@string/version_info"
         android:textColor="@android:color/white"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:visibility="gone" />
 
 </RelativeLayout>

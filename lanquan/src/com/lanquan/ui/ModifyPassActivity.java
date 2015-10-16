@@ -140,8 +140,10 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 			// 没有错误，则修改
 			hideKeyboard();
 			RequestParams params = new RequestParams();
-			params.put(UserTable.U_PASSWORD, MD5For32.GetMD5Code(oldPass));
-			params.put(UserTable.U_NEW_PASSWORD, MD5For32.GetMD5Code(newPass));
+//			params.put(UserTable.U_PASSWORD, MD5For32.GetMD5Code(oldPass));
+//			params.put(UserTable.U_NEW_PASSWORD, MD5For32.GetMD5Code(newPass));
+			params.put(UserTable.U_PASSWORD, oldPass);
+			params.put(UserTable.U_NEW_PASSWORD, newPass);
 			params.put(UserTable.U_TEL, userPreference.getU_tel());
 			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
 				Dialog dialog;
@@ -168,7 +170,8 @@ public class ModifyPassActivity extends BaseActivity implements OnClickListener 
 						ToastTool.showShort(ModifyPassActivity.this, "修改成功！");
 						LogTool.i(jsonTool.getMessage());
 						jsonTool.saveAccess_token();
-						userPreference.setU_password(MD5For32.GetMD5Code(newPass));
+//						userPreference.setU_password(MD5For32.GetMD5Code(newPass));
+						userPreference.setU_password(newPass);
 						finish();
 
 					} else if (status.equals(JsonTool.STATUS_FAIL)) {

@@ -33,12 +33,15 @@ import com.lanquan.utils.ToastTool;
 import com.lanquan.utils.UserPreference;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.core.listener.PauseOnScrollListener;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -796,9 +799,7 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 			holder.itemImageView.setMaxHeight(DensityUtil.getMaxImageHeight(ChannelPhotoActivity.this));
 
 			// 设置图片
-			if (!TextUtils.isEmpty(channel.getImage_url()) && channel.getImage_url() != "null")
-
-			{
+			if (!TextUtils.isEmpty(channel.getImage_url()) && channel.getImage_url() != "null") {
 				imageLoader.displayImage(channel.getImage_url(), holder.itemImageView, ImageLoaderTool.getImageOptions());
 				holder.itemImageView.setVisibility(View.VISIBLE);
 				holder.itemImageView.setOnClickListener(new OnClickListener() {
@@ -813,9 +814,9 @@ public class ChannelPhotoActivity extends BaseActivity implements OnClickListene
 						overridePendingTransition(R.anim.zoomin2, R.anim.zoomout);
 					}
 				});
-			} else
+			}
 
-			{
+			else {
 				holder.itemImageView.setVisibility(View.GONE);
 			}
 

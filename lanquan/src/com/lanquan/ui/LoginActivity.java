@@ -411,11 +411,13 @@ public class LoginActivity extends BaseActivity {
 		} else {
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
-			login(phone, MD5For32.GetMD5Code(password));
+//			login(phone, MD5For32.GetMD5Code(password));
+			login(phone, password);
 
 			// 同时存入手机号和密码，用于记住密码登录使用
 			userPreference.setU_tel(phone);
-			userPreference.setU_password(MD5For32.GetMD5Code(password));
+//			userPreference.setU_password(MD5For32.GetMD5Code(password));
+			userPreference.setU_password(password);
 		}
 
 	}

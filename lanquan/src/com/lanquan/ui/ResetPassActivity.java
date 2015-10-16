@@ -132,7 +132,8 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 			focusView.requestFocus();
 		} else {
 			RequestParams params = new RequestParams();
-			params.put(UserTable.U_NEW_PASSWORD, MD5For32.GetMD5Code(newPass));
+//			params.put(UserTable.U_NEW_PASSWORD, MD5For32.GetMD5Code(newPass));
+			params.put(UserTable.U_NEW_PASSWORD, newPass);
 			params.put(UserTable.U_ACCESS_TOKEN, userPreference.getAccess_token());
 
 			TextHttpResponseHandler responseHandler = new TextHttpResponseHandler() {
@@ -145,7 +146,8 @@ public class ResetPassActivity extends BaseActivity implements OnClickListener {
 					JsonTool jsonTool = new JsonTool(response);
 					String status = jsonTool.getStatus();
 					if (status.equals(JsonTool.STATUS_SUCCESS)) {
-						userPreference.setU_password(MD5For32.GetMD5Code(newPass));
+//						userPreference.setU_password(MD5For32.GetMD5Code(newPass));
+						userPreference.setU_password(newPass);
 						jsonTool.saveAccess_token();
 						reLogin();
 					}

@@ -201,7 +201,7 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			}
 
 			//设置分享内容
-			mController.setShareContent("篮圈--篮球人的天堂圣地" + Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
+			mController.setShareContent(channelTitle + Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
 			//设置分享图片
 			mController.setShareMedia(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//直接分享
@@ -226,9 +226,9 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			//设置微信好友分享内容
 			WeiXinShareContent weixinContent = new WeiXinShareContent();
 			//设置分享文字
-			weixinContent.setShareContent("篮圈--篮球人的天堂圣地");
+			weixinContent.setShareContent(channelTitle);
 			//设置title
-			weixinContent.setTitle("篮圈--篮球人的天堂圣地");
+			weixinContent.setTitle(channelTitle);
 			//设置分享内容跳转URL
 			weixinContent.setTargetUrl(Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channelId);
 			//设置分享图片
@@ -256,8 +256,8 @@ public class ShareQrCodeActivity extends BaseActivity implements android.view.Vi
 			CircleShareContent circleMedia = new CircleShareContent();
 
 			//设置title
-			circleMedia.setTitle("篮圈--篮球人的天堂圣地");
-			circleMedia.setShareContent("篮圈--篮球人的天堂圣地");
+			circleMedia.setTitle(channelTitle);
+			circleMedia.setShareContent(channelTitle);
 			//设置朋友圈title
 			circleMedia.setShareImage(new UMImage(ShareQrCodeActivity.this, shareImageFile));
 			//设置分享内容跳转URL

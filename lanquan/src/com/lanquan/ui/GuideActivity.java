@@ -3,9 +3,7 @@ package com.lanquan.ui;
 import com.lanquan.R;
 import com.lanquan.base.BaseActivity;
 import com.lanquan.base.BaseApplication;
-import com.lanquan.db.CopyDataBase;
 import com.lanquan.utils.LocationTool;
-import com.lanquan.utils.LogTool;
 import com.lanquan.utils.NetworkUtils;
 import com.lanquan.utils.ServerUtil;
 import com.lanquan.utils.SharePreferenceUtil;
@@ -16,7 +14,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
 /**
@@ -52,8 +49,6 @@ public class GuideActivity extends BaseActivity {
 		MobclickAgent.openActivityDurationTrack(false);
 
 		if (count == 0) {// 如果是第一次登陆，则启动向导页面
-			// 第一次运行拷贝数据库文件
-			new initDataBase().execute();
 			sharePreferenceUtil.setUseCount(++count);// 次数加1
 			//			startActivity(new Intent(GuideActivity.this, GuidePagerActivity.class));
 			setContentView(R.layout.activity_guide);
@@ -88,11 +83,6 @@ public class GuideActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 	}
 
-	/**
-	 * 获取版本号
-	 * 
-	 * @return 当前应用的版本号
-	 */
 	public String getVersion() {
 		try {
 			PackageManager manager = this.getPackageManager();
@@ -105,16 +95,4 @@ public class GuideActivity extends BaseActivity {
 		}
 	}
 
-	/**
-	 * 类名称：initDataBase 类描述：拷贝数据库 创建人： 张帅 创建时间：2014年7月8日 下午4:51:58
-	 * 
-	 */
-	public class initDataBase extends AsyncTask<Void, Void, Void> {
-		@Override
-		protected Void doInBackground(Void... params) {
-			// TODO Auto-generated method stub
-			new CopyDataBase(GuideActivity.this).copyDataBase();// 拷贝数据库
-			return null;
-		}
-	}
 }

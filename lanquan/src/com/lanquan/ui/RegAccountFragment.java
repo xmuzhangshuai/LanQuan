@@ -313,7 +313,8 @@ public class RegAccountFragment extends BaseV4Fragment {
 			focusView.requestFocus();
 		} else {
 			userPreference.setU_nickname(mName);
-			userPreference.setU_password(MD5For32.GetMD5Code(mPassword));
+//			userPreference.setU_password(MD5For32.GetMD5Code(mPassword));
+			userPreference.setU_password(mPassword);
 			register();
 		}
 	}

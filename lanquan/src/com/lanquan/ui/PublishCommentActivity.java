@@ -411,9 +411,9 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			//设置微信好友分享内容
 			WeiXinShareContent weixinContent = new WeiXinShareContent();
 			//设置分享文字
-			weixinContent.setShareContent("篮圈--篮球人的天堂圣地");
+			weixinContent.setShareContent(channeltitle);
 			//设置title
-			weixinContent.setTitle("篮圈--篮球人的天堂圣地");
+			weixinContent.setTitle(channeltitle);
 			//设置分享内容跳转URL
 			weixinContent.setTargetUrl(Constants.AppliactionServerDomain + "/wap/channel_article/index/" + channel_id);
 			//设置分享图片
@@ -441,8 +441,8 @@ public class PublishCommentActivity extends BaseActivity implements OnClickListe
 			CircleShareContent circleMedia = new CircleShareContent();
 			circleMedia.setShareContent("篮圈——频道分享");
 			//设置title
-			circleMedia.setTitle("篮圈--篮球人的天堂圣地");
-			circleMedia.setShareContent("篮圈--篮球人的天堂圣地");
+			circleMedia.setTitle(channeltitle);
+			circleMedia.setShareContent(channeltitle);
 			//设置朋友圈title
 			circleMedia.setShareImage(new UMImage(PublishCommentActivity.this, R.drawable.ic_launcher));
 			//设置分享内容跳转URL

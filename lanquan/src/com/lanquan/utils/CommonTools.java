@@ -159,12 +159,13 @@ public class CommonTools {
 	* 判断手机号码
 	*/
 	public static boolean isMobileNO(String mobiles) {
-		if (mobiles == null) {
-			return false;
-		}
-		Pattern pattern = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9])|(17[0-9]))\\d{8}$");
-		Matcher matcher = pattern.matcher(mobiles);
-		return matcher.matches();
+//		if (mobiles == null) {
+//			return false;
+//		}
+//		Pattern pattern = Pattern.compile("^((13[0-9])|(15[0-9])|(18[0-9])|(17[0-9]))\\d{8}$");
+//		Matcher matcher = pattern.matcher(mobiles);
+//		return matcher.matches();
+		return true;
 	}
 
 	/**

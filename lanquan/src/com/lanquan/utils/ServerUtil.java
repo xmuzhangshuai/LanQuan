@@ -97,7 +97,6 @@ public class ServerUtil {
 			}
 		};
 		AsyncHttpClientTool.post(context, "api/user/user", params, responseHandler);
-
 	}
 
 	/**
