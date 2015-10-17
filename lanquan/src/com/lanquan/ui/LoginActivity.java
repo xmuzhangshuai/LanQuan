@@ -192,7 +192,8 @@ public class LoginActivity extends BaseActivity {
 					}
 
 					@Override
-					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+					public void onComplete(final Bundle value, SHARE_MEDIA platform) {
+						Log.d("TestData", value.toString());
 						//Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
 						//获取相关授权信息
 						mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.WEIXIN, new UMDataListener() {
@@ -213,7 +214,7 @@ public class LoginActivity extends BaseActivity {
 									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("headimgurl").toString();
 									String nickname = info.get("nickname").toString();
-									other_login("wx", WeChatConfig.API_KEY, avatar, nickname);
+									other_login("wx", value.getString("uid"), avatar, nickname);
 //									Log.d("TestData", sb.toString());
 								} else {
 									dialog.dismiss();
@@ -252,8 +253,9 @@ public class LoginActivity extends BaseActivity {
 					}
 
 					@Override
-					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+					public void onComplete(final Bundle value, SHARE_MEDIA platform) {
 //						Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+						final String source_id = value.getString("uid");
 						//获取相关授权信息
 						mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.QQ, new UMDataListener() {
 							@Override
@@ -271,11 +273,11 @@ public class LoginActivity extends BaseActivity {
 //										sb.append(key + "=" + info.get(key).toString() + "\r\n");
 //									}
 									//如果第三方登录成功，获取avatar以及appid直接登录
+//									Log.d("TestData", sb.toString());
 									String avatar = info.get("profile_image_url").toString();
 									String nickname = info.get("screen_name").toString();
-									other_login("qq", QQConfig.API_KEY, avatar, nickname);
+									other_login("qq", source_id, avatar, nickname);
 
-//									Log.d("TestData", sb.toString());
 								} else {
 									dialog.dismiss();
 									Log.d("TestData", "发生错误：" + status);
@@ -304,7 +306,7 @@ public class LoginActivity extends BaseActivity {
 					}
 
 					@Override
-					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+					public void onComplete(final Bundle value, SHARE_MEDIA platform) {
 						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
 							
 //							Toast.makeText(LoginActivity.this, "授权成功.", Toast.LENGTH_SHORT).show();
@@ -324,10 +326,10 @@ public class LoginActivity extends BaseActivity {
 //											sb.append(key + "=" + info.get(key).toString() + "\r\n");
 //										}
 										//如果第三方登录成功，获取avatar以及appid直接登录
+//										Log.d("TestData", sb.toString());
 										String avatar = info.get("profile_image_url").toString();
 										String nickname = info.get("screen_name").toString();
-										other_login("weibo", WeiboConfig.API_KEY, avatar, nickname);
-//										Log.d("TestData", sb.toString());
+										other_login("weibo", value.getString("uid"), avatar, nickname);
 									} else {
 										dialog.dismiss();
 										Log.d("TestData", "发生错误：" + status);

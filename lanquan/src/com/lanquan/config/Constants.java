@@ -48,11 +48,16 @@ public class Constants {
 	public static class WeiboConfig {
 		public final static String API_KEY = "4169059323";
 		public final static String SECRIT_KEY = "9825238066521372a2f776fa08b651e2";
+		
+//		public final static String API_KEY = "1143456865";
+//		public final static String SECRIT_KEY = "b28fbfc22b29b0e53424b8c2fb283c2e";
 	}
 
 	public static class QQConfig {
 		public final static String API_KEY = "1104862406";
 		public final static String SECRIT_KEY = "VHSnIwPNZJcnMqj7";
+//		public final static String API_KEY = "1104913890";
+//		public final static String SECRIT_KEY = "9qIl3e9wgCQSgNbL";
 	}
 
 	public static class Extra {

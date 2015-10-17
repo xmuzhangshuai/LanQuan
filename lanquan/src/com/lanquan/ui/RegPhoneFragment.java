@@ -170,7 +170,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					}
 
 					@Override
-					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+					public void onComplete(final Bundle value, SHARE_MEDIA platform) {
 //						Toast.makeText(getActivity(), "授权完成", Toast.LENGTH_SHORT).show();
 						// 获取相关授权信息
 						mController.getPlatformInfo(getActivity(), SHARE_MEDIA.WEIXIN, new UMDataListener() {
@@ -189,7 +189,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									}
 									String avatar = info.get("headimgurl").toString();
 									String nickname = info.get("nickname").toString();
-									other_login("wx", WeChatConfig.API_KEY, avatar, nickname);
+									other_login("wx", value.getString("uid"), avatar, nickname);
 									Log.d("TestData", sb.toString());
 								} else {
 									dialog.dismiss();
@@ -229,7 +229,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					}
 
 					@Override
-					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+					public void onComplete(final Bundle value, SHARE_MEDIA platform) {
 //						Toast.makeText(getActivity(), "授权完成", Toast.LENGTH_SHORT).show();
 						// 获取相关授权信息
 						mController.getPlatformInfo(getActivity(), SHARE_MEDIA.QQ, new UMDataListener() {
@@ -250,7 +250,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 									// 如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("profile_image_url").toString();
 									String nickname = info.get("screen_name").toString();
-									other_login("qq", QQConfig.API_KEY, avatar, nickname);
+									other_login("qq", value.getString("uid"), avatar, nickname);
 
 //									Log.d("TestData", sb.toString());
 								} else {
@@ -281,7 +281,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 					}
 
 					@Override
-					public void onComplete(Bundle value, SHARE_MEDIA platform) {
+					public void onComplete(final Bundle value, SHARE_MEDIA platform) {
 						if (value != null && !TextUtils.isEmpty(value.getString("uid"))) {
 //							Toast.makeText(getActivity(), "授权成功.", Toast.LENGTH_SHORT).show();
 							mController.getPlatformInfo(getActivity(), SHARE_MEDIA.SINA, new UMDataListener() {
@@ -301,7 +301,7 @@ public class RegPhoneFragment extends BaseV4Fragment {
 										//如果第三方登录成功，获取avatar以及appid直接登录
 										String avatar = info.get("profile_image_url").toString();
 										String nickname = info.get("screen_name").toString();
-										other_login("weibo", WeiboConfig.API_KEY, avatar, nickname);
+										other_login("weibo", value.getString("uid"), avatar, nickname);
 //										Log.d("TestData", sb.toString());
 									} else {
 										Log.d("TestData", "发生错误：" + status);
