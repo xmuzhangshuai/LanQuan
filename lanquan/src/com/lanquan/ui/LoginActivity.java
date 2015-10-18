@@ -206,17 +206,17 @@ public class LoginActivity extends BaseActivity {
 							public void onComplete(int status, Map<String, Object> info) {
 								
 								if (status == 200 && info != null) {
-//									StringBuilder sb = new StringBuilder();
-//									Set<String> keys = info.keySet();
-//									for (String key : keys) {
-//										sb.append(key + "=" + info.get(key).toString() + "\r\n");
-//									}
+									StringBuilder sb = new StringBuilder();
+									Set<String> keys = info.keySet();
+									for (String key : keys) {
+										sb.append(key + "=" + info.get(key).toString() + "\r\n");
+									}
 									//如果第三方登录成功，获取avatar以及appid直接登录
 									String avatar = info.get("headimgurl").toString();
 									String nickname = info.get("nickname").toString();
 									other_login("wx", value.getString("uid"), avatar, nickname);
-//									Log.d("TestData", sb.toString());
-//									Log.d("uid", value.getString("uid"));
+									Log.d("TestData", sb.toString());
+									Log.d("uid", value.getString("uid"));
 								} else {
 									dialog.dismiss();
 									Log.d("TestData", "发生错误：" + status);
