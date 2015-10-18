@@ -44,6 +44,14 @@ public class UserPreference {
 		setU_tel(tel);
 		editor.commit();
 	}
+	
+	/**
+	 * 不保存电话号码
+	 */
+	public void clearthird(){
+		editor.clear();
+		editor.commit();
+	}
 
 	// 记录用户是否登录
 	public boolean getUserLogin() {

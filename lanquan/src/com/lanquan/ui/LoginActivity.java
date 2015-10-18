@@ -176,11 +176,11 @@ public class LoginActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				ToastTool.showShort(LoginActivity.this, "微信第三方登录");
+//				ToastTool.showShort(LoginActivity.this, "微信第三方登录");
 				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.WEIXIN, new UMAuthListener() {
 					@Override
 					public void onStart(SHARE_MEDIA platform) {
-						//Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(LoginActivity.this, "授权开始", Toast.LENGTH_SHORT).show();
 						dialog = showProgressDialog("正在登录...");
 						dialog.setCancelable(false);
 					}
@@ -188,13 +188,13 @@ public class LoginActivity extends BaseActivity {
 					@Override
 					public void onError(SocializeException e, SHARE_MEDIA platform) {
 						dialog.dismiss();
-						Toast.makeText(LoginActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(LoginActivity.this, "授权错误", Toast.LENGTH_SHORT).show();
 					}
 
 					@Override
 					public void onComplete(final Bundle value, SHARE_MEDIA platform) {
 						Log.d("TestData", value.toString());
-						//Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
+//						Toast.makeText(LoginActivity.this, "授权完成", Toast.LENGTH_SHORT).show();
 						//获取相关授权信息
 						mController.getPlatformInfo(LoginActivity.this, SHARE_MEDIA.WEIXIN, new UMDataListener() {
 							@Override
@@ -216,6 +216,7 @@ public class LoginActivity extends BaseActivity {
 									String nickname = info.get("nickname").toString();
 									other_login("wx", value.getString("uid"), avatar, nickname);
 //									Log.d("TestData", sb.toString());
+//									Log.d("uid", value.getString("uid"));
 								} else {
 									dialog.dismiss();
 									Log.d("TestData", "发生错误：" + status);
@@ -237,7 +238,7 @@ public class LoginActivity extends BaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				ToastTool.showShort(LoginActivity.this, "qq第三方登录");
+//				ToastTool.showShort(LoginActivity.this, "qq第三方登录");
 				mController.doOauthVerify(LoginActivity.this, SHARE_MEDIA.QQ, new UMAuthListener() {
 					@Override
 					public void onStart(SHARE_MEDIA platform) {
@@ -509,7 +510,7 @@ public class LoginActivity extends BaseActivity {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.i(statusCode + "===" + response);
+				Log.d("sss",statusCode + "===" + response);
 				try {
 					dialog.dismiss();
 					JsonTool jsonTool = new JsonTool(response);
@@ -518,6 +519,8 @@ public class LoginActivity extends BaseActivity {
 					String status = jsonTool.getStatus();
 					String message = jsonTool.getMessage();
 					if (status.equals("success")) {
+						//先把本地的userprefence清除
+						userPreference.clearthird();
 						jsonTool.saveAccess_token();
 						// 登录成功后获取用户信息
 						getUserInfo(jsonObject.getString("user_id"));
@@ -569,7 +572,7 @@ public class LoginActivity extends BaseActivity {
 			@Override
 			public void onSuccess(int statusCode, Header[] headers, String response) {
 				// TODO Auto-generated method stub
-				LogTool.i(statusCode + "===" + response);
+				Log.d("ssss",statusCode + "===" + response);
 				JsonTool jsonTool = new JsonTool(response);
 				JSONObject jsonObject = jsonTool.getJsonObject();
 
@@ -606,6 +609,7 @@ public class LoginActivity extends BaseActivity {
 			String avatar = userInfoJsonObject.getString(UserTable.AVATAR);
 			String create_time = userInfoJsonObject.getString(UserTable.U_CREATE_TIME);
 			Date date = DateTimeTools.StringToDate(create_time);
+			
 
 			String userid = userInfoJsonObject.getString(UserTable.U_ID);
 

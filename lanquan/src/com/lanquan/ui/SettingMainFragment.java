@@ -21,6 +21,11 @@ import com.lanquan.customwidget.MyAlertDialog;
 import com.lanquan.utils.FileSizeUtil;
 import com.lanquan.utils.ImageLoaderTool;
 import com.lanquan.utils.UserPreference;
+import com.umeng.socialize.bean.SHARE_MEDIA;
+import com.umeng.socialize.bean.SocializeEntity;
+import com.umeng.socialize.controller.UMServiceFactory;
+import com.umeng.socialize.controller.UMSocialService;
+import com.umeng.socialize.controller.listener.SocializeListeners.SocializeClientListener;
 
 /**
  * 
@@ -53,7 +58,7 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 	private UserPreference userPreference;
 	private TextView cacheSize;
 	private TextView version;
-
+	UMSocialService mController = UMServiceFactory.getUMSocialService("com.umeng.login");
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -137,6 +142,7 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 				Intent intent;
 				// BaseApplication.getInstance().logout();
 				userPreference.clear();
+				deleteOauth();
 				intent = new Intent(getActivity(), LoginOrRegisterActivity.class);
 				getActivity().startActivity(intent);
 				getActivity().finish();
@@ -156,6 +162,51 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 
 	}
 
+	public void deleteOauth() {
+		mController.deleteOauth(getActivity(), SHARE_MEDIA.WEIXIN, new SocializeClientListener() {
+			@Override
+			public void onStart() {
+			}
+
+			@Override
+			public void onComplete(int status, SocializeEntity entity) {
+				if (status == 200) {
+//					Toast.makeText(getActivity(), "删除成功.", Toast.LENGTH_SHORT).show();
+				} else {
+//					Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+		mController.deleteOauth(getActivity(), SHARE_MEDIA.SINA, new SocializeClientListener() {
+			@Override
+			public void onStart() {
+			}
+
+			@Override
+			public void onComplete(int status, SocializeEntity entity) {
+				if (status == 200) {
+//					Toast.makeText(getActivity(), "删除成功.", Toast.LENGTH_SHORT).show();
+				} else {
+//					Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+		mController.deleteOauth(getActivity(), SHARE_MEDIA.WEIXIN_CIRCLE, new SocializeClientListener() {
+			@Override
+			public void onStart() {
+			}
+
+			@Override
+			public void onComplete(int status, SocializeEntity entity) {
+				if (status == 200) {
+//					Toast.makeText(getActivity(), "删除成功.", Toast.LENGTH_SHORT).show();
+				} else {
+//					Toast.makeText(getActivity(), "删除失败", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
+	}
+
 	/**
 	 * 清楚缓存
 	 */
@@ -172,8 +223,7 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 				myAlertDialog.dismiss();
 				imageLoader.clearMemoryCache();
 				imageLoader.clearDiskCache();
-				cacheSize.setText("" + FileSizeUtil.getFileOrFilesSize(imageLoader.getDiskCache().getDirectory().getAbsolutePath(), FileSizeUtil.SIZETYPE_MB)
-						+ "MB");
+				cacheSize.setText("" + FileSizeUtil.getFileOrFilesSize(imageLoader.getDiskCache().getDirectory().getAbsolutePath(), FileSizeUtil.SIZETYPE_MB) + "MB");
 			}
 		};
 		View.OnClickListener cancle = new OnClickListener() {
@@ -204,10 +254,10 @@ public class SettingMainFragment extends BaseV4Fragment implements OnClickListen
 			Uri uri = Uri.parse("market://details?id=" + getActivity().getPackageName());
 			Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
 			try {
-			    startActivity(goToMarket);
+				startActivity(goToMarket);
 			} catch (ActivityNotFoundException e) {
-			    Toast.makeText(getActivity(), "Couldn't launch the market !", Toast.LENGTH_SHORT).show();
-			} 
+				Toast.makeText(getActivity(), "Couldn't launch the market !", Toast.LENGTH_SHORT).show();
+			}
 			// transaction.setCustomAnimations(R.anim.zoomin2, R.anim.zoomout);
 			// transaction.replace(R.id.container, new SettingChatFragment());
 			// transaction.addToBackStack("setting");
